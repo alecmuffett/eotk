@@ -14,6 +14,10 @@ The results are certainly impactful upon security, pose all manner of
 risk; set them up only for your own sites or for sites which do not
 require login credentials of any kind.
 
+The resulting NGINX configs are probably buggy or not terribly well
+tuned; please consider this project to be very much "early days", but
+I shall try not to mess with the configuration file format.
+
 
 # Usage Notes
 
