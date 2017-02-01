@@ -23,6 +23,10 @@ http {
   resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s;
   resolver_timeout %NGINX_TIMEOUT%s;
 
+  proxy_buffer_size 128k;
+  proxy_buffers 4 256k;
+  proxy_busy_buffers_size 256k;
+
   # logs
   access_log %LOG_DIR%/nginx-access.log;
 
