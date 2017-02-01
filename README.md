@@ -1,6 +1,7 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
+
 # Status
 
 The code is currently pre-alpha - too hacky for words.  It will improve.
@@ -8,6 +9,10 @@ The code is currently pre-alpha - too hacky for words.  It will improve.
 The goal is to provide a tool for prototyping, and eventually
 deploying at scale, HTTP and HTTPS onion sites to provide official
 presence for popular websites.
+
+The results are certainly impactful upon security, pose all manner of
+risk; set them up only for your own sites or for sites which do not
+require login credentials of any kind.
 
 
 # Usage Notes
@@ -57,6 +62,9 @@ Currently works on OSX with Homebrew:
 * (review your config file - `onion-tk.conf` for interest)
 * `./projects.d/default.d/start.sh`
 * (connect to one of the onion sites cited in the `default` project)
+* (play SSL-Certificate-Whackamole)
+* (browse a little)
+* `./projects.d/default.d/stop.sh` # to stop the `default` project
 
 
 # Installation: Debian/Raspbian/Ubuntu
