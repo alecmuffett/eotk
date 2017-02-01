@@ -4,7 +4,9 @@
 
 # Status
 
-The code is currently pre-alpha - too hacky for words.  It will improve.
+The code is currently pre-alpha - too hacky for words.
+
+It will improve.
 
 The goal is to provide a tool for prototyping, and eventually
 deploying at scale, HTTP and HTTPS onion sites to provide official
@@ -78,3 +80,32 @@ Currently works on OSX with Homebrew:
 # Installation: Debian/Raspbian/Ubuntu
 
 Work in progress. Feedback welcome.
+
+# I want to create a new project / my own configuration!
+
+You can either add a new project to the demo config file, or you can
+create a new config for yourself.
+
+The simplest configuration file probably looks like this:
+
+```
+set project myproject
+hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com
+```
+
+...and if you create a file called `myproject.conf` containing those
+files, then you should be able to do:
+
+```
+./onion-tk.sh configure myproject.conf
+./projects.d/myproject.d/start.sh
+```
+
+## But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
+
+```
+cd secrets.d
+./generate-onion-key.sh
+```
+
+Do this as many times as you wish/need.

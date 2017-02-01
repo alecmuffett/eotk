@@ -18,7 +18,8 @@ case "$1" in
 
     conf|config|configure)
         log=configure$$.log
-        if ! $EOTK_HOME/tools/do-configure.pl 2>$log ; then
+	shift
+        if ! $EOTK_HOME/tools/do-configure.pl "$@" 2>$log ; then
             echo $cmd: failure: see $log
             exit 1
         else

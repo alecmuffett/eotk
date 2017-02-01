@@ -353,7 +353,7 @@ else {
     $config = $ARGV[0];
 }
 
-die "$config: no such file / missing configuration\n" unless (-f $config);
+die "$config: no such file / missing configuration: $config\n" unless (-f $config);
 
 open(CONFIG, $config) or die "$config: $!\n";
 chomp(@config = grep(!/^\s*(#.*)?$/, <CONFIG>));
