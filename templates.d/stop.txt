@@ -1,6 +1,8 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
 
+echo stopping %PROJECT%
+
 while read pidfile ; do
     test -s $pidfile && kill -TERM `cat $pidfile`
 done <<EOF

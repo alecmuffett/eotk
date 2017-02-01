@@ -1,31 +1,5 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
-
-while read pidfile ; do
-    test -s $pidfile && kill -TERM `cat $pidfile`
-done <<EOF
-%%IF %IS_SOFTMAP%
-%%BEGIN
-%TOR_DIR%/tor.pid
-%%END
-%%ELSE
-%PROJECT_DIR%/tor.pid
-%%ENDIF
-EOF
-
-while read torconf ; do
-    test -f $torconf && tor -f $torconf
-done <<EOF
-%%IF %IS_SOFTMAP%
-%%BEGIN
-%TOR_DIR%/tor.conf
-%%END
-%%ELSE
-%PROJECT_DIR%/tor.conf
-%%ENDIF
-EOF
-
-nginxconf=%PROJECT_DIR%/nginx.conf
-nginx -c $nginxconf -s reload
-
+sh %PROJECT_DIR%/stop.sh
+sh %PROJECT_DIR%/start.sh
 exit 0

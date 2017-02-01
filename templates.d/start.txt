@@ -1,6 +1,8 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
 
+echo starting %PROJECT%
+
 while read torconf ; do
     test -f $torconf && tor -f $torconf
 done <<EOF
