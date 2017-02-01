@@ -68,15 +68,6 @@ hardmap secrets.d/%NEW_ONION%.key accessnow.org
 hardmap secrets.d/%NEW_ONION%.key digitalrights.ie
 # privacy international already have privacyintyqcroe.onion
 
-# let's try reddit; it has 3+ apparent domains (www.reddit.com,
-# www.redditstatic.com, www.redditmedia.com) - one of which has an
-# additional "thumbs" subdomain (www.thumbs.redditmedia.com)
-
-set project reddit
-hardmap secrets.d/%NEW_ONION%.key reddit.com
-hardmap secrets.d/%NEW_ONION%.key redditstatic.com
-hardmap secrets.d/%NEW_ONION%.key redditmedia.com thumbs
-
 # some more examples to play with:
 
 set project five-eyes
