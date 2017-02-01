@@ -18,6 +18,10 @@ The resulting NGINX configs are probably buggy or not terribly well
 tuned; please consider this project to be very much "early days", but
 I shall try not to mess with the configuration file format.
 
+The `softmap` support is untested, and needs some more work to make it
+nice to launch and integrate with OnionBalance; please avoid it for
+the moment.
+
 
 # Usage Notes
 
