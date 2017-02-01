@@ -94,7 +94,7 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com
 ```
 
 ...and if you create a file called `myproject.conf` containing those
-files, then you should be able to do:
+lines, then you should be able to do:
 
 ```
 ./onion-tk.sh configure myproject.conf
