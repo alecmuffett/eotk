@@ -49,33 +49,21 @@ set tor_single_onion 1
 # feeds requests for 1/more onion addresses into nginx, which remaps
 # and rewrites them, passing the request onto the backend website.
 
-# no project => goes into the "default" project, served by a single
-# tor daemon and a single nginx instance
-
-hardmap secrets.d/%NEW_ONION%.key whitehouse.gov
-
-# add a few onions/domain mappings to a new "goodguys" project, all
-# served by another single tor daemon/nginx instance; these are all
-# simple sites with no apparent subdomains ...
-
-set project civil-society
-hardmap secrets.d/%NEW_ONION%.key openrightsgroup.org
-hardmap secrets.d/%NEW_ONION%.key eff.org
+# default project
 hardmap secrets.d/%NEW_ONION%.key aclu.org
 hardmap secrets.d/%NEW_ONION%.key liberty-human-rights.org.uk
-hardmap secrets.d/%NEW_ONION%.key cpj.org
+
+# topical project
+set project digital-rights
+hardmap secrets.d/%NEW_ONION%.key openrightsgroup.org
+hardmap secrets.d/%NEW_ONION%.key eff.org
 hardmap secrets.d/%NEW_ONION%.key accessnow.org
 hardmap secrets.d/%NEW_ONION%.key digitalrights.ie
 # privacy international already have privacyintyqcroe.onion
 
-# some more examples to play with:
-
-set project five-eyes
-hardmap secrets.d/%NEW_ONION%.key asd.gov.au
-hardmap secrets.d/%NEW_ONION%.key cse-cst.gc.ca
-hardmap secrets.d/%NEW_ONION%.key gchq.gov.uk
-hardmap secrets.d/%NEW_ONION%.key gcsb.govt.nz
-hardmap secrets.d/%NEW_ONION%.key nsa.gov
+# another project
+set project journalists
+hardmap secrets.d/%NEW_ONION%.key cpj.org
 
 #################### softmap examples ####################
 
@@ -112,7 +100,7 @@ hardmap secrets.d/%NEW_ONION%.key nsa.gov
 # instance should choose its own keys, which should subsequently be
 # configured into onionbalance.
 
-# onioncloud: for me this is 7x servers, each with 4 cores => 28 cores
+# onioncloud: 7x servers, each with 4 cores => 28 cores
 
 set project onioncloud
 
@@ -129,25 +117,15 @@ set softmap_tor_workers 4
 
 set softmap_nginx_workers 20
 
-# try the BBC website - it basically two domains, one of which
-# ("bbci", the static content CDN) has a "files" subdomain; however
-# there is a twist that inside the UK the site is known as "bbc.co.uk"
-# and outside it is "bbc.com", where it also has adverts.  We will set
-# up an onion for both, one of them will work for you; in theory if
-# you are outside the UK they should redirect to each other...
+# BBC website - it basically two domains, one of which ("bbci") has a
+# "files" subdomain; however there is a twist that inside the UK the
+# site is known as "bbc.co.uk" and outside it is "bbc.com", where it
+# also has adverts.  We set up an onion for both, one of them will
+# work for you; in theory if you are outside the UK they should
+# redirect to each other...
 
 softmap %NEW_ONION% bbc.com
 softmap %NEW_ONION% bbc.co.uk
 softmap %NEW_ONION% bbci.co.uk files
-
-# let's add Github into the cloud of onionification ...
-
-softmap %NEW_ONION% github.com
-softmap %NEW_ONION% githubusercontent.com
-
-# ... and StackOverflow, too
-
-softmap %NEW_ONION% stackoverflow.com
-softmap %NEW_ONION% sstatic.net
 
 # end

@@ -292,8 +292,15 @@ sub DoProject {
 
     # various scripts
     foreach my $script (split(" ", $ENV{SCRIPT_NAMES})) {
-        my $cmd = "$ENV{TEMPLATE_TOOL} templates.d/$script.txt >$ENV{PROJECT_DIR}/$script.sh";
+        my $path = "$ENV{PROJECT_DIR}/$script.sh";
+        my $cmd = "$ENV{TEMPLATE_TOOL} templates.d/$script.txt >$path";
         &Pipeify($cmd, @scriptrows);
+        chmod(0700, $path) or die "chmod: $path: $!\n";
+    }
+
+    # tell the user
+    foreach my $row (@{$projects{$project}{ROWS}}) {
+        print "project $project maps ${$row}{ONION_ADDRESS} to ${$row}{DNS_DOMAIN}\n";
     }
 }
 
