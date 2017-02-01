@@ -1,0 +1,162 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+#################### defaults ####################
+
+# NOTE: all variables, excepting `project`, are global in scope; if
+# they are set *anywhere* then that value will apply to *all*
+# projects.  if set multiple times, the last value wins.
+
+# create a "/hello-onion/" URL on all onion domains/subdomains; this
+# provides a helpful fixed point when prototyping to navigate to for
+# accepting self-signed SSL certificates, etc. Use `0` to switch off.
+
+set nginx_hello_onion 1
+
+# annoyingly, nginx wants DNS for wildcard rewrites, hence dnsmasq.
+
+set nginx_resolver 127.0.0.1
+
+# generic max-number-of-any-resource (eg: descriptors) in nginx
+
+set nginx_rlim 1024
+
+# generic max-number-of-seconds-to-wait (eg: connect timeout) in nginx
+
+set nginx_timeout 30
+
+# nginx understands multiprocessing, tor does not, but nginx will have
+# more work to do, therefore run several nginx workers...
+
+set nginx_workers 5
+
+# number of introduction points per onion - see tor manual; for basic
+# prototypes 3 is fine, for corporate production services use 10 (max)
+
+set tor_intros_per_daemon 3
+
+# 1 = faster but less/not anonymous; 0 = slower but more anonymous
+
+set tor_single_onion 1
+
+#################### hardmap examples ####################
+
+# hardmap is designed to run on a single machine, for protoyping,
+# testing, or for small deployments.
+
+# in hardmap a `project` contains onion services with pre-established
+# ("hard coded") onion keys, and a single tor daemon (per project)
+# feeds requests for 1/more onion addresses into nginx, which remaps
+# and rewrites them, passing the request onto the backend website.
+
+# no project => goes into the "default" project, served by a single
+# tor daemon and a single nginx instance
+
+hardmap secrets.d/%NEW_ONION%.key whitehouse.gov
+
+# add a few onions/domain mappings to a new "goodguys" project, all
+# served by another single tor daemon/nginx instance; these are all
+# simple sites with no apparent subdomains ...
+
+set project civil-society
+hardmap secrets.d/%NEW_ONION%.key openrightsgroup.org
+hardmap secrets.d/%NEW_ONION%.key eff.org
+hardmap secrets.d/%NEW_ONION%.key aclu.org
+hardmap secrets.d/%NEW_ONION%.key liberty-human-rights.org.uk
+hardmap secrets.d/%NEW_ONION%.key cpj.org
+hardmap secrets.d/%NEW_ONION%.key accessnow.org
+hardmap secrets.d/%NEW_ONION%.key digitalrights.ie
+# privacy international already have privacyintyqcroe.onion
+
+# let's try reddit; it has 3+ apparent domains (www.reddit.com,
+# www.redditstatic.com, www.redditmedia.com) - one of which has an
+# additional "thumbs" subdomain (www.thumbs.redditmedia.com)
+
+set project reddit
+hardmap secrets.d/%NEW_ONION%.key reddit.com
+hardmap secrets.d/%NEW_ONION%.key redditstatic.com
+hardmap secrets.d/%NEW_ONION%.key redditmedia.com thumbs
+
+# some more examples to play with:
+
+set project five-eyes
+hardmap secrets.d/%NEW_ONION%.key asd.gov.au
+hardmap secrets.d/%NEW_ONION%.key cse-cst.gc.ca
+hardmap secrets.d/%NEW_ONION%.key gchq.gov.uk
+hardmap secrets.d/%NEW_ONION%.key gcsb.govt.nz
+hardmap secrets.d/%NEW_ONION%.key nsa.gov
+
+#################### softmap examples ####################
+
+################################################################
+# TIP: UNLESS YOU ARE LAYING OUT AN ONIONSITE FOR A MEDIUM/LARGE
+# ENTERPRISE, YOU CAN PROBABLY SKIP THIS SECTION & GO HAVE FUN!
+################################################################
+
+# softmap is designed to run on 1/more machines, and requires
+# `onionbalance` to synthesise tor multiprocessing, providing an
+# enterprise-scalable means for onionsite provisioning.  the result is
+# an expandable and highly available "pool" of tor servers which can
+# support mapping of several domains simultaneously for hundreds to
+# thousands of simultaneous users.
+
+# in softmap, instead of a `project` creating onion services with
+# pre-established keys, softmap projects contain several independent
+# tor daemons which create self-chosen, random addresses.
+
+# a single nginx listens to all to daemons in a given softmap project,
+# and services HTTP requests on any/all of them; since nginx already
+# understands multiprocessing (see `nginx_workers`) this is okay.
+
+# a softmap project may be replicated (rsync? docker?) to several
+# machines in a cloud, providing linear scalability
+
+# all that remains is for onionbalance to be configured with the
+# "random" onion addresses of the pool's tor daemons, and for it to
+# republish them under a "service" onion address.
+
+# it is important for efficiency to not replicate the per-tor-worker
+# private tor keys, as these serve like the unique worker IP addresses
+# in a traditional TCP/IP load-balancer setup; instead each softmap
+# instance should choose its own keys, which should subsequently be
+# configured into onionbalance.
+
+# onioncloud: for me this is 7x servers, each with 4 cores => 28 cores
+
+set project onioncloud
+
+# softmap only: per-host-per-project number of tor workers; tor is
+# very efficient, so this generally does not have to be a big number.
+# also: this number will be multiplied by the number of times you
+# deploy the project, ie: this number in each machine or container.
+
+set softmap_tor_workers 4
+
+# softmap only: the per-host-per-project number of nginx workers per
+# machine or container; let's guess "5x per tor worker" => 5 * 4 = 20;
+# possibly a bigger multiplier - 7x? 10x? - may eventually be needed.
+
+set softmap_nginx_workers 20
+
+# try the BBC website - it basically two domains, one of which
+# ("bbci", the static content CDN) has a "files" subdomain; however
+# there is a twist that inside the UK the site is known as "bbc.co.uk"
+# and outside it is "bbc.com", where it also has adverts.  We will set
+# up an onion for both, one of them will work for you; in theory if
+# you are outside the UK they should redirect to each other...
+
+softmap %NEW_ONION% bbc.com
+softmap %NEW_ONION% bbc.co.uk
+softmap %NEW_ONION% bbci.co.uk files
+
+# let's add Github into the cloud of onionification ...
+
+softmap %NEW_ONION% github.com
+softmap %NEW_ONION% githubusercontent.com
+
+# ... and StackOverflow, too
+
+softmap %NEW_ONION% stackoverflow.com
+softmap %NEW_ONION% sstatic.net
+
+# end

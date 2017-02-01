@@ -1,0 +1,7 @@
+*.key
+*.pem
+*.cert
+*.crt
+projects.d
+onion-tk.conf
+*.log

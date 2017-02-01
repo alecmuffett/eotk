@@ -1,0 +1,6 @@
+#!/bin/sh
+# eotk (c) 2017 Alec Muffett
+
+nginxconf=%PROJECT_DIR%/nginx.conf
+nginx -c $nginxconf -t
+exit 0

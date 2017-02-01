@@ -1,0 +1,123 @@
+# -*- awk -*-
+# eotk (c) 2017 Alec Muffett
+
+# EMACS awk mode works quite well for nginx configs
+
+# logs and pids
+pid %PROJECT_DIR%/nginx.pid;
+error_log %LOG_DIR%/nginx-error.log debug;
+
+# performance
+%%IF %IS_SOFTMAP%
+worker_processes %SOFTMAP_NGINX_WORKERS%; # softmap
+%%ELSE
+worker_processes %NGINX_WORKERS%; # hardmap
+%%ENDIF
+worker_rlimit_nofile %NGINX_RLIM%;
+events {
+  worker_connections %NGINX_RLIM%;
+}
+
+http {
+  # dns for proxy (sigh)
+  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s;
+  resolver_timeout %NGINX_TIMEOUT%s;
+
+  # logs
+  access_log %LOG_DIR%/nginx-access.log;
+
+  # global settings
+  server_tokens off;
+
+  # allow/deny (first wins)
+  allow "unix:";
+  deny all;
+
+  # rewrite these content types; text/html is implicit
+  subs_filter_types
+  application/javascript
+  application/json
+  application/x-javascript
+  text/css
+  text/javascript
+  text/xml
+  ;
+
+  %%BEGIN
+  subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
+  proxy_cookie_domain %DNS_DOMAIN% %ONION_ADDRESS%;
+  proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
+  %%END
+
+  # global proxy settings
+  proxy_read_timeout %NGINX_TIMEOUT%;
+  proxy_connect_timeout %NGINX_TIMEOUT%;
+
+  # SSL config
+  ssl_certificate %SSL_DIR%/%CERT_PREFIX%.cert;
+  ssl_certificate_key %SSL_DIR%/%CERT_PREFIX%.pem;
+
+  # websockets
+  map $http_upgrade $connection_upgrade {
+    default "upgrade";
+    "" "";
+  }
+
+  %%BEGIN
+  # for %ONION_ADDRESS% -> %DNS_DOMAIN%
+  server {
+    %%IF %IS_SOFTMAP%
+    %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
+    # softmap onion %I%
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-443.sock;
+    %%ENDRANGE
+    %%ELSE
+    # hardmap
+    # unix sockets; use <ONION_ADDRESS>.d as a naming convention
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock;
+    %%ENDIF
+
+    # subdomain regexp captures trailing dot, use carefully
+    server_name
+    %ONION_ADDRESS%
+    ~^(?<subdomain>.+\.)%ONION_ADDRESS_RE%$
+    ;
+
+    %%IF %NGINX_HELLO_ONION%
+    # for test & to help SSL certificate acceptance
+    location ~ ^/hello-onion/?$ {
+      return 200 "Hello, Onion User!";
+    }
+    %%ENDIF
+
+    # for traffic
+    location / {
+      proxy_pass "$scheme://${subdomain}%DNS_DOMAIN%"; # note $scheme
+      proxy_http_version 1.1;
+      proxy_set_header Host "${subdomain}%DNS_DOMAIN%";
+      proxy_set_header Accept-Encoding ""; # but putting this in `http` fails?
+      proxy_set_header Connection $connection_upgrade; # SSL
+      proxy_set_header Upgrade $http_upgrade; # SSL
+      proxy_ssl_server_name on; # SSL
+    }
+  }
+
+  %%END
+
+  # this is a security bug, fix it
+  # more_set_headers "Access-Control-Allow-Origin: *"
+
+  # header purge
+  more_clear_headers "Age";
+  more_clear_headers "Content-Security-Policy-Report-Only";
+  more_clear_headers "Server";
+  more_clear_headers "Via";
+  more_clear_headers "X-From-Nginx";
+  more_clear_headers "X-NA";
+  more_clear_headers "X-Powered-By";
+  more_clear_headers "X-Request-Id";
+  more_clear_headers "X-Runtime";
+  more_clear_headers "X-Varnish";
+}

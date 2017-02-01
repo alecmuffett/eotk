@@ -1,0 +1,18 @@
+#!/bin/sh
+# eotk (c) 2017 Alec Muffett
+
+while read pidfile ; do
+    test -s $pidfile &&
+        kill -USR1 `cat $pidfile` &&
+        kill -USR2 `cat $pidfile`
+done <<EOF
+%%IF %IS_SOFTMAP%
+%%BEGIN
+%TOR_DIR%/tor.pid
+%%END
+%%ELSE
+%PROJECT_DIR%/tor.pid
+%%ENDIF
+EOF
+
+exit 0

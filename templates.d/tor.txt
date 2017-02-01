@@ -1,0 +1,48 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+# template note:
+# we use TOR_DIR not PROJECT_DIR because relocation of softmaps
+%%IF %IS_SOFTMAP%
+DataDirectory %TOR_DIR%
+ControlPort unix:%TOR_DIR%/tor-control.sock
+PidFile %TOR_DIR%/tor.pid
+Log info file %TOR_DIR%/tor.log
+%%ELSE
+DataDirectory %PROJECT_DIR%
+ControlPort unix:%PROJECT_DIR%/tor-control.sock
+PidFile %PROJECT_DIR%/tor.pid
+Log info file %LOG_DIR%/tor.log
+%%ENDIF
+SafeLogging 0 # noisy logging
+HeartbeatPeriod 60 minutes
+LongLivedPorts 80,443
+RunAsDaemon 1
+
+%%IF %TOR_SINGLE_ONION%
+# use single onions
+SocksPort 0 # have to disable this for single onions
+HiddenServiceSingleHopMode 1 # yep, i want single onions
+HiddenServiceNonAnonymousMode 1 # yes, really, honest, i swear
+%%ELSE
+# use normal onions
+SocksPort 0 # frankly we don't want SOCKS anyway
+%%ENDIF
+
+%%IF %IS_SOFTMAP%
+# softmap
+HiddenServiceDir %TOR_DIR%
+HiddenServicePort 80 unix:%TOR_DIR%/port-80.sock
+HiddenServicePort 443 unix:%TOR_DIR%/port-443.sock
+HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+
+%%ELSE
+%%BEGIN
+# hardmap for: %DNS_DOMAIN% -> %ONION_ADDRESS%
+HiddenServiceDir %PROJECT_DIR%/%ONION_ADDRESS%.d
+HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock
+HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock
+HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+
+%%END
+%%ENDIF
