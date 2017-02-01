@@ -70,13 +70,13 @@ http {
     %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
     # softmap onion %I%
     listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
-    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-443.sock;
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-443.sock ssl;
     %%ENDRANGE
     %%ELSE
     # hardmap
     # unix sockets; use <ONION_ADDRESS>.d as a naming convention
     listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
-    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock;
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock ssl;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully
@@ -87,7 +87,7 @@ http {
 
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
-    location ~ ^/hello-onion/?$ {
+    location ~ ^/hello[-_]onion/?$ {
       return 200 "Hello, Onion User!";
     }
     %%ENDIF

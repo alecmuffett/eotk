@@ -14,6 +14,6 @@ done <<EOF
 EOF
 
 nginxconf=%PROJECT_DIR%/nginx.conf
-nginx -c $nginxconf stop
+nginx -c $nginxconf -s stop
 
 exit 0
