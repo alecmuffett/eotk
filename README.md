@@ -57,7 +57,7 @@ certificate to provide identity and assurance to an onion site.
     * https://www.nginx.com/resources/wiki/modules/headers_more/
 * a local DNS resolver
   * e.g.: `dnsmasq`
-  * or you can edit the config to use 8.8.8.8 or something
+  * or you can add to your config: `set nginx_resolver 127.0.0.1`
 
 
 # Installation: OSX
