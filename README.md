@@ -52,11 +52,12 @@ certificate to provide identity and assurance to an onion site.
 * `tor` 2.9.8 or later (ideally: latest)
 * `nginx`
   * with `ngx_http_sub_module`
-    https://nginx.org/en/docs/http/ngx_http_sub_module.html
+    * https://nginx.org/en/docs/http/ngx_http_sub_module.html
   * with `headers_more`
     * https://www.nginx.com/resources/wiki/modules/headers_more/
 * a local DNS resolver
   * e.g.: `dnsmasq`
+  * or you can edit the config to use 8.8.8.8 or something
 
 
 # Installation: OSX
