@@ -92,7 +92,7 @@ Currently works on OSX with Homebrew:
 
 # Installation: Raspbian
 
-Read 000-setup-raspbian.md
+Read (000-setup-raspbian.md)[000-setup-raspbian.md]
 
 # Installation: Debian/Ubuntu
 
