@@ -144,7 +144,7 @@ Alternately get a tool like `scallion` or `shallot` and use that to
 `secrets.d` with a filename like `xxxxxxxxxxxxxxxx.key` where
 `xxxxxxxxxxxxxxxx` is the corresponding onion address.
 
-## But I not only have `www.foo.com`, I have www.dev.foo.com!
+## But I not only have `www.foo.com`, I have `www.dev.foo.com`!
 
 Subdomains are supported thusly:
 
