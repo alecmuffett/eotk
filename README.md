@@ -42,13 +42,16 @@ rendering these issues moot.
 
 # Requirements
 
-* `tor` 2.9.8 or later
-  * ideally, the latest stable version
-* `nginx`
-  * with `ngx_http_sub_module`
-    * https://nginx.org/en/docs/http/ngx_http_sub_module.html
-  * with `headers_more`
-    * https://www.nginx.com/resources/wiki/modules/headers_more/
+* `tor` (latest stable)
+* `nginx` (latest stable) with the following features & modules
+  * `headers_more`
+  * `ngx_http_substitutions_filter_module`
+  * `http_sub`
+  * `http_ssl`
+
+On Linux, scripts are provided to compile these.
+
+On OSX, these are available via Homebrew.
 
 # User Manual
 
