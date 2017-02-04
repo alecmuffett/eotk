@@ -31,10 +31,10 @@ www.foofoofoofoofoof.onion) the EOTK provides a fixed url:
 
 * `https://www.foofoofoofoofoof.onion/hello-onion/`
 
-...which is internally served by the NGINX proxy and so provides a
-stable, fixed URL for SSL certificate acceptance; inside TorBrowser
-another effective solution is to open all the broken links, images and
-resources "in a new Tab" and accept the certificate there.
+...which (`/hello-onion/`) is internally served by the NGINX proxy and
+provides a stable, fixed URL for SSL certificate acceptance; inside
+TorBrowser another effective solution is to open all the broken links,
+images and resources "in a new Tab" and accept the certificate there.
 
 In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
