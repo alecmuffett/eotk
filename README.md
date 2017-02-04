@@ -92,7 +92,9 @@ Currently works on OSX with Homebrew:
 
 # Installation: Raspbian
 
-Read [000-setup-raspbian.md](000-setup-raspbian.md)
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* Read [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
 
 # Installation: Debian/Ubuntu
 
