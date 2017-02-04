@@ -56,16 +56,25 @@ Intuitively obvious to the most casual observer:
 
 * `eotk config [filename]` # default `onions.conf`
   * *synonyms:* `conf`, `configure`
+  * parses the config file and sets up and populates the projects
 * `eotk status projectname ...` # or: `-a` for all
+  * process status
 * `eotk maps projectname ...` # or: `-a` for all
+  * print which onions correspond to which dns domains
 * `eotk start projectname ...` # or: `-a` for all
+  * start projects
 * `eotk stop projectname ...` # or: `-a` for all
+  * stop projects
 * `eotk bounce projectname ...` # or: `-a` for all
   * *synonyms:* `restart`, `reload`
+  * stop, and restart, projects
 * `eotk debugon projectname ...` # or: `-a` for all
+  * enable verbose tor logs
 * `eotk debugoff projectname ...` # or: `-a` for all
+  * disable verbose tor logs
 * `eotk harvest projectname ...` # or: `-a` for all
   * *synonyms:* `onions`
+  * print list of onions used by projects
 
 # Installation: OSX
 

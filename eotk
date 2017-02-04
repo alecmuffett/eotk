@@ -26,16 +26,19 @@ Action() {
     action=$1
     shift
 
+    verbose=false
     if [ "x$1" = "x" ] ; then
         Warn "missing project name, try: '$prog projects' for a list, or '-a' for all"
         return
     elif [ "x$1" = "x-a" ] ; then
         projects=`AllProjects`
+        verbose=true
     else
         projects="$*"
     fi
 
     for project in $projects ; do
+        $verbose && echo :::: $project ::::
         $project_dir/$project.d/$action.sh
     done
 }
