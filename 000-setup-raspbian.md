@@ -22,6 +22,6 @@ two options for you:
 - run the obviously-named scripts in opt.d to compile from source:
   - `build-nginx-on-debian.sh`
   - `build-tor-on-debian.sh`
-  - ...which will do all the work for you.
+  - ...which will do all the work for you, no options/arguments required.
 
 It's your choice...
