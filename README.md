@@ -55,16 +55,17 @@ rendering these issues moot.
 Intuitively obvious to the most casual observer:
 
 * `eotk config [filename]` # default `onions.conf`
-  * synonyms: `conf`, `configure`
+  * *synonyms:* `conf`, `configure`
+* `eotk status projectname ...` # or: `-a` for all
+* `eotk maps projectname ...` # or: `-a` for all
 * `eotk start projectname ...` # or: `-a` for all
 * `eotk stop projectname ...` # or: `-a` for all
 * `eotk bounce projectname ...` # or: `-a` for all
-  * synonyms: `restart`, `reload`
+  * *synonyms:* `restart`, `reload`
 * `eotk debugon projectname ...` # or: `-a` for all
 * `eotk debugoff projectname ...` # or: `-a` for all
 * `eotk harvest projectname ...` # or: `-a` for all
-  * synonyms: `onions`
-* `eotk status projectname ...` # or: `-a` for all
+  * *synonyms:* `onions`
 
 # Installation: OSX
 
