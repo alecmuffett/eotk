@@ -4,7 +4,7 @@ here=`dirname $0`
 here=`pwd`
 cd $here || exit 1
 
-# sudo aptitude install libpcre3-dev zlib1g-dev libssl-dev
+sudo aptitude install libpcre3-dev zlib1g-dev libssl-dev
 
 url=http://nginx.org/download/nginx-1.10.3.tar.gz
 file=`basename $url`
