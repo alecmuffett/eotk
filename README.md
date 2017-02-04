@@ -139,12 +139,12 @@ cd secrets.d
 ./generate-onion-key.sh
 ```
 
-Do this as many times as you wish/need.
-
-Alternately get a tool like `scallion` or `shallot` and use that to
-"mine" a desirable onion address. Be sure to store the private key in
-`secrets.d` with a filename like `xxxxxxxxxxxxxxxx.key` where
-`xxxxxxxxxxxxxxxx` is the corresponding onion address.
+* Do this as many times as you wish/need.
+* Alternately get a tool like `scallion` or `shallot` and use that to
+"mine" a desirable onion address.
+* Be sure to store the private key in `secrets.d` with a filename like
+`xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the corresponding
+onion address.
 
 ## But I not only have `www.foo.com`, I have `www.dev.foo.com`!
 
