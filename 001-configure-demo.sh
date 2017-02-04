@@ -3,8 +3,8 @@
 
 cd `dirname $0`
 
-INPUT=templates.d/onions.txt
-OUTPUT=onions.conf
+INPUT=templates.d/demo.txt
+OUTPUT=demo.conf
 
 echo "generating: $OUTPUT"
 echo "patience, please - this may take a minute or so..."

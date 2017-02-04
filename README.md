@@ -50,7 +50,9 @@ rendering these issues moot.
   * with `headers_more`
     * https://www.nginx.com/resources/wiki/modules/headers_more/
 
-# commands
+# User Manual
+
+Intuitively obvious to the most casual observer:
 
 * `eotk config [filename]` # default `onions.conf`
   * synonyms: `conf`, `configure`
@@ -72,26 +74,29 @@ Currently works on OSX with Homebrew:
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
-* `sh ./001-configure-demo.sh` # creates a working config file
-* `./eotk config` # creates tor & onion configuration files; lists onion sites
-  * (review your config file - `onion-tk.conf` for interest)
-* `./eotk start default`
-  * (connect to one of the onion sites cited in the `default` project)
-  * (play SSL-Certificate-Whackamole)
-  * (browse a little)
-* `./eotk stop default`
 
 # Installation: Debian/Raspbian/Ubuntu
 
 Work in progress. Feedback welcome.
 
+# I want to experiment!
+
+If you want to experiment with some prefabricated projects, try this:
+
+* `sh ./001-configure-demo.sh` # creates a working config file, `demo.conf`
+* `eotk config demo.conf` # creates tor & nginx config files; lists onion sites
+* `eotk start default`
+* Now you can...
+  * Connect to one of the onions cited on screen for the `default` project
+  * Play SSL-Certificate-Acceptance-Whackamole
+  * Browse a little...
+* `eotk stop default`
 
 # I want to create a new project / my own configuration!
 
 You can either add a new project to the demo config file, or you can
-create a new config for yourself.
-
-The simplest configuration file probably looks like this:
+create a new config for yourself.  If you want an onion for `foo.com`,
+the simplest configuration file probably looks like this:
 
 ```
 set project myproject
@@ -102,8 +107,8 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com
 lines, then you should be able to do:
 
 ```
-./eotk configure project.conf
-./eotk start myproject
+eotk configure project.conf
+eotk start myproject
 ```
 
 ## But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
