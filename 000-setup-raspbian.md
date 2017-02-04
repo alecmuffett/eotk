@@ -11,7 +11,9 @@ EOTK requires Tor 0.2.9.9+
 EOTK requires recent `nginx` with the following modules/features enabled:
 
 * `headers_more`
+* `ngx_http_substitutions_filter_module`
 * `http_sub`
+* `http_ssl`
 
 # Summary
 
