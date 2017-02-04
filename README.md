@@ -129,3 +129,5 @@ cd secrets.d
 ```
 
 Do this as many times as you wish/need.
+
+Alternately get a tool like `scallion` or `shallot` and use that to "mine" a desirable onion address. Be sure to store the private key in `secrets.d` with a filename like `xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the corresponding onion address.
