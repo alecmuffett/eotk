@@ -29,3 +29,5 @@ choice.  If you choose the latter option, do this:
 
 - `./opt.d/build-nginx-on-debian.sh`
 - `./opt.d/build-tor-on-debian.sh`
+
+...as appropriate.
