@@ -19,10 +19,16 @@
 
 # ...and it turns out the problem is OSX ships with 0.9.8 in the $PATH
 
-#OPENSSL=openssl # try to use at least v1.0.2
-OPENSSL=/usr/local/opt/openssl/bin/openssl
-OPENSSL_CONFIG=/usr/local/etc/openssl/openssl.cnf
 DAYS=30 # cert lifetime
+
+BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
+if [ -f $BREW_OPENSSL ] ; then
+    OPENSSL=$BREW_OPENSSL
+    OPENSSL_CONFIG=/usr/local/etc/openssl/openssl.cnf
+else
+    OPENSSL=openssl
+    OPENSSL_CONFIG=/etc/ssl/openssl.cnf
+fi
 
 if [ "x$1" == "x" ] ; then
     echo "usage: $0 foo.com '*.foo.com' sub.foo.com '*.sub.foo.com' ..." 1>&2
