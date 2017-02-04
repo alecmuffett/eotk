@@ -1,0 +1,95 @@
+#!/bin/sh
+# Enterprise Onion Toolkit
+
+cd `dirname $0` || exit 1
+
+export EOTK_HOME=`pwd` # expected by tools
+project_dir=$EOTK_HOME/projects.d
+
+prog=`basename $0`
+version=1.0
+
+AllProjects() {
+    (
+        cd $project_dir
+        for d in *.d/ ; do
+            echo `basename $d .d`
+        done
+    )
+}
+
+Action() {
+    action=$1
+    shift
+    if [ "x$1" = "x-1" ] ; then
+        projects=`AllProjects`
+    else
+        projects="$*"
+    fi
+    for project in $projects ; do
+        echo :::: $action $project ::::
+        $project_dir/$project.d/$action.sh || exit 1
+        echo done
+    done
+}
+
+cmd="$1"
+shift
+
+case "$cmd" in
+    version)
+        echo $prog $version $EOTK_HOME
+        if [ -f .gitignore ] ; then
+            git show -s --oneline
+        fi
+        ;;
+
+    projects|proj)
+        AllProjects
+        ;;
+
+    configure|config|conf)
+        log=configure$$.log
+        if ! $EOTK_HOME/tools/do-configure.pl "$@" 2>$log ; then
+            echo $prog: failure: see $log
+            exit 1
+        else
+            echo done
+        fi
+        ;;
+
+    start) # project
+        Action start "$@"
+        ;;
+
+    stop) # project
+        Action stop "$@"
+        ;;
+
+    bounce|restart|reload) # project
+        Action bounce "$@"
+        ;;
+
+    debugon) # project
+        Action debugon "$@"
+        ;;
+
+    debugoff) # project
+        Action debugoff "$@"
+        ;;
+
+    harvest) # project
+        echo tbd
+        ;;
+
+    delete) # project
+        echo tbd
+        ;;
+
+    *)
+        echo "usage: $prog args ... # see README.md for docs" 1>&2
+        exit 1
+        ;;
+esac
+
+exit 0

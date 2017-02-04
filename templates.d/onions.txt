@@ -15,7 +15,7 @@ set nginx_hello_onion 1
 
 # annoyingly, nginx wants DNS for wildcard rewrites, hence dnsmasq.
 
-set nginx_resolver 127.0.0.1
+set nginx_resolver 8.8.8.8
 
 # generic max-number-of-any-resource (eg: descriptors) in nginx
 

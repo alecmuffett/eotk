@@ -55,10 +55,6 @@ certificate to provide identity and assurance to an onion site.
     * https://nginx.org/en/docs/http/ngx_http_sub_module.html
   * with `headers_more`
     * https://www.nginx.com/resources/wiki/modules/headers_more/
-* a local DNS resolver (optional, see alternative)
-  * e.g.: `dnsmasq` if you are using internally-resolvable names
-  * else: you can add to your config: `set nginx_resolver 8.8.8.8` or similar
-
 
 # Installation: OSX
 
@@ -69,14 +65,13 @@ Currently works on OSX with Homebrew:
 * `cd eotk`
 * `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
 * `sh ./001-configure-demo.sh` # creates a working config file
-* `sh ./onion-tk.sh config` # creates tor & onion configuration files; lists onion sites
+* `./eotk config` # creates tor & onion configuration files; lists onion sites
 * (review your config file - `onion-tk.conf` for interest)
-* `./projects.d/default.d/start.sh`
+* `./eotk start default`
 * (connect to one of the onion sites cited in the `default` project)
 * (play SSL-Certificate-Whackamole)
 * (browse a little)
-* `./projects.d/default.d/stop.sh` # to stop the `default` project
-
+* `./eotk stop default`
 
 # Installation: Debian/Raspbian/Ubuntu
 
@@ -94,12 +89,12 @@ set project myproject
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com
 ```
 
-...and if you create a file called `myproject.conf` containing those
+...and if you create a file called `project.conf` containing those
 lines, then you should be able to do:
 
 ```
-./onion-tk.sh configure myproject.conf
-./projects.d/myproject.d/start.sh
+./eotk configure project.conf
+./eotk start myproject
 ```
 
 ## But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?

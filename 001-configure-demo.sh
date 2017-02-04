@@ -3,8 +3,8 @@
 
 cd `dirname $0`
 
-INPUT=templates.d/onion-tk.txt
-OUTPUT=onion-tk.conf
+INPUT=templates.d/onions.txt
+OUTPUT=onions.conf
 
 echo "patience, please - this may take a minute or so..."
 
