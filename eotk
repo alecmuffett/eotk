@@ -13,7 +13,7 @@ export PATH=$EOTK_HOME/opt.d:$PATH
 
 # meta
 prog=`basename $0`
-version=1.0
+version=1.2
 
 Warn() {
     echo "$@" 1>&2
