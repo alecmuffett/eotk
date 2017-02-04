@@ -4,7 +4,7 @@ here=`dirname $0`
 here=`pwd`
 cd $here || exit 1
 
-sudo aptitude install libevent-dev zlib1g-dev libssl-dev || exit 1
+sudo aptitude install -y libevent-dev zlib1g-dev libssl-dev || exit 1
 
 url=https://dist.torproject.org/tor-0.2.9.9.tar.gz
 file=`basename $url`
