@@ -25,9 +25,7 @@ two options for you:
 
 ...which will do all the work for you, no options/arguments required,
 although the actual compilation may take a long time.  It's your
-choice.
-
-If you choose the latter option, do this:
+choice.  If you choose the latter option, do this:
 
 - `./opt.d/build-nginx-on-debian.sh`
 - `./opt.d/build-tor-on-debian.sh`
