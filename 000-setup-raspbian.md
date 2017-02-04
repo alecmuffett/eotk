@@ -21,9 +21,13 @@ Unless you are fortunate to have these already installed, there are
 two options for you:
 
 - spend hours on your own, messing with `backports` and repos, or:
-- run the obviously-named scripts in opt.d to compile from source:
-  - `build-nginx-on-debian.sh`
-  - `build-tor-on-debian.sh`
-  - ...which will do all the work for you, no options/arguments required, although the actual compilation may take a long time.
+- run the obviously-named scripts in opt.d to compile from source.
 
-It's your choice...
+...which will do all the work for you, no options/arguments required,
+although the actual compilation may take a long time.  It's your
+choice.
+
+If you choose the latter option, do this:
+
+- `./opt.d/build-nginx-on-debian.sh`
+- `./opt.d/build-tor-on-debian.sh`
