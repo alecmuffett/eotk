@@ -4,6 +4,7 @@ cd %PROJECT_DIR% || exit 1
 
 %%IF %IS_SOFTMAP%
 for hfile in `echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/hostname` ; do
+    test -f "$onion" || continue
     onion=`cat $hfile`
     %%BEGIN
     echo %PROJECT% softmap %ONION_ADDRESS% %DNS_DOMAIN% via $onion
@@ -14,4 +15,5 @@ done
 echo %PROJECT% hardmap %ONION_ADDRESS% %DNS_DOMAIN%
 %%END
 %%ENDIF
+
 exit 0

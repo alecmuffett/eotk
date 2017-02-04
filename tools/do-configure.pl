@@ -235,9 +235,6 @@ sub DoProject {
             );
     }
 
-    # script settings - we'll meed this further down
-    my @scriptrows = (); # empty except for softmap
-
     # nginx config: feed the rows to the template
     my $cmd = "$ENV{TEMPLATE_TOOL} $ENV{NGINX_TEMPLATE} >$ENV{PROJECT_DIR}/nginx.conf";
     &Pipeify($cmd, @{$projects{$project}{ROWS}});
@@ -256,14 +253,6 @@ sub DoProject {
             &SetEnv("tor_dir", $hs_dir, "softmap");
             my $cmd = "$ENV{TEMPLATE_TOOL} $ENV{TOR_TEMPLATE} >$hs_dir/tor.conf";
             &Pipeify($cmd, @{$projects{$project}{ROWS}});
-
-            # poke the script settings
-            my $row = @{$projects{$project}{ROWS}};
-            push(@scriptrows, {
-                'TOR_DIR' => $hs_dir,
-                'DNS_DOMAIN' => (${$row}{DNS_DOMAIN} || "-"),
-                'ONION_ADDRESS' => (${$row}{ONION_ADDRESS} || "-"),
-                 });
         }
     }
     else {
@@ -291,13 +280,6 @@ sub DoProject {
             else {
                 unlink($poison) if (-f $poison);
             }
-
-            push(@scriptrows,
-                 {
-                     'DNS_DOMAIN' => $dns,
-                     'ONION_ADDRESS' => $onion,
-                 }
-                );
         }
 
         # tor config
@@ -309,7 +291,7 @@ sub DoProject {
     foreach my $script (split(" ", $ENV{SCRIPT_NAMES})) {
         my $path = "$ENV{PROJECT_DIR}/$script.sh";
         my $cmd = "$ENV{TEMPLATE_TOOL} templates.d/$script.txt >$path";
-        &Pipeify($cmd, @scriptrows);
+        &Pipeify($cmd, @{$projects{$project}{ROWS}});
         chmod(0700, $path) or die "chmod: $path: $!\n";
     }
 

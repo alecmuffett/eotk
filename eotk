@@ -27,7 +27,7 @@ Action() {
     shift
 
     if [ "x$1" = "x" ] ; then
-        Warn "missing project name, try: $prog projects"
+        Warn "missing project name, try: '$prog projects' for a list, or '-a' for all"
         return
     elif [ "x$1" = "x-a" ] ; then
         projects=`AllProjects`
