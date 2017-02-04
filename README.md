@@ -87,7 +87,11 @@ Currently works on OSX with Homebrew:
 * `cd eotk`
 * `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
 
-# Installation: Debian/Raspbian/Ubuntu
+# Installation: Raspbian
+
+Read 000-setup-raspbian.md
+
+# Installation: Debian/Ubuntu
 
 Work in progress. Feedback welcome.
 
