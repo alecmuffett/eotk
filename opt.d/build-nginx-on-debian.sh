@@ -36,4 +36,7 @@ done
 make || exit 1
 make install || exit 1
 
+cd $here || exit 1
+ln -s sbin/nginx || exit 1
+
 exit 0

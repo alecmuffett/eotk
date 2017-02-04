@@ -18,4 +18,7 @@ cd $dir || exit 1
 make || exit 1
 make install || exit 1
 
+cd $here || exit 1
+ln -s bin/tor || exit 1
+
 exit 0

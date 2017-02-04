@@ -75,6 +75,8 @@ Intuitively obvious to the most casual observer:
 * `eotk harvest projectname ...` # or: `-a` for all
   * *synonyms:* `onions`
   * print list of onions used by projects
+* `eotk ps`
+  * do a stupid grep for possibly orphaned processes
 
 # Installation: OSX
 

@@ -106,6 +106,10 @@ case "$cmd" in
         Action maps "$@"
         ;;
 
+    ps)
+        ps auxww | grep /eotk/
+        ;;
+
     delete) # project, or "-a"
         echo tbd
         ;;
