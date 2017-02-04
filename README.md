@@ -1,60 +1,68 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
+# Status - ALPHA
 
-# Status
+The EOTK goal is to provide a tool for prototyping, and deploying at
+scale, HTTP and HTTPS onion sites to provide official presence for
+popular websites.
 
-The code is currently pre-alpha - too hacky for words.
+The results are essentially a "man in the middle" proxy; set them up
+only for your own sites or for sites which do not require login
+credentials of any kind.
 
-It will improve.
-
-The goal is to provide a tool for prototyping, and eventually
-deploying at scale, HTTP and HTTPS onion sites to provide official
-presence for popular websites.
-
-The results are certainly impactful upon security, pose all manner of
-risk; set them up only for your own sites or for sites which do not
-require login credentials of any kind.
-
-The resulting NGINX configs are probably buggy or not terribly well
-tuned; please consider this project to be very much "early days", but
-I shall try not to mess with the configuration file format.
+The resulting NGINX configs are probably both buggy and not terribly
+well tuned; please consider this project to be very much "early days",
+but I shall try not to modify the configuration file format.
 
 The `softmap` support is untested, and needs some more work to make it
 nice to launch and integrate with OnionBalance; please avoid it for
 the moment.
 
+## Usage Notes
 
-# Usage Notes
+When connecting to the resulting onions over HTTP/SSL, you will be
+using wildcard self-signed SSL certificates - you *will* encounter
+many "broken links" which are due to the SSL certificate not being
+valid.  This is *expected* and *proper* behaviour.
 
-When using the resulting onions over HTTP/SSL, you will be using
-wildcard self-signed SSL certificates - you *will* encounter many
-"broken links" which are due to the SSL certificate not being valid.
-
-This is expected and proper behaviour.
-
-For any domain (eg: www.foofoofoofoofoof.onion) the EOTK provides a
-fixed url:
+To help cope with this, for any domain (eg:
+www.foofoofoofoofoof.onion) the EOTK provides a fixed url:
 
 * `https://www.foofoofoofoofoof.onion/hello-onion/`
 
-...which is internally served by the NGINX proxy and provides a fixed
-point for SSL certificate acceptance; inside TorBrowser another
-effective solution is to open all the broken links, images and
+...which is internally served by the NGINX proxy and so provides a
+stable, fixed URL for SSL certificate acceptance; inside TorBrowser
+another effective solution is to open all the broken links, images and
 resources "in a new Tab" and accept the certificate there.
 
 In production, of course, one would expect to use an SSL EV
-certificate to provide identity and assurance to an onion site.
-
+certificate to provide identity and assurance to an onion site,
+rendering these issues moot.
 
 # Requirements
 
-* `tor` 2.9.8 or later (ideally: latest)
+* `tor` 2.9.8 or later
+  * ideally, the latest stable version
 * `nginx`
   * with `ngx_http_sub_module`
     * https://nginx.org/en/docs/http/ngx_http_sub_module.html
   * with `headers_more`
     * https://www.nginx.com/resources/wiki/modules/headers_more/
+
+# commands
+
+* `eotk config [filename]` # default `onions.conf`
+  * synonyms: `conf`, `configure`
+* `eotk start projectname ...` # or: `-a` for all
+* `eotk stop projectname ...` # or: `-a` for all
+* `eotk bounce projectname ...` # or: `-a` for all
+  * synonyms: `restart`, `reload`
+* `eotk debugon projectname ...` # or: `-a` for all
+* `eotk debugoff projectname ...` # or: `-a` for all
+* `eotk harvest projectname ...` # or: `-a` for all
+  * synonyms: `onions`
+* `eotk status projectname ...` # or: `-a` for all
 
 # Installation: OSX
 
@@ -66,16 +74,17 @@ Currently works on OSX with Homebrew:
 * `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
 * `sh ./001-configure-demo.sh` # creates a working config file
 * `./eotk config` # creates tor & onion configuration files; lists onion sites
-* (review your config file - `onion-tk.conf` for interest)
+  * (review your config file - `onion-tk.conf` for interest)
 * `./eotk start default`
-* (connect to one of the onion sites cited in the `default` project)
-* (play SSL-Certificate-Whackamole)
-* (browse a little)
+  * (connect to one of the onion sites cited in the `default` project)
+  * (play SSL-Certificate-Whackamole)
+  * (browse a little)
 * `./eotk stop default`
 
 # Installation: Debian/Raspbian/Ubuntu
 
 Work in progress. Feedback welcome.
+
 
 # I want to create a new project / my own configuration!
 
