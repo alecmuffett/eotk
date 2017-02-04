@@ -1,19 +1,16 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
+cd %PROJECT_DIR% || exit 1
 
-echo starting %PROJECT%
-
-while read torconf ; do
-    test -f $torconf && tor -f $torconf
-done >%LOG_DIR%/tor-startup.conf <<EOF
 %%IF %IS_SOFTMAP%
-%%BEGIN
-%TOR_DIR%/tor.conf
-%%END
+conffiles=`echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/tor.conf`
 %%ELSE
-%PROJECT_DIR%/tor.conf
+conffiles=%PROJECT_DIR%/tor.conf
 %%ENDIF
-EOF
+
+for torconf in $conffiles ; do
+    test -f $torconf && tor -f $torconf
+done >%LOG_DIR%/tor-startup.conf
 
 sleep %SCRIPT_PAUSE%
 

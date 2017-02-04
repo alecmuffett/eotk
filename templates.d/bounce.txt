@@ -1,5 +1,6 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
+cd %PROJECT_DIR% || exit 1
 sh %PROJECT_DIR%/stop.sh
 sh %PROJECT_DIR%/start.sh
 exit 0

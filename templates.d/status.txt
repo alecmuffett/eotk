@@ -1,7 +1,5 @@
 #!/bin/sh
-
-echo status %PROJECT%
-
+# eotk (c) 2017 Alec Muffett
 cd %PROJECT_DIR% || exit 1
 
 pidfiles=`find . -name "*.pid"`

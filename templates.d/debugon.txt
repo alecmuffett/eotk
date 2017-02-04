@@ -1,18 +1,17 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
+cd %PROJECT_DIR% || exit 1
 
-while read pidfile ; do
+%%IF %IS_SOFTMAP%
+pidfiles=`echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/tor.pid`
+%%ELSE
+pidfiles=%PROJECT_DIR%/tor.pid
+%%ENDIF
+
+for pidfile in $pidfiles ; do
     test -s $pidfile &&
         kill -USR1 `cat $pidfile` &&
         kill -USR2 `cat $pidfile`
-done <<EOF
-%%IF %IS_SOFTMAP%
-%%BEGIN
-%TOR_DIR%/tor.pid
-%%END
-%%ELSE
-%PROJECT_DIR%/tor.pid
-%%ENDIF
-EOF
+done
 
 exit 0

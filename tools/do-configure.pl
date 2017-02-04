@@ -258,8 +258,11 @@ sub DoProject {
             &Pipeify($cmd, @{$projects{$project}{ROWS}});
 
             # poke the script settings
+            my $row = @{$projects{$project}{ROWS}};
             push(@scriptrows, {
-                'TOR_DIR' => $hs_dir
+                'TOR_DIR' => $hs_dir,
+                'DNS_DOMAIN' => (${$row}{DNS_DOMAIN} || "-"),
+                'ONION_ADDRESS' => (${$row}{ONION_ADDRESS} || "-"),
                  });
         }
     }
@@ -312,7 +315,7 @@ sub DoProject {
 
     # tell the user
     foreach my $row (@{$projects{$project}{ROWS}}) {
-        print "map ${$row}{ONION_ADDRESS} to ${$row}{DNS_DOMAIN} project $project\n";
+        print "mapping ${$row}{ONION_ADDRESS} to ${$row}{DNS_DOMAIN} project $project\n";
     }
 }
 

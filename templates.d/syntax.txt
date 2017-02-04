@@ -1,7 +1,6 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
-
-echo syntax %PROJECT%
+cd %PROJECT_DIR% || exit 1
 
 nginxconf=%PROJECT_DIR%/nginx.conf
 nginx -c $nginxconf -t
