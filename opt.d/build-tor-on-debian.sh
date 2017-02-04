@@ -1,8 +1,8 @@
 #!/bin/sh -x
 
 here=`dirname $0`
-here=`pwd`
 cd $here || exit 1
+here=`pwd`
 
 sudo aptitude install -y libevent-dev zlib1g-dev libssl-dev || exit 1
 
