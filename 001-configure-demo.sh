@@ -6,6 +6,7 @@ cd `dirname $0`
 INPUT=templates.d/onions.txt
 OUTPUT=onions.conf
 
+echo "generating: $OUTPUT"
 echo "patience, please - this may take a minute or so..."
 
 while read line ; do
@@ -23,7 +24,7 @@ while read line ; do
 done < $INPUT > $OUTPUT
 
 echo ""
-echo "done."
+echo "done"
 
-echo "the demo configuration is in $OUTPUT, go take a look :-)"
+echo "the demo configuration file is $OUTPUT, take a look :-)"
 exit 0

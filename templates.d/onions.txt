@@ -13,7 +13,7 @@
 
 set nginx_hello_onion 1
 
-# annoyingly, nginx wants DNS for wildcard rewrites, hence dnsmasq.
+# where nginx will get DNS from; if locally, perhaps try installing `dnsmasq`
 
 set nginx_resolver 8.8.8.8
 

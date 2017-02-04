@@ -347,7 +347,7 @@ sub DoProject {
 # fetch the config
 
 if ($#ARGV < 0) {
-    $config = "onion-tk.conf"; # in $here
+    $config = "onions.conf"; # in $here
 }
 else {
     $config = $ARGV[0];

@@ -5,7 +5,7 @@ echo starting %PROJECT%
 
 while read torconf ; do
     test -f $torconf && tor -f $torconf
-done <<EOF
+done >%LOG_DIR%/tor-startup.conf <<EOF
 %%IF %IS_SOFTMAP%
 %%BEGIN
 %TOR_DIR%/tor.conf
