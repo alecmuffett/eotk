@@ -19,6 +19,9 @@ Unless you are fortunate to have these already installed, there are
 two options for you:
 
 - spend hours on your own, messing with `backports` and repos, or:
-- run the obviously-named scripts in opt.d to compile from source
+- run the obviously-named scripts in opt.d to compile from source:
+  - `build-nginx-on-debian.sh`
+  - `build-tor-on-debian.sh`
+  - ...which will do all the work for you.
 
 It's your choice...
