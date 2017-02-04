@@ -93,6 +93,10 @@ case "$cmd" in
         Action status "$@"
         ;;
 
+    maps) # project, or "-a"
+        Action maps "$@"
+        ;;
+
     delete) # project, or "-a"
         echo tbd
         ;;

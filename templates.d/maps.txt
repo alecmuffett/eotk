@@ -1,0 +1,12 @@
+#!/bin/sh
+%%IF %IS_SOFTMAP%
+cd %PROJECT_DIR% || exit 1
+for hfile in *.d/hostname ; do
+    echo %PROJECT% softmap `cat $hfile`
+done
+%%ELSE
+%%BEGIN
+echo %PROJECT% hardmap %ONION_ADDRESS% %DNS_DOMAIN%
+%%END
+%%ENDIF
+exit 0

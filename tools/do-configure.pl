@@ -258,12 +258,17 @@ sub DoProject {
             &Pipeify($cmd, @{$projects{$project}{ROWS}});
 
             # poke the script settings
-            push(@scriptrows, {'TOR_DIR' => $hs_dir});
+            push(@scriptrows, {
+                'TOR_DIR' => $hs_dir
+                 });
         }
     }
     else {
         # setup tor hs directories and keys
         foreach my $row (@{$projects{$project}{ROWS}}) {
+            # what dns?
+            my $dns = ${$row}{DNS_DOMAIN};
+
             # which onion?
             my $onion = ${$row}{ONION_ADDRESS};
 
@@ -283,6 +288,13 @@ sub DoProject {
             else {
                 unlink($poison) if (-f $poison);
             }
+
+            push(@scriptrows,
+                 {
+                     'DNS_DOMAIN' => $dns,
+                     'ONION_ADDRESS' => $onion,
+                 }
+                );
         }
 
         # tor config
@@ -333,7 +345,7 @@ sub DoProject {
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
-&SetEnv("SCRIPT_NAMES", "start stop bounce debugon debugoff syntax harvest status");
+&SetEnv("SCRIPT_NAMES", "bounce debugoff debugon harvest maps start status stop syntax");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting
