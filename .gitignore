@@ -6,3 +6,5 @@
 *.pem
 *~
 projects.d
+opt.d/tor-*
+opt.d/nginx-*

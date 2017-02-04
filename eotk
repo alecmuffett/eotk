@@ -4,8 +4,14 @@
 cd `dirname $0` || exit 1
 
 export EOTK_HOME=`pwd` # expected by tools
+
+# set project directory; this path is hard-replicated elsewhere
 project_dir=$EOTK_HOME/projects.d
 
+# set path
+export PATH=$EOTK_HOME/opt.d:$PATH
+
+# meta
 prog=`basename $0`
 version=1.0
 
@@ -39,7 +45,7 @@ Action() {
 
     for project in $projects ; do
         $verbose && echo :::: $project ::::
-        $project_dir/$project.d/$action.sh
+        sh $project_dir/$project.d/$action.sh
     done
 }
 

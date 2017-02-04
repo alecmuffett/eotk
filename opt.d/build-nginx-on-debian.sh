@@ -1,24 +1,18 @@
 #!/bin/sh -x
 
-#sudo aptitude install libpcre3-dev zlib1g-dev libssl-dev
+here=`dirname $0`
+here=`pwd`
+cd $here || exit 1
 
-where=/tmp/nginx
-
-test -d $where || mkdir -p $where || exit 1
+# sudo aptitude install libpcre3-dev zlib1g-dev libssl-dev
 
 url=http://nginx.org/download/nginx-1.10.3.tar.gz
-
 file=`basename $url`
-
 dir=`basename $file .tar.gz`
 
-test -f $file || wget $url
-
-test -d $dir || tar zxf $file
-
+test -f $file || curl -o $file $url || exit 1
+test -d $dir || tar zxf $file || exit 1
 cd $dir || exit 1
-
-here=`pwd`
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
@@ -35,11 +29,11 @@ MODADD=""
 for modurl in $MODS ; do
     moddir=`basename $modurl .git`
     test -d $moddir || git clone $modurl
-    MODADD="$MODADD --add-module=$here/$moddir"
+    MODADD="$MODADD --add-module=$here/$dir/$moddir"
 done
 
-./configure --prefix=$where $OPTS $MODADD
+./configure --prefix=$here $OPTS $MODADD || exit 1
+make || exit 1
+make install || exit 1
 
-make
-
-make install
+exit 0
