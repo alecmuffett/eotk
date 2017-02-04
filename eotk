@@ -9,6 +9,10 @@ project_dir=$EOTK_HOME/projects.d
 prog=`basename $0`
 version=1.0
 
+Warn() {
+    echo "$@" 1>&2
+}
+
 AllProjects() {
     (
         cd $project_dir
@@ -21,15 +25,18 @@ AllProjects() {
 Action() {
     action=$1
     shift
-    if [ "x$1" = "x-1" ] ; then
+
+    if [ "x$1" = "x" ] ; then
+        Warn "missing project name, try: $prog projects"
+        return
+    elif [ "x$1" = "x-a" ] ; then
         projects=`AllProjects`
     else
         projects="$*"
     fi
+
     for project in $projects ; do
-        echo :::: $action $project ::::
-        $project_dir/$project.d/$action.sh || exit 1
-        echo done
+        $project_dir/$project.d/$action.sh
     done
 }
 
@@ -58,31 +65,35 @@ case "$cmd" in
         fi
         ;;
 
-    start) # project
+    start) # project, or "-a"
         Action start "$@"
         ;;
 
-    stop) # project
+    stop) # project, or "-a"
         Action stop "$@"
         ;;
 
-    bounce|restart|reload) # project
+    bounce|restart|reload) # project, or "-a"
         Action bounce "$@"
         ;;
 
-    debugon) # project
+    debugon) # project, or "-a"
         Action debugon "$@"
         ;;
 
-    debugoff) # project
+    debugoff) # project, or "-a"
         Action debugoff "$@"
         ;;
 
-    harvest) # project
-        echo tbd
+    harvest|onions) # project, or "-a"
+        Action harvest "$@"
         ;;
 
-    delete) # project
+    status) # project, or "-a"
+        Action status "$@"
+        ;;
+
+    delete) # project, or "-a"
         echo tbd
         ;;
 

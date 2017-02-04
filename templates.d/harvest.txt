@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd %PROJECT_DIR% || exit 1
+
+for hfile in *.d/hostname ; do
+    cat $hfile
+done
+
+exit 0

@@ -300,7 +300,7 @@ sub DoProject {
 
     # tell the user
     foreach my $row (@{$projects{$project}{ROWS}}) {
-        print "project $project maps ${$row}{ONION_ADDRESS} to ${$row}{DNS_DOMAIN}\n";
+        print "map ${$row}{ONION_ADDRESS} to ${$row}{DNS_DOMAIN} project $project\n";
     }
 }
 
@@ -333,7 +333,7 @@ sub DoProject {
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
-&SetEnv("SCRIPT_NAMES", "start stop bounce debugon debugoff syntax");
+&SetEnv("SCRIPT_NAMES", "start stop bounce debugon debugoff syntax harvest status");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting
