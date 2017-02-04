@@ -22,6 +22,7 @@
 DAYS=30 # cert lifetime
 
 BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
+
 if [ -f $BREW_OPENSSL ] ; then
     OPENSSL=$BREW_OPENSSL
     OPENSSL_CONFIG=/usr/local/etc/openssl/openssl.cnf

@@ -312,8 +312,8 @@ sub DoProject {
 &SetEnv("nginx_template", "$here/templates.d/nginx.txt");
 &SetEnv("tor_template", "$here/templates.d/tor.txt");
 
-&SetEnv("ssl_tool", "$here/tools/make-selfsigned-wildcard-ssl-cert.sh");
-&SetEnv("template_tool", "$here/tools/expand-template.pl");
+&SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
+&SetEnv("template_tool", "$here/lib.d/expand-template.pl");
 
 # in-template settings
 

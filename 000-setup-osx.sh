@@ -16,4 +16,13 @@ brew unlink nginx
 brew tap homebrew/nginx
 brew install nginx-full --with-subs-filter-module --with-headers-more-module
 
+: prioritise a sane openssl
+
+BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
+
+if [ -f $BREW_OPENSSL ] ; then
+    ( cd opt.d ; ln -s $BREW_OPENSSL )
+fi
+
+
 exit 0
