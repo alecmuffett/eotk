@@ -164,8 +164,11 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 
 # Acknowledgements
 
-EOTK stands largely on the experience of work I led at Facebook to create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to [Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put their site into Onionspace through using Nginx as a rewriting proxy -- and that [he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services) including [sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2). 
+EOTK stands largely on the experience of work I led at Facebook to create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to [Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put their site into Onionspace through using Nginx as a rewriting proxy -- and that [he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services) including [sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
 
 Reading this prodded me to learn about Nginx and then aim to shrink & genericise the solution; so thanks, Mike!
 
-Also, thanks go to Christopher Weatherhead for acting as a local Nginx *sounding board* :-) 
+Also, thanks go to Christopher Weatherhead for acting as a local Nginx *sounding board* :-)
+
+And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and the rest of the FB-over-Tor team.  Hugs.
+
