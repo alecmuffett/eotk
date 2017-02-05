@@ -80,6 +80,9 @@ Intuitively obvious to the most casual observer:
   * print list of onions used by projects
 * `eotk ps`
   * do a stupid grep for possibly orphaned processes
+* `eotk genkey`
+  * *synonyms:* `gen`
+  * generate an onion key and stash it in `secrets.d`
 
 # Installation: OSX
 
