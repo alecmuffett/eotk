@@ -12,7 +12,7 @@ echo "Patience, please - this may take a minute or so..."
 while read line ; do
     case "$line" in
         *%NEW_ONION%*)
-            onion=`./secrets.d/generate-onion-key.sh`
+            onion=`./eotk genkey`
             onion=`basename $onion .key`
             echo "$line" | sed -e "s/%NEW_ONION%/$onion/"
             ;;

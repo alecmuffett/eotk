@@ -134,21 +134,17 @@ eotk start myproject
 
 ## But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
 
-```
-cd secrets.d
-./generate-onion-key.sh
-```
-
-* Do this as many times as you wish/need.
+* Do `eotk genkey` - it will print the name of the onion it generates
+  * Do this as many times as you wish/need.
 * Alternately get a tool like `scallion` or `shallot` and use that to
-"mine" a desirable onion address.
-* Be sure to store the private key in `secrets.d` with a filename like
-`xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the corresponding
-onion address.
+  "mine" a desirable onion address.
+* Be sure to store your mined private keys in `secrets.d` with a
+  filename like `xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the
+  corresponding onion address.
 
 ## But I not only have `www.foo.com`, I have `www.dev.foo.com`!
 
-Subdomains are supported thusly:
+Subdomains are supported like this:
 
 ```
 set project myproject

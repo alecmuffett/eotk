@@ -9,7 +9,7 @@ export EOTK_HOME=`pwd` # expected by tools
 project_dir=$EOTK_HOME/projects.d
 
 # set path
-export PATH=$EOTK_HOME/opt.d:$PATH
+export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
 # meta
 prog=`basename $0`
@@ -110,8 +110,14 @@ case "$cmd" in
         ps auxww | grep /eotk/
         ;;
 
+    genkey|gen)
+        secrets=secrets.d
+        test -d $secrets || mkdir $secrets || exit 1
+        ( cd $secrets ; generate-onion-key.sh )
+        ;;
+
     delete) # project, or "-a"
-        echo tbd
+        echo delete is tbd
         ;;
 
     *)

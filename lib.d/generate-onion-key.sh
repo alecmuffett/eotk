@@ -1,13 +1,15 @@
 #!/bin/sh
 
-cd `dirname $0` || exit 1
+# run this using the `eotk` wrapper, else you might not pick up the
+# necessary PATH to `tor`, etc...
 
-here=`pwd`
+here=`pwd` # absolute pathnames are required by tor
+
 log=$here/__gok$$.log
 dir=$here/__gok$$.dir
+
 mkdir $dir || exit 1
 chmod 700 $dir || exit 1
-
 cat >$dir/config <<EOF
 DataDirectory $dir/
 Log info file $dir/tor.log
@@ -37,6 +39,7 @@ onion=`basename $onion .onion`
 file=$onion.key
 
 mv $dir/private_key $file || exit 1
+
 rm -r $dir $log || exit 1
 
 echo $file
