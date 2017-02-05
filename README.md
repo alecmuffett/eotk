@@ -101,7 +101,9 @@ Currently works on OSX with Homebrew:
 
 # Installation: Debian/Ubuntu
 
-Work in progress. Feedback welcome.
+Try following the instructions for Raspbian, it seems to work though you may need to install a compiler first.  
+
+I'll do some more work on this.
 
 # I want to experiment!
 
