@@ -102,7 +102,7 @@ case "$cmd" in
         Action status "$@"
         ;;
 
-    maps) # project, or "-a"
+    maps|map) # project, or "-a"
         Action maps "$@"
         ;;
 
