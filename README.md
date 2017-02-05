@@ -53,6 +53,11 @@ On Linux, scripts are provided to compile these.
 
 On OSX, these are available via Homebrew.
 
+# Video Demonstrations
+
+* [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
+* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ) 
+
 # User Manual
 
 Intuitively obvious to the most casual observer:
