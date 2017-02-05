@@ -32,7 +32,7 @@ else
 fi
 
 if [ "x$1" == "x" ] ; then
-    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards will be added)" 1>&2
+    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
     exit 1
 fi
 
@@ -60,8 +60,8 @@ done
 dns="dns_${tmp_suffix}"
 
 for tld in "$@" ; do
-    echo "$tld"
-    echo "*.$tld"
+    echo "$tld" # for every foo.com
+    echo "*.$tld" # add a wildcard: *.foo.com
 done > $dns
 
 subjectaltname=`awk '{printf "DNS." NR ":" $1 ","}' < $dns | sed -e 's/,$//'`
