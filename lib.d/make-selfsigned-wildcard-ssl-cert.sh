@@ -32,7 +32,7 @@ else
 fi
 
 if [ "x$1" == "x" ] ; then
-    echo "usage: $0 foo.com '*.foo.com' sub.foo.com '*.sub.foo.com' ..." 1>&2
+    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards will be added)" 1>&2
     exit 1
 fi
 

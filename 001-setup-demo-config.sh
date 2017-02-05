@@ -6,8 +6,8 @@ cd `dirname $0`
 INPUT=templates.d/demo.txt
 OUTPUT=demo.conf
 
-echo "generating: $OUTPUT"
-echo "patience, please - this may take a minute or so..."
+echo "Generating: $OUTPUT"
+echo "Patience, please - this may take a minute or so..."
 
 while read line ; do
     case "$line" in
@@ -26,5 +26,6 @@ done < $INPUT > $OUTPUT
 echo ""
 echo "done"
 
-echo "the demo configuration file is $OUTPUT, take a look :-)"
+echo "The demo configuration file is $OUTPUT"
+echo "Take a look, and then run: eotk config $OUTPUT"
 exit 0
