@@ -330,6 +330,8 @@ sub DoProject {
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
+&SetEnv("header_csp_suppress", 0); # eventually header_csp_rewrite
+
 &SetEnv("SCRIPT_NAMES", "bounce debugoff debugon harvest maps start status stop syntax");
 &SetEnv("SCRIPT_PAUSE", 5);
 
