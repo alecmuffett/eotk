@@ -14,7 +14,10 @@ brew unlink nginx
 
 : go for the full nginx
 brew tap homebrew/nginx
-brew install nginx-full --with-subs-filter-module --with-headers-more-module
+brew install \
+     nginx-full \
+     --with-subs-filter-module \
+     --with-headers-more-module
 
 : prioritise a sane openssl
 
