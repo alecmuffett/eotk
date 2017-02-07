@@ -49,11 +49,11 @@ set tor_single_onion 1
 # feeds requests for 1/more onion addresses into nginx, which remaps
 # and rewrites them, passing the request onto the backend website.
 
-# default project
+# "default" project
 hardmap secrets.d/%NEW_ONION%.key aclu.org
 hardmap secrets.d/%NEW_ONION%.key liberty-human-rights.org.uk
 
-# topical project
+# a topical project
 set project digital-rights
 hardmap secrets.d/%NEW_ONION%.key openrightsgroup.org
 hardmap secrets.d/%NEW_ONION%.key eff.org
@@ -72,33 +72,34 @@ hardmap secrets.d/%NEW_ONION%.key cpj.org
 # ENTERPRISE, YOU CAN PROBABLY SKIP THIS SECTION & GO HAVE FUN!
 ################################################################
 
-# softmap is designed to run on 1/more machines, and requires
+# softmap is designed to run on 1-or-more machines, and requires
 # `onionbalance` to synthesise tor multiprocessing, providing an
-# enterprise-scalable means for onionsite provisioning.  the result is
-# an expandable and highly available "pool" of tor servers which can
-# support mapping of several domains simultaneously for hundreds to
-# thousands of simultaneous users.
+# enterprise-scalable means for onionsite provisioning.
+
+# the result is an expandable and highly available "cloud" of tor
+# servers which can support mapping of several/tens/scores of domains
+# simultaneously for hundreds to thousands of simultaneous users.
 
 # in softmap, instead of a `project` creating onion services with
-# pre-established keys, softmap projects contain several independent
-# tor daemons which create self-chosen, random addresses.
+# pre-established keys, softmap projects use many, independent tor
+# daemons, each of which creates a self-chosen, random address.
 
-# a single nginx listens to all to daemons in a given softmap project,
-# and services HTTP requests on any/all of them; since nginx already
-# understands multiprocessing (see `nginx_workers`) this is okay.
+# a single nginx (per machine) listens to all to all of the tor
+# daemons in a given softmap project, and it services the HTTP
+# requests sent to any/all of them; since nginx already understands
+# multiprocessing (see `nginx_workers`) this is okay.
 
 # a softmap project may be replicated (rsync? docker?) to several
-# machines in a cloud, providing linear scalability
+# machines in a cloud, providing linear scalability; all that remains
+# is for onionbalance to be configured with the "random" onion
+# addresses of the cloud's tor daemons, and for it to republish them
+# under (a) "service" onion address(es).
 
-# all that remains is for onionbalance to be configured with the
-# "random" onion addresses of the pool's tor daemons, and for it to
-# republish them under a "service" onion address.
-
-# it is important for efficiency to not replicate the per-tor-worker
-# private tor keys, as these serve like the unique worker IP addresses
-# in a traditional TCP/IP load-balancer setup; instead each softmap
-# instance should choose its own keys, which should subsequently be
-# configured into onionbalance.
+# it is important for efficiency and security to not replicate the
+# per-tor-worker private tor keys, as these serve like the unique
+# worker IP addresses in a traditional TCP/IP load-balancer setup;
+# instead each softmap instance should choose its own keys, which
+# should subsequently be configured into onionbalance.
 
 # onioncloud: 7x servers, each with 4 cores => 28 cores
 
@@ -117,15 +118,8 @@ set softmap_tor_workers 4
 
 set softmap_nginx_workers 20
 
-# BBC website - it basically two domains, one of which ("bbci") has a
-# "files" subdomain; however there is a twist that inside the UK the
-# site is known as "bbc.co.uk" and outside it is "bbc.com", where it
-# also has adverts.  We set up an onion for both, one of them will
-# work for you; in theory if you are outside the UK they should
-# redirect to each other...
+# example
 
-softmap %NEW_ONION% bbc.com
-softmap %NEW_ONION% bbc.co.uk
-softmap %NEW_ONION% bbci.co.uk files
+# softmap %NEW_ONION% site.tld sub1 sub2 sub3.sub2
 
 # end
