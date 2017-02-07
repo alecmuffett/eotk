@@ -51,14 +51,20 @@ http {
   text/xml
   ;
 
+  # onion_lookup -> if cannot remap, return input.
   init_by_lua_block {
+    slog = function (s)
+      ngx.log(ngx.ERR, "\n<<"..s..">>\n")
+      return
+    end
+
     onion_mappings = {}
     %%BEGIN
     onion_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
     onion_lookup = function (o)
-      return ( onion_mappings[o[1]] or "invalid.invalid" )
+      return ( onion_mappings[o[1]] or o[1] )
     end
 
     onion_sub = function (i)
