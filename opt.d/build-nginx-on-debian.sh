@@ -4,6 +4,7 @@ LUAJITURL="http://luajit.org/download/LuaJIT-2.0.3.tar.gz"
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
+https://github.com/openresty/lua-nginx-module.git
 https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
 "
 

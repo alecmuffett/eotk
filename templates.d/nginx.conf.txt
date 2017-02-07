@@ -20,14 +20,14 @@ events {
 
 http {
   # dns for proxy (sigh)
-  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s ipv6=off;
+  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s; # should be able to do `ipv6=off` here, but problems
   resolver_timeout %NGINX_TIMEOUT%s;
 
   proxy_buffering on;
   proxy_buffers 16 64k;
   proxy_buffer_size 64k;
   proxy_busy_buffers_size 512k;
-  proxy_max_temp_file_size 2048m;
+  proxy_max_temp_file_size 2048k;
   proxy_temp_file_write_size 64k;
   proxy_temp_path "/tmp";
 
