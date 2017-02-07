@@ -107,7 +107,7 @@ case "$cmd" in
         ;;
 
     ps)
-        ps auxww | grep /eotk/
+        ps auxww | egrep '\b(tor|nginx)\b'
         ;;
 
     genkey|gen)
