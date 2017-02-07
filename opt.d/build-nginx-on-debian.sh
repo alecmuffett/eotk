@@ -18,7 +18,7 @@ opt_dir=`pwd`
 
 # dependencies
 
-sudo aptitude install -y libpcre3-dev zlib1g-dev libssl-dev
+sudo aptitude install -y libpcre3-dev zlib1g-dev libssl-dev || exit 1
 
 # get NGINX and cd into it
 
