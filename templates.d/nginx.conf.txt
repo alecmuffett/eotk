@@ -70,15 +70,24 @@ http {
     end
   }
 
+  # subs filters
   %%BEGIN
   subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
   proxy_cookie_domain %DNS_DOMAIN% %ONION_ADDRESS%;
   proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
+
   %%END
   %%IF %HEADER_CSP_SUPPRESS%
+  # csp suppression
   proxy_hide_header "Content-Security-Policy";
-  %%ENDIF
+  proxy_hide_header "Content-Security-Policy-Report-Only";
 
+  %%ENDIF
+  %%IF %HEADER_HSTS_SUPPRESS%
+  # hsts suppression
+  proxy_hide_header "Strict-Transport-Security";
+
+  %%ENDIF
   # global proxy settings
   proxy_read_timeout %NGINX_TIMEOUT%;
   proxy_connect_timeout %NGINX_TIMEOUT%;
@@ -155,12 +164,8 @@ http {
 
   %%END
 
-  # this is a security bug, fix it
-  # more_set_headers "Access-Control-Allow-Origin: *"
-
   # header purge
   more_clear_headers "Age";
-  more_clear_headers "Content-Security-Policy-Report-Only";
   more_clear_headers "Server";
   more_clear_headers "Via";
   more_clear_headers "X-From-Nginx";

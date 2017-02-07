@@ -3,7 +3,7 @@
 
 cd `dirname $0`
 
-INPUT=templates.d/demo.txt
+INPUT=templates.d/demo.conf.txt
 OUTPUT=demo.conf
 
 echo "Generating: $OUTPUT"

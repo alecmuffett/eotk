@@ -289,7 +289,7 @@ sub DoProject {
 
     # various scripts
     foreach my $script (split(" ", $ENV{SCRIPT_NAMES})) {
-        my $path = "$ENV{PROJECT_DIR}/$script.sh";
+        my $path = "$ENV{PROJECT_DIR}/$script";
         my $cmd = "$ENV{TEMPLATE_TOOL} templates.d/$script.txt >$path";
         &Pipeify($cmd, @{$projects{$project}{ROWS}});
         chmod(0700, $path) or die "chmod: $path: $!\n";
@@ -309,8 +309,8 @@ sub DoProject {
 &SetEnv("projects_home", "$here/projects.d");
 &SetEnv("project", "default");
 
-&SetEnv("nginx_template", "$here/templates.d/nginx.txt");
-&SetEnv("tor_template", "$here/templates.d/tor.txt");
+&SetEnv("nginx_template", "$here/templates.d/nginx.conf.txt");
+&SetEnv("tor_template", "$here/templates.d/tor.conf.txt");
 
 &SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("template_tool", "$here/lib.d/expand-template.pl");
@@ -331,8 +331,9 @@ sub DoProject {
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
 &SetEnv("header_csp_suppress", 0); # eventually header_csp_rewrite
+&SetEnv("header_hsts_suppress", 0);
 
-&SetEnv("SCRIPT_NAMES", "bounce debugoff debugon harvest maps start status stop syntax");
+&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh start.sh status.sh stop.sh syntax.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting

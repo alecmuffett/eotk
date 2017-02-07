@@ -26,17 +26,23 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
+     'HEADER_CSP_SUPPRESS' => 1,
+     'IS_SOFTMAP' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
      'NGINX_RLIM' => 1,
      'NGINX_TEMPLATE' => 1,
      'NGINX_TIMEOUT' => 1,
      'NGINX_WORKERS' => 1,
-
+     'SOFTMAP_NGINX_WORKERS' => 1,
+     'SOFTMAP_TOR_WORKERS' => 1,
      'TOR_INTROS_PER_DAEMON' => 1,
      'TOR_SINGLE_ONION' => 1,
      'TOR_TEMPLATE' => 1,
-     'TOR_WORKER_DIR_PREFIX' => 1,
+     'TOR_WORKER_PREFIX' => 1,
+
+     # in the control scripts
+     'SCRIPT_PAUSE' => 1,
     );
 
 my %syms = ();
