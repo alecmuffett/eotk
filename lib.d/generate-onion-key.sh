@@ -26,8 +26,9 @@ loops=0
 while [ ! -f $dir/hostname ] ; do
     sleep 1 # wait
     loops=`expr $loops + 1`
-    if [ $loops = 10 ] ; then
+    if [ $loops = 30 ] ; then
         echo tor failed to launch in $dir
+        kill -TERM `cat $dir/tor.pid` # try to shut it down
         exit 1
     fi
 done
