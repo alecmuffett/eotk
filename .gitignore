@@ -4,6 +4,7 @@
 *.key
 *.log
 *.pem
+*.tconf
 *~
 projects.d
 secrets.d

@@ -49,26 +49,59 @@ Action() {
     done
 }
 
+Populate() {
+    cat "$@" |
+        while read line ; do
+            case "$line" in
+                *%NEW_ONION%*)
+                    onion=secrets.d/`eotk genkey`
+                    echo "$line" | sed -e "s!%NEW_ONION%!$onion!"
+                    ;;
+                *)
+                    echo "$line"
+                    ;;
+            esac
+        done
+}
+
+
 Configure() {
     log=configure$$.log
 
     for file in "$@" ; do
+        echo :::: $file ::::
+
+        case "$file" in
+            *.tconf)
+                file2=`basename $file .tconf`.conf
+                if [ -s $file2 ] ; then
+                    echo $prog: $file: using existing $file2
+                else
+                    echo $prog: $file: populating $file2 with onions
+                    Populate $file > $file2
+                fi
+                file="$file2"
+                ;;
+            *) ;;
+        esac
+
+        echo $prog: $file: processing
+
         if ! $EOTK_HOME/lib.d/do-configure.pl "$file" ; then
-            echo "$prog: failure processing $file: see $log"
+            echo $prog: failure processing $file: see $log
             exit 1
         fi
     done 2>$log
 
-    echo done
+    echo $prog: done
 }
-
 
 cmd="$1"
 shift
 
 case "$cmd" in
     version)
-        echo $prog $version $EOTK_HOME
+        echo $prog: $version $EOTK_HOME
         if [ -f .gitignore ] ; then
             git show -s --oneline
         fi
@@ -76,6 +109,10 @@ case "$cmd" in
 
     projects|proj)
         AllProjects
+        ;;
+
+    populate|pop)
+        Populate "$@"
         ;;
 
     configure|config|conf)
@@ -125,7 +162,7 @@ case "$cmd" in
         ;;
 
     delete) # project, or "-a"
-        echo delete is tbd
+        echo $prog: delete is tbd
         ;;
 
     *)
