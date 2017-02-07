@@ -16,6 +16,7 @@ brew unlink nginx
 brew tap homebrew/nginx
 brew install \
      nginx-full \
+     --with-lua-module \
      --with-subs-filter-module \
      --with-headers-more-module
 

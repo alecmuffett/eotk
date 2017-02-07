@@ -49,6 +49,20 @@ Action() {
     done
 }
 
+Configure() {
+    log=configure$$.log
+
+    for file in "$@" ; do
+        if ! $EOTK_HOME/lib.d/do-configure.pl "$file" ; then
+            echo "$prog: failure processing $file: see $log"
+            exit 1
+        fi
+    done 2>$log
+
+    echo done
+}
+
+
 cmd="$1"
 shift
 
@@ -65,13 +79,7 @@ case "$cmd" in
         ;;
 
     configure|config|conf)
-        log=configure$$.log
-        if ! $EOTK_HOME/lib.d/do-configure.pl "$@" 2>$log ; then
-            echo $prog: failure: see $log
-            exit 1
-        else
-            echo done
-        fi
+        Configure "$@"
         ;;
 
     start) # project, or "-a"
@@ -107,7 +115,7 @@ case "$cmd" in
         ;;
 
     ps)
-        ps auxww | egrep '\b(tor|nginx)\b'
+        ps auxww | grep /eotk/
         ;;
 
     genkey|gen)

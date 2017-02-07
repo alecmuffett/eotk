@@ -20,7 +20,7 @@ events {
 
 http {
   # dns for proxy (sigh)
-  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s;
+  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s ipv6=off;
   resolver_timeout %NGINX_TIMEOUT%s;
 
   proxy_buffering on;
@@ -50,6 +50,25 @@ http {
   text/javascript
   text/xml
   ;
+
+  init_by_lua_block {
+    onion_mappings = {}
+    %%BEGIN
+    onion_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
+    %%END
+
+    onion_lookup = function (o)
+      return ( onion_mappings[o[1]] or "invalid.invalid" )
+    end
+
+    onion_sub = function (i)
+      if i == nil then
+        return nil
+      end
+      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", onion_lookup, "io")
+      return o
+    end
+  }
 
   %%BEGIN
   subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
@@ -121,6 +140,16 @@ http {
       proxy_set_header Connection $connection_upgrade; # SSL
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
+
+      set_by_lua_block $referer2 {
+        return onion_sub(ngx.var.http_referer)
+      }
+      proxy_set_header Referer $referer2;
+
+      set_by_lua_block $origin2 {
+        return onion_sub(ngx.var.http_origin)
+      }
+      proxy_set_header Origin $origin2;
     }
   }
 

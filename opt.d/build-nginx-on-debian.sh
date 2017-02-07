@@ -16,6 +16,7 @@ cd $dir || exit 1
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
+https://github.com/openresty/lua-nginx-module.git
 https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
 "
 
