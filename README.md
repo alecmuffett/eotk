@@ -21,6 +21,21 @@ The `softmap` support is untested, and needs some more work to make it
 nice to launch and integrate with OnionBalance; please avoid it for
 the moment.
 
+## An Important Note About Anonymity
+
+The presumed use-case of EOTK is that you have an already-public website and that you wish to give it a corresponding Onion address; a lot of people mistakenly believe that Tor Onion Networking is "all about anonymity" - which is incorrect, since it also includes:
+
+
+* privacy
+* identity/surety of to whom you are connected
+* freedom from oversight/network surveillance
+* anti-blocking, and... 
+* enhanced integrity
+
+...none of which are the same as "anonymity"; also, if you are setting EOTK up in its intended mode, your resulting site is almost certainly not going to be anonymous.
+
+If instead you want to set up a server which includes anonymity **as well as** all of the aforementioned qualities, you [want to be reading this document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
+
 ## Usage Notes
 
 When connecting to the resulting onions over HTTP/SSL, you will be
