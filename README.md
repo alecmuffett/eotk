@@ -122,10 +122,11 @@ I will look into hardcoding the Google DNS server as a default.
 
 ## I can't connect, it's just hanging
 
-If your onion project has just started, it can take up to a few minutes to connect 
-for the first time; also sometimes TorBrowser caches stale descriptors for older onions.  
-Try restarting TorBrowser (or use the `New Identity` menu item) and have a cup of tea.  
-If it persists, check the logfiles.
+If your onion project has just started, it can take up to a few
+minutes to connect for the first time; also sometimes TorBrowser
+caches stale descriptors for older onions.  Try restarting TorBrowser
+(or use the `New Identity` menu item) and have a cup of tea.  If it
+persists, check the logfiles.
 
 ## Help I'm Stuck!
 
