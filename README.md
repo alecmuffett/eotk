@@ -34,7 +34,7 @@ The presumed use-case of EOTK is that you have an already-public website and tha
 
 ...none of which are the same as "anonymity"; also, if you are setting EOTK up in its intended mode, your resulting site is almost certainly not going to be anonymous.
 
-If instead you want to set up a server which includes anonymity **as well as** all of the aforementioned qualities, you [want to be reading and entirely different document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
+If instead you want to set up a server which includes anonymity **as well as** all of the aforementioned qualities, you [want to be reading an entirely different document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
 
 ## Usage Notes
 
