@@ -318,7 +318,7 @@ sub DoProject {
 # in-template settings
 
 &SetEnv("nginx_hello_onion", 1);
-&SetEnv("nginx_resolver", "127.0.0.1");
+&SetEnv("nginx_resolver", "8.8.8.8");
 &SetEnv("nginx_rlim", 1024);
 &SetEnv("nginx_timeout", 30);
 &SetEnv("nginx_workers", 5);
