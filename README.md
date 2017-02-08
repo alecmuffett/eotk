@@ -56,7 +56,7 @@ On OSX, these are available via Homebrew.
 # Video Demonstrations
 
 * [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
-* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ) 
+* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
 
 # Troubleshooting
 
@@ -70,24 +70,39 @@ If something is problematic, first try:
 
 ## Lots of broken images, missing images, missing CSS
 
-Because of the nature of SSL self-signed certificates, you have to manually accept the certificate of each and every site for which a certificate has been created. See the second of the YouTube videos for some mention of this. 
+Because of the nature of SSL self-signed certificates, you have to
+manually accept the certificate of each and every site for which a
+certificate has been created. See the second of the YouTube videos for
+some mention of this.
 
-In short: this is normal and expected behaviour.  You can temporarily fix this by:
+In short: this is normal and expected behaviour.  You can temporarily
+fix this by:
 
-* right-clicking on the image for `Open In New Tab`, and accepting the certificate
-* or using `Inspect Element > Network` to find broken resources, and doing the same
-* or - if you know the list of domains in advance - visiting the `/hello-onion/` URL for each of them, in advance, to accept certificates.
+* right-clicking on the image for `Open In New Tab`, and accepting the
+  certificate
+* or using `Inspect Element > Network` to find broken resources, and
+  doing the same
+* or - if you know the list of domains in advance - visiting the
+  `/hello-onion/` URL for each of them, in advance, to accept
+  certificates.
 
-If you get an [official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/) then the problem will vanish. Until then, I am afraid that you will be stuck playing certificate "whack-a-mole".
+If you get an
+[official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/)
+then the problem will vanish. Until then, I am afraid that you will be
+stuck playing certificate "whack-a-mole".
 
 ## Nginx: Bad Gateway
 
-Generally this means that Nginx cannot connect to the remote website, which generally happens because:
+Generally this means that Nginx cannot connect to the remote website,
+which generally happens because:
 
 * the site name in the config file, is wrong
 * the nginx daemon tries to do a DNS resolution, which fails
 
-Check the Nginx logfiles in the directory cited above, for confirmation. If DNS resolution is failing, *PROBABLY* the cause is not running a DNS server locally; therefore in your config file you should add a line:
+Check the Nginx logfiles in the directory cited above, for
+confirmation. If DNS resolution is failing, *PROBABLY* the cause is
+not running a DNS server locally; therefore in your config file you
+should add a line:
 
 ```
 set nginx_resolver 8.8.8.8
@@ -141,29 +156,35 @@ Currently works on OSX with Homebrew:
 * install homebrew - http://brew.sh/
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
+* `sh ./000-setup-osx.sh` # installs required software; if you're
+  worried, check it first
 
 # Installation: Raspbian
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* Read [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
+* Read [000-setup-raspbian.md](000-setup-raspbian.md) and follow the
+  instructions.
 
 # Installation: Debian/Ubuntu
 
-Try following the instructions for Raspbian, it seems to work though you may need to install a compiler first.  
-
-I'll do some more work on this.
+Try following the same instructions as for Raspbian, it seems to work
+though you *may* need to install a compiler first. The installation
+involves a lot of compilation and may take 20..30 minutes on a slow
+machine.
 
 # I want to experiment!
 
 If you want to experiment with some prefabricated projects, try this:
 
-* `sh ./001-configure-demo.sh` # creates a working config file, `demo.conf`
-* `eotk config demo.conf` # creates tor & nginx config files; lists onion sites
+* `sh ./001-configure-demo.sh` # creates a working config file,
+  `demo.conf`
+* `eotk config demo.conf` # creates tor & nginx config files; lists
+  onion sites
 * `eotk start default`
 * Now you can...
-  * Connect to one of the onions cited on screen for the `default` project
+  * Connect to one of the onions cited on screen for the `default`
+    project
   * Play SSL-Certificate-Acceptance-Whackamole
   * Browse a little...
 * `eotk stop default`
@@ -214,11 +235,20 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 
 # Acknowledgements
 
-EOTK stands largely on the experience of work I led at Facebook to create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to [Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put their site into Onionspace through using Nginx as a rewriting proxy -- and that [he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services) including [sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
+EOTK stands largely on the experience of work I led at Facebook to
+create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to
+[Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put
+their site into Onionspace through using Nginx as a rewriting proxy --
+and that
+[he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services)
+including
+[sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
 
-Reading this prodded me to learn about Nginx and then aim to shrink & genericise the solution; so thanks, Mike!
+Reading this prodded me to learn about Nginx and then aim to shrink &
+genericise the solution; so thanks, Mike!
 
-Also, thanks go to Christopher Weatherhead for acting as a local Nginx *sounding board* :-)
+Also, thanks go to Christopher Weatherhead for acting as a local Nginx
+*sounding board* :-)
 
-And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and the rest of the FB-over-Tor team.  Hugs.
-
+And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and
+the rest of the FB-over-Tor team.  Hugs.
