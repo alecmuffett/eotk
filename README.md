@@ -1,7 +1,9 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-# Status - ALPHA, updated 8 February 2017 @ 1824 UTC
+# Status - ALPHA, updated 8 February 2017 @ 1830 UTC
+
+*NEW: `Troubleshooting` section at the bottom of this page*
 
 The EOTK goal is to provide a tool for prototyping, and deploying at
 scale, HTTP and HTTPS onion sites to provide official presence for
@@ -57,80 +59,6 @@ On OSX, these are available via Homebrew.
 
 * [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
 * [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
-
-# Troubleshooting
-
-Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
-
-If something is problematic, first try:
-
-* `git pull` and...
-* `eotk config <filename>.conf` again, and then...
-* `eotk bounce -a`
-
-## Lots of broken images, missing images, missing CSS
-
-This is probably an SSL/HTTPS thing.
-
-Because of the nature of SSL self-signed certificates, you have to
-manually accept the certificate of each and every site for which a
-certificate has been created. See the second of the YouTube videos for
-some mention of this.
-
-In short: this is normal and expected behaviour.  You can temporarily
-fix this by:
-
-* right-clicking on the image for `Open In New Tab`, and accepting the
-  certificate
-* or using `Inspect Element > Network` to find broken resources, and
-  doing the same
-* or - if you know the list of domains in advance - visiting the
-  `/hello-onion/` URL for each of them, in advance, to accept
-  certificates.
-
-If you get an
-[official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/)
-then the problem will vanish. Until then, I am afraid that you will be
-stuck playing certificate "whack-a-mole".
-
-## Nginx: Bad Gateway
-
-Generally this means that Nginx cannot connect to the remote website,
-which generally happens because:
-
-* the site name in the config file, is wrong
-* the nginx daemon tries to do a DNS resolution, which fails
-
-Check the Nginx logfiles in the directory cited above, for
-confirmation. If DNS resolution is failing, *PROBABLY* the cause is
-not running a DNS server locally; therefore in your config file you
-should add a line like this - to use Google DNS as an example:
-
-```
-set nginx_resolver 8.8.8.8
-```
-
-...and then do:
-
-```
-eotk stop -a
-eotk config filename.conf
-eotk start -a
-```
-
-I will look into hardcoding the Google DNS server as a default.
-
-## I can't connect, it's just hanging
-
-If your onion project has just started, it can take up to a few
-minutes to connect for the first time; also sometimes TorBrowser
-caches stale descriptors for older onions.  Try restarting TorBrowser
-(or use the `New Identity` menu item) and have a cup of tea.  If it
-persists, check the logfiles.
-
-## Help I'm Stuck!
-
-Ping @alecmuffett on Twitter, or log an `Issue`, above.
 
 # Command List
 
@@ -246,6 +174,80 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
 ```
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 ```
+
+# Troubleshooting
+
+Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
+
+If something is problematic, first try:
+
+* `git pull` and...
+* `eotk config <filename>.conf` again, and then...
+* `eotk bounce -a`
+
+## Lots of broken images, missing images, missing CSS
+
+This is probably an SSL/HTTPS thing.
+
+Because of the nature of SSL self-signed certificates, you have to
+manually accept the certificate of each and every site for which a
+certificate has been created. See the second of the YouTube videos for
+some mention of this.
+
+In short: this is normal and expected behaviour.  You can temporarily
+fix this by:
+
+* right-clicking on the image for `Open In New Tab`, and accepting the
+  certificate
+* or using `Inspect Element > Network` to find broken resources, and
+  doing the same
+* or - if you know the list of domains in advance - visiting the
+  `/hello-onion/` URL for each of them, in advance, to accept
+  certificates.
+
+If you get an
+[official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/)
+then the problem will vanish. Until then, I am afraid that you will be
+stuck playing certificate "whack-a-mole".
+
+## Nginx: Bad Gateway
+
+Generally this means that Nginx cannot connect to the remote website,
+which generally happens because:
+
+* the site name in the config file, is wrong
+* the nginx daemon tries to do a DNS resolution, which fails
+
+Check the Nginx logfiles in the directory cited above, for
+confirmation. If DNS resolution is failing, *PROBABLY* the cause is
+not running a DNS server locally; therefore in your config file you
+should add a line like this - to use Google DNS as an example:
+
+```
+set nginx_resolver 8.8.8.8
+```
+
+...and then do:
+
+```
+eotk stop -a
+eotk config filename.conf
+eotk start -a
+```
+
+I will look into hardcoding the Google DNS server as a default.
+
+## I can't connect, it's just hanging
+
+If your onion project has just started, it can take up to a few
+minutes to connect for the first time; also sometimes TorBrowser
+caches stale descriptors for older onions.  Try restarting TorBrowser
+(or use the `New Identity` menu item) and have a cup of tea.  If it
+persists, check the logfiles.
+
+## Help I'm Stuck!
+
+Ping @alecmuffett on Twitter, or log an `Issue`, above.
 
 # Acknowledgements
 
