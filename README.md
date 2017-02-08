@@ -69,9 +69,7 @@ Generally this means that Nginx cannot connect to the remote website, which gene
 * the site name in the config file, is wrong
 * the nginx daemon tries to do a DNS resolution, which fails
 
-Check the Nginx logfiles in the directory cited above, for confirmation.
-
-If DNS resolution is failing, *PROBABLY* the cause is not running a DNS server locally; therefore in your config file you should add a line:
+Check the Nginx logfiles in the directory cited above, for confirmation. If DNS resolution is failing, *PROBABLY* the cause is not running a DNS server locally; therefore in your config file you should add a line:
 
 ```
 set nginx_resolver 8.8.8.8
@@ -87,7 +85,7 @@ eotk start -a
 
 I will look into hardcoding the Google DNS server as a default.
 
-# User Manual
+# Command List
 
 Intuitively obvious to the most casual observer:
 
