@@ -104,7 +104,7 @@ which generally happens because:
 Check the Nginx logfiles in the directory cited above, for
 confirmation. If DNS resolution is failing, *PROBABLY* the cause is
 not running a DNS server locally; therefore in your config file you
-should add a line:
+should add a line like this - to use Google DNS as an example:
 
 ```
 set nginx_resolver 8.8.8.8
