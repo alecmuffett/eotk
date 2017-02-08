@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-# Status - ALPHA, updated 8 February 2017 @ 1810 UTC
+# Status - ALPHA, updated 8 February 2017 @ 1824 UTC
 
 The EOTK goal is to provide a tool for prototyping, and deploying at
 scale, HTTP and HTTPS onion sites to provide official presence for
