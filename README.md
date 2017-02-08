@@ -70,6 +70,8 @@ If something is problematic, first try:
 
 ## Lots of broken images, missing images, missing CSS
 
+This is probably an SSL/HTTPS thing.
+
 Because of the nature of SSL self-signed certificates, you have to
 manually accept the certificate of each and every site for which a
 certificate has been created. See the second of the YouTube videos for
@@ -117,6 +119,17 @@ eotk start -a
 ```
 
 I will look into hardcoding the Google DNS server as a default.
+
+## I can't connect, it's just hanging
+
+If your onion project has just started, it can take up to a few minutes to connect 
+for the first time; also sometimes TorBrowser caches stale descriptors for older onions.  
+Try restarting TorBrowser (or use the `New Identity` menu item) and have a cup of tea.  
+If it persists, check the logfiles.
+
+## Help I'm Stuck!
+
+Ping @alecmuffett on Twitter, or log an `Issue`, above.
 
 # Command List
 
