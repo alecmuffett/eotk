@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-# Status - ALPHA
+# Status - ALPHA, updated 8 February 2017 @ 1810 UTC
 
 The EOTK goal is to provide a tool for prototyping, and deploying at
 scale, HTTP and HTTPS onion sites to provide official presence for
@@ -61,6 +61,18 @@ On OSX, these are available via Homebrew.
 # Troubleshooting
 
 Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
+
+## Lots of broken images, missing images, missing CSS
+
+Because of the nature of SSL self-signed certificates, you have to manually accept the certificate of each and every site for which a certificate has been created. See the second of the YouTube videos for some mention of this. 
+
+In short: this is normal and expected behaviour.  You can temporarily fix this by:
+
+* right-clicking on the image for `Open In New Tab`, and accepting the certificate
+* or using `Inspect Element > Network` to find broken resources, and doing the same
+* or - if you know the list of domains in advance - visiting the `/hello-onion/` URL for each of them, in advance, to accept certificates.
+
+If you get an [official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/) then the problem will vanish. Until then, I am afraid that you will be stuck playing certificate "whack-a-mole".
 
 ## Nginx: Bad Gateway
 
