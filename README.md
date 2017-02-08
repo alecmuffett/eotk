@@ -62,6 +62,12 @@ On OSX, these are available via Homebrew.
 
 Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
 
+If something is problematic, first try:
+
+* `git pull` and...
+* `eotk config <filename>.conf` again, and then...
+* `eotk bounce -a`
+
 ## Lots of broken images, missing images, missing CSS
 
 Because of the nature of SSL self-signed certificates, you have to manually accept the certificate of each and every site for which a certificate has been created. See the second of the YouTube videos for some mention of this. 
