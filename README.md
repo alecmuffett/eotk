@@ -106,7 +106,9 @@ Intuitively obvious to the most casual observer:
   * *synonyms:* `gen`
   * generate an onion key and stash it in `secrets.d`
 
-# Installation: OSX
+# Installation
+
+## OSX
 
 Currently works on OSX with Homebrew:
 
@@ -116,21 +118,20 @@ Currently works on OSX with Homebrew:
 * `sh ./000-setup-osx.sh` # installs required software; if you're
   worried, check it first
 
-# Installation: Raspbian
+## Raspbian
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* Read [000-setup-raspbian.md](000-setup-raspbian.md) and follow the
-  instructions.
+* **Read** [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
 
-# Installation: Debian/Ubuntu
+## Debian and Ubuntu
 
-Try following the same instructions as for Raspbian, it seems to work
-though you *may* need to install a compiler first. The installation
+Try the same instructions as for Raspbian, it seems to work okay
+although you *may* need to install a compiler first. The installation
 involves a lot of compilation and may take 20..30 minutes on a slow
 machine.
 
-# I want to experiment!
+# I don't own a site, but I want to experiment!
 
 If you want to experiment with some prefabricated projects, try this:
 
@@ -145,6 +146,10 @@ If you want to experiment with some prefabricated projects, try this:
   * Play SSL-Certificate-Acceptance-Whackamole
   * Browse a little...
 * `eotk stop default`
+
+## This is really complex, do you have something similar I can play with?
+
+There's [another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md), showing how to do something very similar to `eotk` by using a tool called `mitmproxy`; if you can use a Linux commandline it will give you something relevant to play with, and you won't have to setup anything permanent.
 
 # I want to create a new project / my own configuration!
 
