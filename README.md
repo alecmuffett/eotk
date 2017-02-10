@@ -26,8 +26,8 @@ the moment.
 The presumed use-case of EOTK is that you have an already-public
 website and that you wish to give it a corresponding Onion address.
 
-A lot of people mistakenly believe that Tor Onion Networking is
-"all about anonymity" - which is incorrect, since it also includes:
+A lot of people mistakenly believe that Tor Onion Networking is "all
+about anonymity" - which is incorrect, since it also includes:
 
 * extra privacy
 * identity/surety of to whom you are connected
@@ -38,12 +38,16 @@ A lot of people mistakenly believe that Tor Onion Networking is
 ...none of which are the same as "anonymity", but all of which are
 valuable qualities to add to communications.
 
-Also, if you are setting EOTK up in its intended mode, your resulting
-site is almost certainly not going to be anonymous; for one thing your
-brand name (etc) will be plastered all over it.
+Also: setting up an Onion address can provide less contention, more
+speed & more bandwidth to people accessing your site than they would
+get by using Tor "Exit Nodes".
 
-If instead you want to set up a server which includes anonymity **as
-well as** all of the aforementioned qualities, you
+If you set up EOTK in its intended mode then your resulting site is
+almost certainly not going to be anonymous; for one thing your brand
+name (etc) will likely be plastered all over it.
+
+If you want to set up a server which includes anonymity **as well as**
+all of the aforementioned qualities, you
 [want to be reading an entirely different document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
 
 ## Usage Notes
