@@ -33,7 +33,7 @@ config files and different runs of `eotk configure`.
 
 ### EOTK Configuration
 
-Documentation TBD
+#### Documentation TBD
 
 * PROJECT
 * PROJECT_DIR
@@ -43,18 +43,24 @@ Documentation TBD
 
 ### EOTK Use
 
-Documentation TBD
+#### Documentation TBD
 
 * IS_SOFTMAP :no_entry:
 * SCRIPT_PAUSE
 
 ### NGINX Configuration
 
-Documentation TBD
+#### NGINX_HELLO_ONION
+
+Creates a "/hello-onion/" URL on all onion domains/subdomains; this
+provides a helpful fixed point when prototyping to navigate to for
+accepting self-signed SSL certificates, etc. Use `0` to switch
+off. Underscore also accepted.
+
+#### Documentation TBD
 
 * HEADER_CSP_SUPPRESS
 * HEADER_HSTS_SUPPRESS
-* NGINX_HELLO_ONION
 * NGINX_RESOLVER
 * NGINX_RLIM
 * NGINX_TIMEOUT
@@ -63,7 +69,7 @@ Documentation TBD
 
 ### Tor Configuration
 
-Documentation TBD
+#### Documentation TBD
 
 * TOR_DIR :no_entry:
 * TOR_INTROS_PER_DAEMON
@@ -73,7 +79,7 @@ Documentation TBD
 
 ## Begin/End Variables
 
-Documentation TBD
+#### Documentation TBD
 
 * DNS_DOMAIN
 * DNS_DOMAIN_RE
@@ -83,7 +89,7 @@ Documentation TBD
 
 ## Fake Variables
 
-* NEW_ONION
+#### NEW_ONION
 
 Used only in template configs (`*.tconf` files) to show the point
 where a newly created onion keyfile path should be inserted.
@@ -130,7 +136,7 @@ bar 4
 bar 5
 ```
 
-## Begin/End
+## BEGIN/END
 
 The template engine expects to read a document from standard input, of
 the example form:
@@ -185,6 +191,11 @@ title: x
   body b c
   body y z
 ```
+
+Also you can nest RANGE and IF/ELSE/ENDIF in obvious ways, within a
+BEGIN/END body
+
+There is currently a fatal block on empty IF or ELSE template bodies.
 
 The overall concept is to make a template which is easy to portably
 generate/regenerate, containing lots of hard-codeables for simplicity.
