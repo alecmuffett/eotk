@@ -1,5 +1,8 @@
 #!/bin/sh -x
 
+ngxversion=1.10.3
+ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
+
 LUAJITURL="http://luajit.org/download/LuaJIT-2.0.3.tar.gz"
 
 MODS="
@@ -24,10 +27,15 @@ sudo aptitude install -y libpcre3-dev zlib1g-dev libssl-dev || exit 1
 
 # get NGINX and cd into it
 
-url=http://nginx.org/download/nginx-1.10.3.tar.gz
-file=`basename "$url"`
+ngxurl=http://nginx.org/download/nginx-$ngxversion.tar.gz
+sigurl=http://nginx.org/download/nginx-$ngxversion.tar.gz.asc
+file=`basename "$ngxurl"`
+sig=`basename "$sigurl"`
 dir=`basename "$file" .tar.gz`
-test -f "$file" || curl -o "$file" "$url" || exit 1
+test -f "$file" || curl -o "$file" "$ngxurl" || exit 1
+test -f $sig || curl -o $sig $sigurl || exit 1
+gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $ngxsigningkey || exit 1
+gpg --verify $sig || exit 1
 test -d "$dir" || tar zxf "$file" || exit 1
 
 cd $dir || exit 1
@@ -35,10 +43,10 @@ src_dir=`pwd`
 
 # make luajiturl
 
-url=$LUAJITURL
-file=`basename "$url"`
+luaurl=$LUAJITURL
+file=`basename "$luaurl"`
 dir=`basename "$file" .tar.gz`
-test -f "$file" || curl -o "$file" "$url" || exit 1
+test -f "$file" || curl -o "$file" "$luaurl" || exit 1
 test -d "$dir" || tar zxf "$file" || exit 1
 
 (
