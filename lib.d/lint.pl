@@ -27,6 +27,7 @@ my %known =
 
      # in-template settings
      'HEADER_CSP_SUPPRESS' => 1,
+     'HEADER_HSTS_SUPPRESS' => 1,
      'IS_SOFTMAP' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
