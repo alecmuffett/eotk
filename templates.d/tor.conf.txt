@@ -1,9 +1,9 @@
 # -*- conf -*-
 # eotk (c) 2017 Alec Muffett
 
-# template note:
-# we use TOR_DIR not PROJECT_DIR because relocation of softmaps
 %%IF %IS_SOFTMAP%
+# template note: here we use TOR_DIR not PROJECT_DIR because of the
+# relocation of Tor directories under `softmap`
 DataDirectory %TOR_DIR%
 ControlPort unix:%TOR_DIR%/tor-control.sock
 PidFile %TOR_DIR%/tor.pid
@@ -14,7 +14,7 @@ ControlPort unix:%PROJECT_DIR%/tor-control.sock
 PidFile %PROJECT_DIR%/tor.pid
 Log info file %LOG_DIR%/tor.log
 %%ENDIF
-SafeLogging 0 # noisy logging
+SafeLogging 1
 HeartbeatPeriod 60 minutes
 LongLivedPorts 80,443
 RunAsDaemon 1

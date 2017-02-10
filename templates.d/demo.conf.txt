@@ -1,43 +1,7 @@
 # -*- conf -*-
 # eotk (c) 2017 Alec Muffett
 
-#################### defaults ####################
-
-# NOTE: all variables, excepting `project`, are global in scope; if
-# they are set *anywhere* then that value will apply to *all*
-# projects.  if set multiple times, the last value wins.
-
-# create a "/hello-onion/" URL on all onion domains/subdomains; this
-# provides a helpful fixed point when prototyping to navigate to for
-# accepting self-signed SSL certificates, etc. Use `0` to switch off.
-
-set nginx_hello_onion 1
-
-# where nginx will get DNS from; if locally, perhaps try installing `dnsmasq`
-
-set nginx_resolver 8.8.8.8
-
-# generic max-number-of-any-resource (eg: descriptors) in nginx
-
-set nginx_rlim 1024
-
-# generic max-number-of-seconds-to-wait (eg: connect timeout) in nginx
-
-set nginx_timeout 30
-
-# nginx understands multiprocessing, tor does not, but nginx will have
-# more work to do, therefore run several nginx workers...
-
-set nginx_workers 5
-
-# number of introduction points per onion - see tor manual; for basic
-# prototypes 3 is fine, for corporate production services use 10 (max)
-
-set tor_intros_per_daemon 3
-
-# 1 = faster but less/not anonymous; 0 = slower but more anonymous
-
-set tor_single_onion 1
+# documentation for default settings moved to "TUNEABLES.md"
 
 #################### hardmap examples ####################
 
@@ -120,6 +84,6 @@ set softmap_nginx_workers 20
 
 # example
 
-# softmap %NEW_ONION% site.tld sub1 sub2 sub3.sub2
+# softmap secrets.d/%NEW_ONION%.key site.tld sub1 sub2 sub3.sub2
 
 # end
