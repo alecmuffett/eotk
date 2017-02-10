@@ -331,7 +331,8 @@ sub DoProject {
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
 &SetEnv("header_csp_suppress", 0); # eventually header_csp_rewrite
-&SetEnv("header_hsts_suppress", 0);
+&SetEnv("header_hsts_suppress", 1);
+&SetEnv("header_hpkp_suppress", 1);
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh start.sh status.sh stop.sh syntax.sh");
 &SetEnv("SCRIPT_PAUSE", 5);

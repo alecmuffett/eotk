@@ -94,6 +94,11 @@ http {
   proxy_hide_header "Strict-Transport-Security";
 
   %%ENDIF
+  %%IF %HEADER_HPKP_SUPPRESS%
+  # hpkp suppression
+  proxy_hide_header "public-key-pins";
+
+  %%ENDIF
   # global proxy settings
   proxy_read_timeout %NGINX_TIMEOUT%;
   proxy_connect_timeout %NGINX_TIMEOUT%;
