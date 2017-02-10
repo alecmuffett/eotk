@@ -27,7 +27,12 @@ impact the projects at the top. For clarity, keep them at the top, and
 if you have projects which need different settings, use different
 config files and different runs of `eotk configure`.
 
-# Variables (not settable = :no_entry:)
+# Variables
+
+Key:
+
+* defaulted per project = :boom:
+* not settable / do not change = :no_entry:
 
 ## Global Variables
 
@@ -35,18 +40,23 @@ config files and different runs of `eotk configure`.
 
 #### Documentation TBD
 
-* PROJECT
-* PROJECT_DIR
-* LOG_DIR
-* SSL_DIR
+* PROJECTS_HOME
+* PROJECT :boom:
+* PROJECT_DIR :boom:
+* LOG_DIR :boom:
+* SSL_DIR :boom:
 * CERT_PREFIX
 
 ### EOTK Use
 
 #### Documentation TBD
 
-* IS_SOFTMAP :no_entry:
+* IS_SOFTMAP :boom: :no_entry:
 * SCRIPT_PAUSE
+* SCRIPT_NAMES :no_entry:
+* SSL_TOOL
+* TEMPLATE_TOOL
+
 
 ### NGINX Configuration
 
@@ -71,7 +81,7 @@ off. Underscore also accepted.
 
 #### Documentation TBD
 
-* TOR_DIR :no_entry:
+* TOR_DIR :boom: :no_entry:
 * TOR_INTROS_PER_DAEMON
 * TOR_SINGLE_ONION
 * TOR_WORKER_PREFIX
