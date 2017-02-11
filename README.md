@@ -79,7 +79,7 @@ In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
 
-# Requirements
+## Requirements
 
 * `tor` (latest stable)
 * `nginx` (latest stable) with the following features & modules
@@ -92,12 +92,12 @@ On Linux, scripts are provided to compile these.
 
 On OSX, these are available via Homebrew.
 
-# Video Demonstrations
+## Video Demonstrations
 
 * [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
 * [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
 
-# Command List
+## Command List
 
 Intuitively obvious to the most casual observer:
 
@@ -115,6 +115,8 @@ Intuitively obvious to the most casual observer:
 * `eotk bounce projectname ...` # or: `-a` for all
   * *synonyms:* `restart`, `reload`
   * stop, and restart, projects
+* `eotk nxreload projectname ...` # or: `-a` for all
+  * politely ask NGINX to reload its config files
 * `eotk debugon projectname ...` # or: `-a` for all
   * enable verbose tor logs
 * `eotk debugoff projectname ...` # or: `-a` for all
@@ -128,9 +130,9 @@ Intuitively obvious to the most casual observer:
   * *synonyms:* `gen`
   * generate an onion key and stash it in `secrets.d`
 
-# Installation
+## Installation
 
-## OSX
+### OSX
 
 Currently works on OSX with Homebrew:
 
@@ -140,20 +142,20 @@ Currently works on OSX with Homebrew:
 * `sh ./000-setup-osx.sh` # installs required software; if you're
   worried, check it first
 
-## Raspbian
+### Raspbian
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * **Read** [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
 
-## Debian and Ubuntu
+### Debian and Ubuntu
 
 Try the same instructions as for Raspbian, it seems to work okay
 although you *may* need to install a compiler first. The installation
 involves a lot of compilation and may take 20..30 minutes on a slow
 machine.
 
-# I don't own a site, but I want to experiment!
+## I don't own a site, but I want to experiment!
 
 If you want to experiment with some prefabricated projects, try this:
 
@@ -173,7 +175,7 @@ If you want to experiment with some prefabricated projects, try this:
 
 There's [another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md), showing how to do something very similar to `eotk` by using a tool called `mitmproxy`; if you can use a Linux commandline it will give you something relevant to play with, and you won't have to setup anything permanent.
 
-# I want to create a new project / my own configuration!
+## I want to create a new project / my own configuration!
 
 You can either add a new project to the demo config file, or you can
 create a new config for yourself.  If you want an onion for `foo.com`,
@@ -192,7 +194,7 @@ eotk configure project.conf
 eotk start myproject
 ```
 
-## But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
+### But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
@@ -217,7 +219,7 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 ```
 
-# Troubleshooting
+## Troubleshooting
 
 Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
 
@@ -227,7 +229,7 @@ If something is problematic, first try:
 * `eotk config <filename>.conf` again, and then...
 * `eotk bounce -a`
 
-## Lots of broken images, missing images, missing CSS
+### Lots of broken images, missing images, missing CSS
 
 This is probably an SSL/HTTPS thing.
 
@@ -252,7 +254,7 @@ If you get an
 then the problem will vanish. Until then, I am afraid that you will be
 stuck playing certificate "whack-a-mole".
 
-## NGINX: Bad Gateway
+### NGINX: Bad Gateway
 
 Generally this means that NGINX cannot connect to the remote website,
 which generally happens because:
@@ -279,7 +281,7 @@ eotk start -a
 
 I will look into hardcoding the Google DNS server as a default.
 
-## I can't connect, it's just hanging
+### I can't connect, it's just hanging
 
 If your onion project has just started, it can take up to a few
 minutes to connect for the first time; also sometimes TorBrowser
@@ -287,11 +289,11 @@ caches stale descriptors for older onions.  Try restarting TorBrowser
 (or use the `New Identity` menu item) and have a cup of tea.  If it
 persists, check the logfiles.
 
-## Help I'm Stuck!
+### Help I'm Stuck!
 
 Ping @alecmuffett on Twitter, or log an `Issue`, above.
 
-# Acknowledgements
+## Acknowledgements
 
 EOTK stands largely on the experience of work I led at Facebook to
 create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to
