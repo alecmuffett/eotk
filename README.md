@@ -3,7 +3,7 @@
 
 ## Status
 
-**ALPHA** see [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information.
+**ALPHA** - see [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information.
 
 ## Changes
 
