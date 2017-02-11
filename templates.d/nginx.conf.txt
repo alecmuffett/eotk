@@ -51,29 +51,36 @@ http {
   text/xml
   ;
 
-  # onion_lookup -> if cannot remap, return input.
+  # o2d_lookup -> if cannot remap, return input.
   init_by_lua_block {
-    # in case of manual debugging
-    slog = function (s)
-      ngx.log(ngx.ERR, "\n<<"..s..">>\n")
+    slog = function (s) -- in case of manual debugging
+      ngx.log(ngx.ERR, "\n<<", s, ">>\n")
       return
     end
 
-    onion_mappings = {}
+    o2d_mappings = {}
     %%BEGIN
-    onion_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
+    o2d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
-    onion_lookup = function (o)
-      return ( onion_mappings[o[1]] or o[1] )
+    o2d_lookup = function (o)
+      return ( o2d_mappings[o[1]] or o[1] )
     end
 
-    onion_sub = function (i)
+    onion2dns = function (i)
       if i == nil then
         return nil
       end
-      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", onion_lookup, "io")
+      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o2d_lookup, "io")
       return o
+    end
+
+    dns2onion = function (i) -- inherently a bit flaky because ordering, boundaries; avoid
+      local num, errs
+      %%BEGIN
+      i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
+      %%END
+      return i
     end
   }
 
@@ -170,12 +177,12 @@ http {
       proxy_ssl_server_name on; # SSL
 
       set_by_lua_block $referer2 {
-        return onion_sub(ngx.var.http_referer)
+        return onion2dns(ngx.var.http_referer)
       }
       proxy_set_header Referer $referer2;
 
       set_by_lua_block $origin2 {
-        return onion_sub(ngx.var.http_origin)
+        return onion2dns(ngx.var.http_origin)
       }
       proxy_set_header Origin $origin2;
     }

@@ -169,8 +169,10 @@ sub DoMap {
     my %row = ();
     $row{DNS_DOMAIN} = $to;
     $row{DNS_DOMAIN_RE} = &Dotify($to);
+    $row{DNS_DOMAIN_RE2} = &Dotify(&Dotify($to));
     $row{ONION_ADDRESS} = $onion;
     $row{ONION_ADDRESS_RE} = &Dotify($onion);
+    $row{ONION_ADDRESS_RE2} = &Dotify(&Dotify($onion));
     $row{KEYFILE} = $keyfile;
 
     warn Dumper(\%row);
