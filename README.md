@@ -312,3 +312,29 @@ Also, thanks go to Christopher Weatherhead for acting as a local NGINX
 
 And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and
 the rest of the FB-over-Tor team.  Hugs.
+
+## Architectures
+
+### hardmap 1
+
+![hardmap 1](docs.d/hardmap-1.png)
+
+### hardmap 2
+
+![hardmap 2](docs.d/hardmap-2.png)
+
+### softmap 1
+
+![softmap 1](docs.d/softmap-1.png)
+
+### softmap 2
+
+![softmap 2](docs.d/softmap-2.png)
+
+### softmap 3
+
+![softmap 3](docs.d/softmap-3.png)
+
+### horcrux 1
+
+![horcrux 1](docs.d/horcrux-1.png)
