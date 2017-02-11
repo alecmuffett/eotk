@@ -264,12 +264,14 @@ which generally happens because:
 * the nginx daemon tries to do a DNS resolution, which fails
 
 Check the NGINX logfiles in the directory cited above, for
-confirmation. If DNS resolution is failing, *PROBABLY* the cause is
-not running a DNS server locally; therefore in your config file you
-should add a line like this - to use Google DNS as an example:
+confirmation. 
+
+If DNS resolution is failing, *PROBABLY* the cause is probably lack 
+of access to Google DNS / 8.8.8.8; therefore in your config file 
+you should add a line like this - to use `localhost` as an example:
 
 ```
-set nginx_resolver 8.8.8.8
+set nginx_resolver 127.0.0.1
 ```
 
 ...and then do:
@@ -280,7 +282,7 @@ eotk config filename.conf
 eotk start -a
 ```
 
-I will look into hardcoding the Google DNS server as a default.
+If you need a local DNS resolver, I recommend `dnsmasq`.
 
 ### I can't connect, it's just hanging
 
