@@ -332,7 +332,7 @@ sub DoProject {
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4);
 
-&SetEnv("header_csp_suppress", 0); # eventually header_csp_rewrite?
+&SetEnv("header_csp_suppress", 1); # eventually header_csp_rewrite?
 &SetEnv("header_hpkp_suppress", 1);
 &SetEnv("header_hsts_suppress", 1);
 
