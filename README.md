@@ -7,9 +7,10 @@
 
 ## Changes
 
+* architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
 * ["tunables"](TUNEABLES.md) documentation for template content
-* `troubleshooting` section at the bottom of this page*
+* `troubleshooting` section near the bottom of this page
 
 ## Introduction
 
