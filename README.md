@@ -8,7 +8,7 @@
 ## Changes
 
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
-* ["tunables"](/alecmuffett/eotk/blob/master/TUNEABLES.md) documentation for template content
+* ["tunables"](TUNEABLES.md) documentation for template content
 * `troubleshooting` section at the bottom of this page*
 
 ## Introduction
