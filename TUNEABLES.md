@@ -36,73 +36,69 @@ Key:
 
 ## Global Variables
 
+Defaults in (parentheses)
+
 ### EOTK Configuration
 
-#### Documentation TBD
-
-* PROJECTS_HOME
+* PROJECTS_HOME (projects.d)
 * PROJECT :boom:
-* PROJECT_DIR :boom:
-* LOG_DIR :boom:
-* SSL_DIR :boom:
-* CERT_PREFIX
+* PROJECT_DIR (PROJECTS_HOME/projname.d) :boom:
+* LOG_DIR (PROJECT_DIR/log.d) :boom:
+* SSL_DIR (PROJECT_DIR/ssl.d) :boom:
 
-### EOTK Use
+### Template Generation
 
-#### Documentation TBD
+* TEMPLATE_TOOL (lib.d/expand-template.pl)
+* NGINX_TEMPLATE (templates.d/nginx.conf.txt)
+* TOR_TEMPLATE (templates.d/tor.conf.txt)
+
+### SSL Certificate Generation
+
+* SSL_TOOL (lib.d/make-selfsigned-wildcard-ssl-cert.sh)
+* CERT_COMMON_NAME (not set, use to override CERT_PREFIX)
+* CERT_PREFIX (first onion address cited in project)
+
+### EOTK Operation
 
 * IS_SOFTMAP :boom: :no_entry:
-* SCRIPT_PAUSE
+* SCRIPT_PAUSE (5 seconds)
 * SCRIPT_NAMES :no_entry:
-* SSL_TOOL
-* TEMPLATE_TOOL
-
 
 ### NGINX Configuration
 
-#### NGINX_HELLO_ONION
-
-Creates a "/hello-onion/" URL on all onion domains/subdomains; this
-provides a helpful fixed point when prototyping to navigate to for
-accepting self-signed SSL certificates, etc. Use `0` to switch
-off. Underscore also accepted.
-
-#### Documentation TBD
-
-* HEADER_CSP_SUPPRESS
-* HEADER_HSTS_SUPPRESS
-* NGINX_RESOLVER
-* NGINX_RLIM
-* NGINX_TIMEOUT
-* NGINX_WORKERS
-* SOFTMAP_NGINX_WORKERS
+* NGINX_HELLO_ONION (on)
+* HEADER_CSP_SUPPRESS (on)
+* HEADER_HPKP_SUPPRESS (on)
+* HEADER_HSTS_SUPPRESS (on)
+* NGINX_RESOLVER (8.8.8.8)
+* NGINX_RLIM (1024)
+* NGINX_TIMEOUT (30 seconds)
+* NGINX_WORKERS (5)
+* SOFTMAP_NGINX_WORKERS (20)
 
 ### Tor Configuration
 
-#### Documentation TBD
-
 * TOR_DIR :boom: :no_entry:
-* TOR_INTROS_PER_DAEMON
-* TOR_SINGLE_ONION
-* TOR_WORKER_PREFIX
-* SOFTMAP_TOR_WORKERS
+* TOR_INTROS_PER_DAEMON (3)
+* TOR_SINGLE_ONION (on)
+* TOR_WORKER_PREFIX ("hs")
+* SOFTMAP_TOR_WORKERS (4)
 
 ## Begin/End Variables
 
-#### Documentation TBD
-
 * DNS_DOMAIN
-* DNS_DOMAIN_RE
+* DNS_DOMAIN_RE (backslashed dots)
+* DNS_DOMAIN_RE2 (double-backslashed dots)
 * ONION_ADDRESS
-* ONION_ADDRESS_RE
-* KEYFILE
+* ONION_ADDRESS_RE (backslashed dots)
+* ONION_ADDRESS_RE2 (double-backslashed dots)
+* KEYFILE :no_entry: (cited in config)
 
 ## Fake Variables
 
-#### NEW_ONION
-
-Used only in template configs (`*.tconf` files) to show the point
-where a newly created onion keyfile path should be inserted.
+* NEW_ONION
+  * Used only in template configs (`*.tconf` files) to show the point
+    where a newly created onion keyfile path should be inserted.
 
 # Template Syntax
 
