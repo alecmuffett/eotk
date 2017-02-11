@@ -77,7 +77,7 @@ Configure() {
                 if [ -s $file2 ] ; then
                     echo $prog: $file: using existing $file2
                 else
-                    echo $prog: $file: populating $file2 with onions
+                    echo $prog: $file: populating $file2 with onions, please be very patient...
                     Populate $file > $file2
                 fi
                 file="$file2"
@@ -129,6 +129,10 @@ case "$cmd" in
 
     bounce|restart|reload) # project, or "-a"
         Action bounce "$@"
+        ;;
+
+    nxreload) # project, or "-a"
+        Action nxreload "$@"
         ;;
 
     debugon) # project, or "-a"

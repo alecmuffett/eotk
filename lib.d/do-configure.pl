@@ -336,7 +336,7 @@ sub DoProject {
 &SetEnv("header_hpkp_suppress", 1);
 &SetEnv("header_hsts_suppress", 1);
 
-&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh start.sh status.sh stop.sh syntax.sh");
+&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting
