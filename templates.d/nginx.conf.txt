@@ -51,6 +51,21 @@ http {
   text/xml
   ;
 
+  # subs filters
+  %%BEGIN
+  subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
+  %%END
+
+  # fix the cookies
+  %%BEGIN
+  proxy_cookie_domain %DNS_DOMAIN% %ONION_ADDRESS%;
+  %%END
+
+  # fix the header-redirects
+  %%BEGIN
+  proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
+  %%END
+
   # o2d_lookup -> if cannot remap, return input.
   init_by_lua_block {
     slog = function (s) -- in case of manual debugging
@@ -84,13 +99,6 @@ http {
     end
   }
 
-  # subs filters
-  %%BEGIN
-  subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
-  proxy_cookie_domain %DNS_DOMAIN% %ONION_ADDRESS%;
-  proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
-
-  %%END
   %%IF %HEADER_CSP_SUPPRESS%
   # csp suppression
   proxy_hide_header "Content-Security-Policy";
