@@ -1,12 +1,20 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-# Status - ALPHA, updated 8 February 2017 @ 1830 UTC
+## Status
 
-*NEW: `Troubleshooting` section at the bottom of this page*
+**ALPHA** see [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information.
 
-The EOTK goal is to provide a tool for prototyping, and deploying at
-scale, HTTP and HTTPS onion sites to provide official presence for
+## Changes
+
+* all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
+* ["tunables"](/alecmuffett/eotk/blob/master/TUNEABLES.md) documentation for template content
+* `troubleshooting` section at the bottom of this page*
+
+## Introduction
+
+The goal of EOTK is to provide a tool for prototyping, and deploying
+at scale, HTTP and HTTPS onion sites to provide official presence for
 popular websites.
 
 The results are essentially a "man in the middle" proxy; set them up
@@ -244,15 +252,15 @@ If you get an
 then the problem will vanish. Until then, I am afraid that you will be
 stuck playing certificate "whack-a-mole".
 
-## Nginx: Bad Gateway
+## NGINX: Bad Gateway
 
-Generally this means that Nginx cannot connect to the remote website,
+Generally this means that NGINX cannot connect to the remote website,
 which generally happens because:
 
 * the site name in the config file, is wrong
 * the nginx daemon tries to do a DNS resolution, which fails
 
-Check the Nginx logfiles in the directory cited above, for
+Check the NGINX logfiles in the directory cited above, for
 confirmation. If DNS resolution is failing, *PROBABLY* the cause is
 not running a DNS server locally; therefore in your config file you
 should add a line like this - to use Google DNS as an example:
@@ -288,16 +296,16 @@ Ping @alecmuffett on Twitter, or log an `Issue`, above.
 EOTK stands largely on the experience of work I led at Facebook to
 create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to
 [Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put
-their site into Onionspace through using Nginx as a rewriting proxy --
+their site into Onionspace through using NGINX as a rewriting proxy --
 and that
 [he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services)
 including
 [sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
 
-Reading this prodded me to learn about Nginx and then aim to shrink &
+Reading this prodded me to learn about NGINX and then aim to shrink &
 genericise the solution; so thanks, Mike!
 
-Also, thanks go to Christopher Weatherhead for acting as a local Nginx
+Also, thanks go to Christopher Weatherhead for acting as a local NGINX
 *sounding board* :-)
 
 And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and
