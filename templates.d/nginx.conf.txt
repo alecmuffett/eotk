@@ -53,6 +53,7 @@ http {
 
   # onion_lookup -> if cannot remap, return input.
   init_by_lua_block {
+    # in case of manual debugging
     slog = function (s)
       ngx.log(ngx.ERR, "\n<<"..s..">>\n")
       return
@@ -87,13 +88,25 @@ http {
   # csp suppression
   proxy_hide_header "Content-Security-Policy";
   proxy_hide_header "Content-Security-Policy-Report-Only";
-
+  %%ELSE
+  # csp not suppressed
   %%ENDIF
+
   %%IF %HEADER_HSTS_SUPPRESS%
   # hsts suppression
   proxy_hide_header "Strict-Transport-Security";
-
+  %%ELSE
+  # hsts not suppressed
   %%ENDIF
+
+  %%IF %HEADER_HPKP_SUPPRESS%
+  # hpkp suppression
+  proxy_hide_header "Public-Key-Pins";
+  proxy_hide_header "Public-Key-Pins-Report-Only";
+  %%ELSE
+  # hpkp not suppressed
+  %%ENDIF
+
   # global proxy settings
   proxy_read_timeout %NGINX_TIMEOUT%;
   proxy_connect_timeout %NGINX_TIMEOUT%;
