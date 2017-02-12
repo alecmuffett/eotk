@@ -255,17 +255,16 @@ When you are setting up mappings, generally the rules are:
 * you will append all possible subdomains
 
 So if your browser tells you that you are fetching content from
-`cdn7.dublin.ireland.europe.foo.co.jp`, you should set up:
+`cdn7.dublin.ireland.europe.foo.co.jp`, you should add a line like:
 
 ```
 hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
 ```
 
-...and EOTK should do the rest.
-
-Al this is necessary purely for correctness of the self-signed
-SSL-Certificates - which are going to be weird, anyway - so the rest
-of the HTML-rewriting code in EOTK will be blind to this.
+...and EOTK should do the rest. All this is necessary purely for
+correctness of the self-signed SSL-Certificates - which are going to
+be weird, anyway - so the rest of the HTML-rewriting code in EOTK will
+be blind to subdomains.
 
 ### Solution
 
