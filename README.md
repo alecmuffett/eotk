@@ -285,9 +285,9 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 ```
 
-## My company has a bunch of domains! foo.com.au, foo.syd.com.au, foo.net, foo.aws.amazon.com...
+## My company has a bunch of site/domains! www.foo.com.au, www.syd.foo.com.au, www.foo.net, www.foo.aws.amazon.com...
 
-Put them all in the same project as separate mappings:
+Put them all in the same project as separate mappings. remembering to avoid "hostnames" as above:
 
 ```
 set project fooproj
