@@ -174,7 +174,12 @@ If you want to experiment with some prefabricated projects, try this:
 
 ## This is really complex, do you have something similar I can play with?
 
-There's [another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md), showing how to do something very similar to `eotk` by using a tool called `mitmproxy`; if you can use a Linux commandline it will give you something relevant to play with, and you won't have to setup anything permanent.
+There's
+[another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md),
+showing how to do something very similar to `eotk` by using a tool
+called `mitmproxy`; if you can use a Linux commandline it will give
+you something relevant to play with, and you won't have to setup
+anything permanent.
 
 ## I want to create a new project / my own configuration!
 
@@ -195,7 +200,9 @@ eotk configure project.conf
 eotk start myproject
 ```
 
-### But how do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
+### How do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
+
+#### OLD METHOD
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
@@ -205,7 +212,25 @@ eotk start myproject
   filename like `xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the
   corresponding onion address.
 
-## But I not only have `www.foo.com`, I have `www.dev.foo.com`!
+#### NEW METHOD
+
+Create a config file with a `.tconf` suffix, and use this syntax:
+
+```
+set project myproject
+hardmap %NEW_ONION% foo.com
+hardmap %NEW_ONION% foo.co.uk
+hardmap %NEW_ONION% foo.de
+```
+
+...and then run `eotk config foo.tconf`; this will create the onions
+for you and will populate a `foo.conf` for you, and it will configure
+from *that*.
+
+You should probably *delete* `foo.tconf` afterwards, since reusing it
+will trash your existing onions.
+
+## Help! I not only have `www.foo.com`, I have `www.dev.foo.com`!
 
 Subdomains are supported like this:
 
@@ -264,10 +289,10 @@ which generally happens because:
 * the nginx daemon tries to do a DNS resolution, which fails
 
 Check the NGINX logfiles in the directory cited above, for
-confirmation. 
+confirmation.
 
-If DNS resolution is failing, *PROBABLY* the cause is probably lack 
-of access to Google DNS / 8.8.8.8; therefore in your config file 
+If DNS resolution is failing, *PROBABLY* the cause is probably lack
+of access to Google DNS / 8.8.8.8; therefore in your config file
 you should add a line like this - to use `localhost` as an example:
 
 ```
