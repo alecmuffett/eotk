@@ -230,7 +230,44 @@ from *that*.
 You should probably *delete* `foo.tconf` afterwards, since reusing it
 will trash your existing onions.
 
-## Help! I not only have `www.foo.com`, I have `www.dev.foo.com`!
+## Help! I have both www.foo.com and www.DEV.foo.com!
+
+### A Little Background
+
+When you are setting up the mappings in a config file, you may have to
+accomodate "subdomains"; the general form of a internet hostname is
+like this:
+
+```
+hostname.domain.tld # like: www.facebook.com or www.gov.uk
+hostname.domain.sld.tld # like: www.amazon.co.uk
+hostname.subdom.domain.tld # like: www.prod.facebook.com
+hostname.subsubdom.subdom.domain.tld
+hostname.subsubdom.subdom.domain.sld.tld
+hostname.subsubsub.subsubdom.subdom.domain.sld.tld
+...and so on...
+```
+
+When you are setting up mappings, generally the rules are:
+
+* you will map one domain per onion
+* you will ignore all hostnames
+* you will append all possible subdomains
+
+So if your browser tells you that you are fetching content from
+`cdn7.dublin.ireland.europe.foo.co.jp`, you should set up:
+
+```
+hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
+```
+
+...and EOTK should do the rest.
+
+Al this is necessary purely for correctness of the self-signed
+SSL-Certificates - which are going to be weird, anyway - so the rest
+of the HTML-rewriting code in EOTK will be blind to this.
+
+### Solution
 
 Subdomains are supported like this:
 
