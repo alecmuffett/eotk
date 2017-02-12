@@ -267,8 +267,8 @@ hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
 
 ...and EOTK should do the rest. All this is necessary purely for
 correctness of the self-signed SSL-Certificates - which are going to
-be weird, anyway - so the rest of the HTML-rewriting code in EOTK will
-be blind to subdomains.
+be weird, anyway - and the rest of the HTML-rewriting code in EOTK
+will be blind to subdomains.
 
 ### Solution
 
