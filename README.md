@@ -238,27 +238,25 @@ When you are setting up the mappings in a config file, you may have to
 accomodate "subdomains"; the general form of a internet hostname is
 like this:
 
-```
-hostname.domain.tld # like: www.facebook.com or www.gov.uk
-hostname.domain.sld.tld # like: www.amazon.co.uk
-hostname.subdom.domain.tld # like: www.prod.facebook.com
-hostname.subsubdom.subdom.domain.tld
-hostname.subsubdom.subdom.domain.sld.tld
-hostname.subsubsub.subsubdom.subdom.domain.sld.tld
-...and so on...
-```
+* `hostname.domain.tld` # like: www.facebook.com or www.gov.uk
+  * or: `hostname.domain.sld.tld` # like: www.amazon.co.uk
+* `hostname.subdom.domain.tld` # like: www.prod.facebook.com
+* `hostname.subsubdom.subdom.domain.tld` # cdn.lhr.eu.foo.net
+* `hostname.subsubsubdom.subsubdom.subdom.domain.tld` # ...
 
-Where:
+...and so on, where:
 
 * tld = [top level domain](https://en.wikipedia.org/wiki/Top-level_domain)
-* sld = [second level domain](https://en.wikipedia.org/wiki/.uk#Second-level_domains)
+  * sld = [second level domain](https://en.wikipedia.org/wiki/.uk#Second-level_domains)
 * domain = *generally the name of the organisation you are interested in*
+* subdomain = *some kind of internal structure*
+* hostname = *actual computer, or equivalent*
 
 When you are setting up mappings, generally the rules are:
 
-* you will map one domain per onion
-* you will ignore all hostnames
-* you will append all possible subdomains
+* you will **map one domain per onion**
+* you will **ignore all hostnames**
+* you will **append all possible subdomain stems**
 
 So if your browser tells you that you are fetching content from
 `cdn7.dublin.ireland.europe.foo.co.jp`, you should add a line like:
@@ -285,6 +283,17 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
 
 ```
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
+```
+
+## My company has a bunch of domains! foo.com.au, foo.syd.com.au, foo.net, foo.aws.amazon.com...
+
+Put them all in the same project as separate mappings:
+
+```
+set project fooproj
+hardmap %NEW_ONION% foo.com.au syd
+hardmap %NEW_ONION% foo.net
+hardmap %NEW_ONION% foo.aws.amazon.com
 ```
 
 ## Troubleshooting
