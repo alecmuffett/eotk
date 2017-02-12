@@ -248,6 +248,12 @@ hostname.subsubsub.subsubdom.subdom.domain.sld.tld
 ...and so on...
 ```
 
+Where:
+
+* tld = [top level domain](https://en.wikipedia.org/wiki/Top-level_domain)
+* sld = [second level domain](https://en.wikipedia.org/wiki/.uk#Second-level_domains)
+* domain = *generally the name of the organisation you are interested in*
+
 When you are setting up mappings, generally the rules are:
 
 * you will map one domain per onion
