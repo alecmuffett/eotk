@@ -285,16 +285,23 @@ hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
 hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
 ```
 
-## My company has a bunch of site/domains! www.foo.com.au, www.syd.foo.com.au, www.foo.net, www.foo.aws.amazon.com...
+## My company has a bunch of site/domains!
 
-Put them all in the same project as separate mappings. remembering to avoid "hostnames" as above:
+Example: `www.foo.com.au`, `www.syd.foo.com.au`, `www.per.foo.com.au`,
+`www.cdn.foo.net`, `www.foo.aws.amazon.com`...
+
+Put them all in the same project as separate mappings, remembering to
+avoid "hostnames" as above:
 
 ```
 set project fooproj
-hardmap %NEW_ONION% foo.com.au syd
-hardmap %NEW_ONION% foo.net
+hardmap %NEW_ONION% foo.com.au syd per
+hardmap %NEW_ONION% cdn.foo.net
 hardmap %NEW_ONION% foo.aws.amazon.com
 ```
+
+Onion mapping/translations will be applied for all sites in the same project.
+
 
 ## Troubleshooting
 
