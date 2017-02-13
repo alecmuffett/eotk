@@ -3,10 +3,17 @@
 
 ## Status
 
-**ALPHA** - see [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information.
+### NEW RELEASES
+
+* Apparently Stable v1.0 Alpha 
+  * Downloadable from https://github.com/alecmuffett/eotk/releases
+  * I recommend that you use this if you feel at all uncertain about systems administration or tweaking code
+* Trunk
+  * See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
 
 ## Changes
 
+* have declared a stable alpha release
 * architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
 * ["tunables"](TUNEABLES.md) documentation for template content
