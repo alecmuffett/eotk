@@ -50,18 +50,40 @@ Action() {
 }
 
 Populate() {
+    if [ -t 0 ] ; then
+        dots=true
+    else
+        dots=false
+    fi
+
     cat "$@" |
         while read line ; do
             case "$line" in
-                *%NEW_ONION%*)
+                *%NEW_ONION%*) # legacy / shorter / more common
                     onion=secrets.d/`$EOTK_HOME/eotk genkey`
                     echo "$line" | sed -e "s!%NEW_ONION%!$onion!"
+                    ;;
+                *%NEW_HARD_ONION%*)
+                    onion=secrets.d/`$EOTK_HOME/eotk genkey`
+                    echo "$line" | sed -e "s!%NEW_HARD_ONION%!$onion!"
+                    ;;
+                *%NEW_SOFT_ONION%*)
+                    onion=`$EOTK_HOME/eotk genkey`
+                    onion=`basename $onion .key`
+                    echo "$line" | sed -e "s!%NEW_SOFT_ONION%!$onion!"
                     ;;
                 *)
                     echo "$line"
                     ;;
             esac
+            if $dots ; then
+                echo ".\c" >/dev/tty
+            fi
         done
+
+    if $dots ; then
+        echo "" >/dev/tty
+    fi
 }
 
 
@@ -78,7 +100,7 @@ Configure() {
                     echo $prog: $file: using existing $file2
                 else
                     echo $prog: $file: populating $file2 with onions, please be very patient...
-                    Populate $file > $file2
+                    Populate $file >$file2
                 fi
                 file="$file2"
                 ;;
@@ -93,7 +115,7 @@ Configure() {
         fi
     done 2>$log
 
-    echo $prog: done
+    echo "$prog: done; log is in $log"
 }
 
 cmd="$1"
