@@ -48,9 +48,9 @@ CloudHosts() { # fake this up for the moment
 
 # mirror eotk directory to remote
 Push() {
-    for host in "$@" ; do
+    for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
-        echo :::: $host :::: # NOTE: PURGE delete-excluded
+        echo :::: host: $host :::: # NOTE: PURGE delete-excluded
         rsync \
             -av \
             --delete \
@@ -69,18 +69,17 @@ Push() {
 
 # pull remote back for log review, backup, etc
 Pull() {
-    for host in "$@" ; do
+    for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
-        echo :::: $host ::::
+        echo :::: host: $host ::::
     done
 }
 
 RemoteAction() {
-    action="$1"
-    shift
-    for host in "$@" ; do
+    for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
-        echo :::: $host ::::
+        echo :::: host: $host ::::
+        ssh "$host" "${EOTK_HOME}/eotk $*"
     done
 }
 
@@ -102,7 +101,7 @@ LocalAction() {
     fi
 
     for project in $projects ; do
-        $verbose && echo :::: $project ::::
+        $verbose && echo :::: project: $project ::::
         sh $project_dir/$project.d/$action.sh
     done
 }
@@ -152,7 +151,7 @@ Configure() {
     log=configure$$.log
 
     for file in "$@" ; do
-        echo :::: $file ::::
+        echo :::: file: $file ::::
 
         case "$file" in
             *.conf)
@@ -188,7 +187,8 @@ Configure() {
 # argument 'parser' - ha!
 
 cmd="$1"
-shift
+
+shift # we may need the remaining args
 
 case "$cmd" in
     version)
@@ -263,21 +263,16 @@ case "$cmd" in
         echo $prog: delete is tbd
         ;;
 
-    push-remote|rpush)
-        Push `CloudHosts`
+    push)
+        Push
         ;;
 
-    pull-remote|rpull)
-        Pull `CloudHosts`
+    pull)
+        Pull
         ;;
 
-    start-remote|rstart)
-        ;;
-
-    stop-remote|rstop)
-        ;;
-
-    maps-remote|rmaps)
+    remote)
+        RemoteAction "$@"
         ;;
 
     *)
