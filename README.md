@@ -350,7 +350,7 @@ stuck playing certificate "whack-a-mole".
 ### NGINX: Bad Gateway
 
 Generally this means that NGINX cannot connect to the remote website,
-which generally happens because:
+which usually happens because:
 
 * the site name in the config file, is wrong
 * the nginx daemon tries to do a DNS resolution, which fails
