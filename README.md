@@ -303,7 +303,7 @@ avoid "hostnames" as above:
 ```
 set project fooproj
 hardmap %NEW_ONION% foo.com.au syd per
-hardmap %NEW_ONION% cdn.foo.net
+hardmap %NEW_ONION% foo.net cdn
 hardmap %NEW_ONION% foo.aws.amazon.com
 ```
 
