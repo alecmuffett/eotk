@@ -40,9 +40,13 @@ print "services:\n";
 foreach my $project (sort keys %data) {
     print "# PROJECT $project\n";
     foreach my $master_onion (sort {$dnsmap{$a} cmp $dnsmap{$b}} keys %{$data{$project}}) {
+        my $keyfile = "secrets.d/$master_onion.key";
+        $keyfile =~ s!\.onion\.!.!;
+
         print "$indent# $dnsmap{$master_onion} => $master_onion\n";
-        print "$indent- key: /path/to/secrets.d/$master_onion.key\n";
+        print "$indent- key: $keyfile\n";
         print "$indent  instances:\n";
+
 	foreach my $worker_onion (sort keys %{$data{$project}{$master_onion}}) {
             print "$indent$indent- $worker_onion\n";
         }
