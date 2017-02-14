@@ -44,7 +44,7 @@ CloudHosts() { # fake this up for the moment
 # essentially the projects.d folder is a little database
 ListProjects() {
     (
-        cd $project_dir
+        cd $project_dir || exit 1
         for d in *.d/ ; do
             echo `basename $d .d`
         done
