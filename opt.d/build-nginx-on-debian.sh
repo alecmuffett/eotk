@@ -56,7 +56,7 @@ cd $luadir || exit 1
 
 make DESTDIR=$opt_dir install || exit 1
 
-cd .. || exit 1
+cd $src_dir || exit 1
 
 # get mods
 
