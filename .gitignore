@@ -5,6 +5,11 @@
 *.log
 *.pem
 *.tconf
+
 *~
-projects.d
-secrets.d
+
+opt.d/*
+!opt.d/build*.sh
+
+projects.d/
+secrets.d/
