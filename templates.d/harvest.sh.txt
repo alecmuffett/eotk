@@ -3,7 +3,7 @@
 cd %PROJECT_DIR% || exit 1
 
 for hfile in *.d/hostname ; do
-    cat $hfile
+    test -f "$hfile" && cat "$hfile" # check wildcard expanded
 done
 
 exit 0

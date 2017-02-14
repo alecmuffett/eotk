@@ -13,13 +13,36 @@ export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
 # meta
 prog=`basename $0`
-version=1.3
+version=1.1alpha
 
-Warn() {
-    echo "$@" 1>&2
+# print a formatted message to stdout
+Print() {
+    echo "$prog:" "$@"
 }
 
-AllProjects() {
+# print a formatted message to stderr
+Warn() {
+    Print "$@" 1>&2
+}
+
+# have we set up a cloud of remote workers?
+HasCloud() {
+    return 0 # 0 => true
+}
+
+# what are the names of the remote workers?
+CloudHosts() { # fake this up for the moment
+    # echo "localhost" # this will be magic
+    echo "rig1"
+    echo "rig2"
+    echo "rig3"
+    echo "rig4"
+    echo "rig5"
+    echo "rig6"
+}
+
+# essentially the projects.d folder is a little database
+ListProjects() {
     (
         cd $project_dir
         for d in *.d/ ; do
@@ -28,16 +51,18 @@ AllProjects() {
     )
 }
 
-Action() {
+# run a command in the context of the local projects directory
+LocalAction() {
     action=$1
     shift
 
     verbose=false
+
     if [ "x$1" = "x" ] ; then
-        Warn "missing project name, try: '$prog projects' for a list, or '-a' for all"
-        return
+        Print error: missing project name, try: $prog projects for a list, or '-a' for all
+        return 1
     elif [ "x$1" = "x-a" ] ; then
-        projects=`AllProjects`
+        projects=`ListProjects`
         verbose=true
     else
         projects="$*"
@@ -49,8 +74,10 @@ Action() {
     done
 }
 
+# implement kludge to insert freshly-generated onions into a '*.tconf'
+# template-configuration, so people don't have to type so much...
 Populate() {
-    if [ -t 0 ] ; then
+    if [ -t 0 ] ; then # if stdin is a terminal, provide diags
         dots=true
     else
         dots=false
@@ -76,6 +103,7 @@ Populate() {
                     echo "$line"
                     ;;
             esac
+
             if $dots ; then
                 echo ".\c" >/dev/tty
             fi
@@ -86,7 +114,7 @@ Populate() {
     fi
 }
 
-
+# get a config file and re/populate the projects directory with it
 Configure() {
     log=configure$$.log
 
@@ -94,29 +122,37 @@ Configure() {
         echo :::: $file ::::
 
         case "$file" in
+            *.conf)
+                : happy bunnies
+                ;;
+
             *.tconf)
                 file2=`basename $file .tconf`.conf
                 if [ -s $file2 ] ; then
-                    echo $prog: $file: using existing $file2
+                    Print info: $file: using existing $file2
                 else
-                    echo $prog: $file: populating $file2 with onions, please be very patient...
+                    Print info: $file: populating $file2 with onions, please be patient...
                     Populate $file >$file2
                 fi
                 file="$file2"
                 ;;
-            *) ;;
+
+            *)
+                Print error: bad config file suffix, was expecting: .conf, .tconf
+                exit 1
+                ;;
         esac
 
-        echo $prog: $file: processing
-
         if ! $EOTK_HOME/lib.d/do-configure.pl "$file" ; then
-            echo $prog: failure processing $file: see $log
+            Print error: failure processing $file: see $log
             exit 1
         fi
     done 2>$log
 
-    echo "$prog: done; log is in $log"
+    Print info: done, logfile: $log
 }
+
+# argument 'parser' - ha!
 
 cmd="$1"
 shift
@@ -130,7 +166,7 @@ case "$cmd" in
         ;;
 
     projects|proj)
-        AllProjects
+        ListProjects
         ;;
 
     populate|pop)
@@ -142,39 +178,39 @@ case "$cmd" in
         ;;
 
     start) # project, or "-a"
-        Action start "$@"
+        LocalAction start "$@"
         ;;
 
     stop) # project, or "-a"
-        Action stop "$@"
+        LocalAction stop "$@"
         ;;
 
     bounce|restart|reload) # project, or "-a"
-        Action bounce "$@"
+        LocalAction bounce "$@"
         ;;
 
     nxreload) # project, or "-a"
-        Action nxreload "$@"
+        LocalAction nxreload "$@"
         ;;
 
     debugon) # project, or "-a"
-        Action debugon "$@"
+        LocalAction debugon "$@"
         ;;
 
     debugoff) # project, or "-a"
-        Action debugoff "$@"
+        LocalAction debugoff "$@"
         ;;
 
     harvest|onions) # project, or "-a"
-        Action harvest "$@"
+        LocalAction harvest "$@"
         ;;
 
     status) # project, or "-a"
-        Action status "$@"
+        LocalAction status "$@"
         ;;
 
     maps|map) # project, or "-a"
-        Action maps "$@"
+        LocalAction maps "$@"
         ;;
 
     ps)
@@ -184,15 +220,30 @@ case "$cmd" in
     genkey|gen)
         secrets=secrets.d
         test -d $secrets || mkdir $secrets || exit 1
-        ( cd $secrets ; generate-onion-key.sh )
+        (
+            cd $secrets
+            generate-onion-key.sh
+        )
         ;;
 
     delete) # project, or "-a"
         echo $prog: delete is tbd
         ;;
 
+    push-remote)
+        ;;
+
+    pull-remote)
+        ;;
+
+    start-remote)
+        ;;
+
+    stop-remote)
+        ;;
+
     *)
-        echo "usage: $prog args ... # see README.md for docs" 1>&2
+        Print usage: see README.md for documentation
         exit 1
         ;;
 esac
