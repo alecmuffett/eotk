@@ -207,6 +207,8 @@ eotk configure project.conf
 eotk start myproject
 ```
 
+See also: the next question:
+
 ### How do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
 
 #### OLD METHOD
