@@ -25,9 +25,14 @@ Warn() {
     Print "$@" 1>&2
 }
 
-# have we set up a cloud of remote workers?
-HasCloud() {
-    return 0 # 0 => true
+# essentially the projects.d folder is a little database
+ListProjects() {
+    (
+        cd $project_dir || exit 1
+        for d in *.d/ ; do
+            echo `basename $d .d`
+        done
+    )
 }
 
 # what are the names of the remote workers?
@@ -41,14 +46,42 @@ CloudHosts() { # fake this up for the moment
     echo "rig6"
 }
 
-# essentially the projects.d folder is a little database
-ListProjects() {
-    (
-        cd $project_dir || exit 1
-        for d in *.d/ ; do
-            echo `basename $d .d`
-        done
-    )
+# mirror eotk directory to remote
+Push() {
+    for host in "$@" ; do
+        test "$host" = "localhost" && continue # skip self
+        echo :::: $host :::: # NOTE: PURGE delete-excluded
+        rsync \
+            -av \
+            --delete \
+            --delete-excluded \
+            --exclude="*~" \
+            --exclude=".git/" \
+            --exclude="configure*.log" \
+            --exclude="hostname" \
+            --exclude="onion_service_non_anonymous" \
+            --exclude="private_key" \
+            --exclude="secrets.d/" \
+            ${EOTK_HOME}/ \
+            $host:${EOTK_HOME}/
+    done
+}
+
+# pull remote back for log review, backup, etc
+Pull() {
+    for host in "$@" ; do
+        test "$host" = "localhost" && continue # skip self
+        echo :::: $host ::::
+    done
+}
+
+RemoteAction() {
+    action="$1"
+    shift
+    for host in "$@" ; do
+        test "$host" = "localhost" && continue # skip self
+        echo :::: $host ::::
+    done
 }
 
 # run a command in the context of the local projects directory
@@ -59,7 +92,7 @@ LocalAction() {
     verbose=false
 
     if [ "x$1" = "x" ] ; then
-        Print error: missing project name, try: $prog projects for a list, or '-a' for all
+        Print error: missing project name, try: $prog projects for a list, or -a for all
         return 1
     elif [ "x$1" = "x-a" ] ; then
         projects=`ListProjects`
@@ -74,7 +107,7 @@ LocalAction() {
     done
 }
 
-# implement kludge to insert freshly-generated onions into a '*.tconf'
+# implement kludge to insert freshly-generated onions into a "*.tconf"
 # template-configuration, so people don't have to type so much...
 Populate() {
     if [ -t 0 ] ; then # if stdin is a terminal, provide diags
@@ -230,16 +263,21 @@ case "$cmd" in
         echo $prog: delete is tbd
         ;;
 
-    push-remote)
+    push-remote|rpush)
+        Push `CloudHosts`
         ;;
 
-    pull-remote)
+    pull-remote|rpull)
+        Pull `CloudHosts`
         ;;
 
-    start-remote)
+    start-remote|rstart)
         ;;
 
-    stop-remote)
+    stop-remote|rstop)
+        ;;
+
+    maps-remote|rmaps)
         ;;
 
     *)
