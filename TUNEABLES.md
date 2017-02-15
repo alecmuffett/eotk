@@ -96,9 +96,11 @@ Defaults in (parentheses)
 
 ## Fake Variables
 
-* NEW_ONION
-  * Used only in template configs (`*.tconf` files) to show the point
-    where a newly created onion keyfile path should be inserted.
+* NEW_ONION / NEW_HARD_ONION
+* NEW_SOFT_ONION
+
+Used only in template configs (`*.tconf` files) to show the point where 
+a newly created onion and/or keyfile path should be inserted.
 
 # Template Syntax
 
