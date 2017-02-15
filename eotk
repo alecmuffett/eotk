@@ -323,21 +323,51 @@ case "$cmd" in
         RemoteAction "$@"
         ;;
 
-    ob-start|obstart)
-        ;;
-
-    ob-stop|obstop)
-        ;;
-
     ob-config|obconfig)
         if [ "x$1" = "x" ] ; then
             Print error: missing project name, try: $prog projects for a list, or -a for all
             exit 1
         fi
 
-        $self remote map "$@" |
-            grep -v "^::::" |
-            lib.d/do-obconfig.pl > ob-config.yaml
+        # TODO: check if they are extant first, and if so, exit with error
+
+        # ob storage
+        ob_dir=$project_dir/onionbalance.run
+        test -d $ob_dir || mkdir $ob_dir || exit 1
+
+        # config files
+        ob_conf=$ob_dir/config.yaml
+        tor_conf=$ob_dir/tor.conf
+        tor_control=$ob_dir/tor-control.sock
+
+        # make tor conf
+        (
+            echo DataDirectory $ob_dir
+            echo ControlPort unix:$tor_control
+            echo PidFile $ob_dir/tor.pid
+            echo Log info file $ob_dir/tor.log
+            echo SafeLogging 1
+            echo HeartbeatPeriod 60 minutes
+            echo RunAsDaemon 1
+            echo "#" onionbalance
+            # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
+            echo SocksPort 127.0.0.1:9050 # meh
+            echo CookieAuthentication 1
+            echo MaxClientCircuitsPending 1024
+        ) > $tor_conf
+
+        # make ob conf
+        $self remote map "$@" | grep -v "^::::" | do-obconfig.pl > $ob_conf
+
+        # to be done
+        # echo tor -f $tor_conf
+        # echo onionbalance -s $tor_control -c $ob_conf -v info
+        ;;
+
+    ob-start|obstart)
+        ;;
+
+    ob-stop|obstop)
         ;;
 
     *)
