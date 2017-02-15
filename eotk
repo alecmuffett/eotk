@@ -46,12 +46,9 @@ ListProjects() {
 # what are the names of the remote workers?
 CloudHosts() { # fake this up for the moment
     echo "localhost" # this will be magic
-    echo "rig1"
-    echo "rig2"
-    echo "rig3"
-    echo "rig4"
-    echo "rig5"
-    echo "rig6"
+    for i in 1 2 3 4 5 6 ; do
+        : echo rig$i
+    done
 }
 
 # push eotk directory to remote
@@ -322,8 +319,14 @@ case "$cmd" in
         )
         ;;
 
-    remote)
+    remote) # todo: wire this into all actions?
         RemoteAction "$@"
+        ;;
+
+    ob-start|obstart)
+        ;;
+
+    ob-stop|obstop)
         ;;
 
     ob-config|obconfig)

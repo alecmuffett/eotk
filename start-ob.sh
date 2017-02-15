@@ -2,44 +2,44 @@
 
 # WORK IN PROGRESS
 
-here=`dirname $0`
-cd $here || exit 1
-here=`pwd`
+EOTK_HOME=`dirname $0`
+cd $EOTK_HOME || exit 1
+EOTK_HOME=`pwd`
 
 # minimal path hack
-export PATH=$here/opt.d:$PATH
-
-# OB wants a directory in /var/run, but does not create it
-rundir=/var/run/onionbalance
-test -d $rundir || sudo mkdir $rundir || exit 1
-sudo chmod 01777 $rundir || exit 1
+export PATH=$EOTK_HOME/opt.d:$PATH
+project_dir=$EOTK_HOME/projects.d
 
 # where shall we put stuff?
-OB_TOR_DIR=$here/ob-tor.d
-test -d $OB_TOR_DIR || mkdir $OB_TOR_DIR || exit 1
+ob_dir=$project_dir/onionbalance.run
+test -d $ob_dir || mkdir $ob_dir || exit 1
 
-# tor-config
-conf=$OB_TOR_DIR/tor.conf
-cat > $conf <<EOF
-DataDirectory $OB_TOR_DIR
-ControlPort unix:$OB_TOR_DIR/tor-control.sock
-PidFile $OB_TOR_DIR/tor.pid
-Log info file $OB_TOR_DIR/tor.log
+# config files
+ob_conf=$ob_dir/config.yaml
+tor_conf=$ob_dir/tor.conf
+tor_control=$ob_dir/tor-control.sock
+
+# make tor conf
+cat > $tor_conf <<EOF
+DataDirectory $ob_dir
+ControlPort unix:$tor_control
+PidFile $ob_dir/tor.pid
+Log info file $ob_dir/tor.log
 SafeLogging 1
 HeartbeatPeriod 60 minutes
 RunAsDaemon 1
 # onionbalance
-# SocksPort unix:$OB_TOR_DIR/tor-socks.sock # curl 7.38 does not like this
+# SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
 SocksPort 127.0.0.1:9050 # meh
 CookieAuthentication 1
 MaxClientCircuitsPending 1024
 EOF
 
 # launch tor
-tor -f $conf
+echo tor -f $tor_conf
 
 # launch ob
-echo onionbalance -c ob-config.yaml
+echo onionbalance -s $tor_control -c $ob_conf -v info
 
 # done
 exit 0

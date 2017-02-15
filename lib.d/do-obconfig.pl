@@ -33,8 +33,11 @@ while (<>) {
 
 $indent = "    ";
 
-print "REFRESH_INTERVAL: 600\n";
-print "\n";
+print <<"EOT";
+INITIAL_DELAY: 60
+# PUBLISH_CHECK_INTERVAL
+# REFRESH_INTERVAL: 600
+EOT
 
 print "services:\n";
 foreach my $project (sort keys %data) {
@@ -48,7 +51,7 @@ foreach my $project (sort keys %data) {
         print "$indent  instances:\n";
 
 	foreach my $worker_onion (sort keys %{$data{$project}{$master_onion}}) {
-            print "$indent$indent- $worker_onion\n";
+            print "$indent$indent- address: $worker_onion\n";
         }
     }
 }
