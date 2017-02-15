@@ -1,6 +1,8 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
+#RSYNCFLAGS="-n" # safety/testing
+
 cd `dirname $0` || exit 1
 
 export EOTK_HOME=`pwd` # expected by tools
@@ -14,6 +16,9 @@ version=1.1alpha
 
 # set project directory; this path is hard-replicated elsewhere
 project_dir=$EOTK_HOME/projects.d
+
+# mirror directory
+mirrors_dir=$EOTK_HOME/mirrors.d
 
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
@@ -49,19 +54,23 @@ CloudHosts() { # fake this up for the moment
     echo "rig6"
 }
 
-# mirror eotk directory to remote
-Push() {
+# push eotk directory to remote
+DestructivePush() {
     for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
         echo :::: host: $host ::::
-        # DO NOT USE `--delete-excluded` OR YOU WILL NUKE REMOTE KEYS
-        rsync \
+        rsync $RSYNCFLAGS \
             -av \
             --delete \
+            --delete-excluded \
             --exclude="*~" \
             --exclude=".git/" \
+            --exclude=".gitignore" \
             --exclude="configure*.log" \
+            --exclude="docs.d/" \
             --exclude="hostname" \
+            --exclude="mirrors.d/" \
+            --exclude="ob*.yaml" \
             --exclude="onion_service_non_anonymous" \
             --exclude="private_key" \
             --exclude="secrets.d/" \
@@ -70,11 +79,16 @@ Push() {
     done
 }
 
-# pull remote back for log review, backup, etc
-Pull() {
+# mirror remote back for log review, backup, etc
+Mirror() {
     for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
         echo :::: host: $host ::::
+        test -d $mirrors_dir || mkdir $mirrors_dir || exit 1
+        rsync $RSYNCFLAGS -av \
+              --delete \
+              --delete-excluded \
+              $host:${EOTK_HOME}/ $mirrors_dir/$host/
     done
 }
 
@@ -195,8 +209,8 @@ shift # we may need the remaining args
 
 case "$cmd" in
     version)
-        echo $prog: $version $EOTK_HOME
-        if [ -f .gitignore ] ; then
+        echo $prog: $version $EOTK_HOME `uname -a`
+        if [ -d .git ] ; then
             git show -s --oneline
         fi
         ;;
@@ -250,7 +264,7 @@ case "$cmd" in
         ;;
 
     ps)
-        ps auxww | grep /eotk/
+        ps auxww | egrep '\b(eotk)\b'
         ;;
 
     genkey|gen)
@@ -266,12 +280,32 @@ case "$cmd" in
         echo $prog: delete is tbd
         ;;
 
-    push)
-        Push
+    # this used to be called 'push' but got renamed because oops.
+    # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
+    remote-nuke-and-push|rnap)
+        RemoteAction stop -a
+        DestructivePush
         ;;
 
-    pull)
-        Pull
+    remote-mirror|mirror|pull)
+        Mirror
+        ;;
+
+    remote-test|test)
+        RemoteAction version
+        ;;
+
+    freeze-mirrors|freeze-mirror|freeze)
+        (
+            ds=`date "+%Y%m%d%H%M%S"`
+            cd $mirrors_dir || exit 1
+            for directory in */ ; do
+                test -d "$directory" || exit 1 # did */ expand?
+                dir=`basename $directory` # strip trailing /
+                echo :::: freeze: $dir ::::
+                tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
+            done
+        )
         ;;
 
     remote)

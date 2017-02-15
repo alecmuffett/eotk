@@ -12,5 +12,6 @@
 opt.d/*
 !opt.d/build*.sh
 
+mirrors.d/
 projects.d/
 secrets.d/
