@@ -1,7 +1,7 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
-#RSYNCFLAGS="-n" # safety/testing
+RSYNCFLAGS="-n" # safety/testing
 
 cd `dirname $0` || exit 1
 
@@ -45,7 +45,7 @@ ListProjects() {
 
 # what are the names of the remote workers?
 CloudHosts() { # fake this up for the moment
-    # echo "localhost" # this will be magic
+    echo "localhost" # this will be magic
     echo "rig1"
     echo "rig2"
     echo "rig3"
@@ -63,17 +63,22 @@ DestructivePush() {
             -av \
             --delete \
             --delete-excluded \
+            --exclude="*.log" \
             --exclude="*~" \
             --exclude=".git/" \
             --exclude=".gitignore" \
+            --exclude="cached-certs" \
+            --exclude="cached-microdesc*" \
             --exclude="configure*.log" \
             --exclude="docs.d/" \
             --exclude="hostname" \
+            --exclude="lock" \
             --exclude="mirrors.d/" \
             --exclude="ob*.yaml" \
             --exclude="onion_service_non_anonymous" \
             --exclude="private_key" \
             --exclude="secrets.d/" \
+            --exclude="state" \
             ${EOTK_HOME}/ \
             $host:${EOTK_HOME}/
     done
@@ -88,15 +93,20 @@ Mirror() {
         rsync $RSYNCFLAGS -av \
               --delete \
               --delete-excluded \
+              --exclude="cached-certs" \
+              --exclude="cached-microdesc*" \
               $host:${EOTK_HOME}/ $mirrors_dir/$host/
     done
 }
 
 RemoteAction() {
     for host in `CloudHosts` ; do
-        test "$host" = "localhost" && continue # skip self
         echo :::: host: $host ::::
-        ssh "$host" "$self $*"
+        if [ "$host" = "localhost" ] ; then
+            $self "$@"
+        else
+            ssh "$host" "$self $*"
+        fi
     done
 }
 
