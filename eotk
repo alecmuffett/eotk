@@ -53,11 +53,11 @@ CloudHosts() { # fake this up for the moment
 Push() {
     for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
-        echo :::: host: $host :::: # NOTE: PURGE delete-excluded
+        echo :::: host: $host ::::
+        # DO NOT USE `--delete-excluded` OR YOU WILL NUKE REMOTE KEYS
         rsync \
             -av \
             --delete \
-            --delete-excluded \
             --exclude="*~" \
             --exclude=".git/" \
             --exclude="configure*.log" \
