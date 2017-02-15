@@ -1,7 +1,7 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
-RSYNCFLAGS="-n" # safety/testing
+#RSYNCFLAGS="-n" # safety/testing
 
 cd `dirname $0` || exit 1
 
