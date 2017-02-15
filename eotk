@@ -209,7 +209,7 @@ shift # we may need the remaining args
 
 case "$cmd" in
     version)
-        echo $prog: $version $EOTK_HOME `uname -a`
+        Print $version $EOTK_HOME `uname -a`
         if [ -d .git ] ; then
             git show -s --oneline
         fi
@@ -277,7 +277,11 @@ case "$cmd" in
         ;;
 
     delete) # project, or "-a"
-        echo $prog: delete is tbd
+        Print delete is tbd
+        ;;
+
+    push)
+        Print push is destructive and has been renamed, see the documentation
         ;;
 
     # this used to be called 'push' but got renamed because oops.
@@ -295,7 +299,7 @@ case "$cmd" in
         RemoteAction version
         ;;
 
-    freeze-mirrors|freeze-mirror|freeze)
+    freeze-mirrors|freeze-mirror|freeze|backup)
         (
             ds=`date "+%Y%m%d%H%M%S"`
             cd $mirrors_dir || exit 1
