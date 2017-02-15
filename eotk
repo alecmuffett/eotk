@@ -86,7 +86,7 @@ Mirror() {
     for host in `CloudHosts` ; do
         test "$host" = "localhost" && continue # skip self
         echo :::: host: $host ::::
-        test -d $mirrors_dir || mkdir $mirrors_dir || exit 1
+        test -d $mirrors_dir || mkdir -p $mirrors_dir || exit 1
         rsync $RSYNCFLAGS -av \
               --delete \
               --delete-excluded \
@@ -276,7 +276,7 @@ case "$cmd" in
 
     genkey|gen)
         secrets=secrets.d
-        test -d $secrets || mkdir $secrets || exit 1
+        test -d $secrets || mkdir -p $secrets || exit 1
         (
             cd $secrets
             generate-onion-key.sh
@@ -333,7 +333,7 @@ case "$cmd" in
 
         # ob storage
         ob_dir=$project_dir/onionbalance.run
-        test -d $ob_dir || mkdir $ob_dir || exit 1
+        test -d $ob_dir || mkdir -p $ob_dir || exit 1
 
         # config files
         ob_conf=$ob_dir/config.yaml
