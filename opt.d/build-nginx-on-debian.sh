@@ -3,7 +3,7 @@
 ngxversion=1.10.3
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
-LUAJITURL="https://luajit.org/download/LuaJIT-2.0.3.tar.gz"
+LUAJITURL="http://luajit.org/download/LuaJIT-2.0.3.tar.gz"
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
@@ -27,32 +27,49 @@ sudo aptitude install -y libpcre3-dev zlib1g-dev libssl-dev || exit 1
 
 # get NGINX and cd into it
 
-ngxurl=https://nginx.org/download/nginx-$ngxversion.tar.gz
-sigurl=https://nginx.org/download/nginx-$ngxversion.tar.gz.asc
+<<<<<<< HEAD
+ngxurl=http://nginx.org/download/nginx-$ngxversion.tar.gz
+sigurl=http://nginx.org/download/nginx-$ngxversion.tar.gz.asc
 file=`basename "$ngxurl"`
 sig=`basename "$sigurl"`
 dir=`basename "$file" .tar.gz`
 test -f "$file" || curl -o "$file" "$ngxurl" || exit 1
 test -f $sig || curl -o $sig $sigurl || exit 1
-gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys $ngxsigningkey || exit 1
+gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $ngxsigningkey || exit 1
 gpg --verify $sig || exit 1
 test -d "$dir" || tar zxf "$file" || exit 1
+=======
+ngxurl=http://nginx.org/download/nginx-$ngxversion.tar.gz
+ngxsigurl=http://nginx.org/download/nginx-$ngxversion.tar.gz.asc
+ngxfile=`basename "$ngxurl"`
+ngxsig=`basename "$ngxsigurl"`
+ngxdir=`basename "$ngxfile" .tar.gz`
 
-cd $dir || exit 1
+test -f "$ngxfile" || curl -o "$ngxfile" "$ngxurl" || exit 1
+test -f $ngxsig || curl -o $ngxsig $ngxsigurl || exit 1
+gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $ngxsigningkey || exit 1
+gpg --verify $ngxsig || exit 1
+test -d "$ngxdir" || tar zxf "$ngxfile" || exit 1
+
+cd $ngxdir || exit 1
+>>>>>>> upstream/master
+
 src_dir=`pwd`
 
 # make luajiturl
 
 luaurl=$LUAJITURL
-file=`basename "$luaurl"`
-dir=`basename "$file" .tar.gz`
-test -f "$file" || curl -o "$file" "$luaurl" || exit 1
-test -d "$dir" || tar zxf "$file" || exit 1
+luafile=`basename "$luaurl"`
+luadir=`basename "$luafile" .tar.gz`
 
-(
-    cd $dir || exit 1
-    make DESTDIR=$opt_dir install
-)
+test -f "$luafile" || curl -o "$luafile" "$luaurl" || exit 1
+test -d "$luadir" || tar zxf "$luafile" || exit 1
+
+cd $luadir || exit 1
+
+make DESTDIR=$opt_dir install || exit 1
+
+cd $src_dir || exit 1
 
 # get mods
 
@@ -87,5 +104,11 @@ make install || exit 1
 cd $opt_dir || exit 1
 
 ln -s sbin/nginx || exit 1
+
+# cleanup
+
+rm -rf $ngxfile $ngxsig $ngxdir
+
+# done
 
 exit 0

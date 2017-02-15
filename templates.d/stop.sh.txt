@@ -13,6 +13,7 @@ for pidfile in $pidfiles; do
 done
 
 nginxconf=%PROJECT_DIR%/nginx.conf
-nginx -c $nginxconf -s stop
+pidfile=%PROJECT_DIR%/nginx.pid
+test -s $pidfile && nginx -c $nginxconf -s stop
 
 exit 0

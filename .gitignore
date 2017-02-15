@@ -5,6 +5,13 @@
 *.log
 *.pem
 *.tconf
+*config.yaml
+
 *~
-projects.d
-secrets.d
+
+opt.d/*
+!opt.d/build*.sh
+
+mirrors.d/
+projects.d/
+secrets.d/

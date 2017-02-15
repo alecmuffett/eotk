@@ -10,7 +10,7 @@ conffiles=%PROJECT_DIR%/tor.conf
 
 for torconf in $conffiles ; do
     test -f $torconf && tor -f $torconf
-done >%LOG_DIR%/tor-startup.conf
+done >%LOG_DIR%/tor-startup.log
 
 sleep %SCRIPT_PAUSE%
 

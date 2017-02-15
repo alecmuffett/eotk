@@ -3,10 +3,17 @@
 
 ## Status
 
-**ALPHA** - see [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information.
+### NEW RELEASES
+
+* Apparently Stable v1.0 Alpha
+  * Downloadable from https://github.com/alecmuffett/eotk/releases
+  * I recommend that you use this if you feel at all uncertain about systems administration or tweaking code
+* Trunk
+  * See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
 
 ## Changes
 
+* have declared a stable alpha release
 * architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
 * ["tunables"](TUNEABLES.md) documentation for template content
@@ -200,6 +207,8 @@ eotk configure project.conf
 eotk start myproject
 ```
 
+See also: the next question:
+
 ### How do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
 
 #### OLD METHOD
@@ -296,7 +305,7 @@ avoid "hostnames" as above:
 ```
 set project fooproj
 hardmap %NEW_ONION% foo.com.au syd per
-hardmap %NEW_ONION% cdn.foo.net
+hardmap %NEW_ONION% foo.net cdn
 hardmap %NEW_ONION% foo.aws.amazon.com
 ```
 
@@ -341,7 +350,7 @@ stuck playing certificate "whack-a-mole".
 ### NGINX: Bad Gateway
 
 Generally this means that NGINX cannot connect to the remote website,
-which generally happens because:
+which usually happens because:
 
 * the site name in the config file, is wrong
 * the nginx daemon tries to do a DNS resolution, which fails
@@ -420,6 +429,10 @@ the rest of the FB-over-Tor team.  Hugs.
 ### softmap 3
 
 ![softmap 3](docs.d/softmap-3.png)
+
+### softmap 4
+
+![softmap 4](docs.d/softmap-4.png)
 
 ### horcrux 1
 

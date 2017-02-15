@@ -1,114 +1,232 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
+#RSYNCFLAGS="-n" # safety/testing
+
 cd `dirname $0` || exit 1
 
 export EOTK_HOME=`pwd` # expected by tools
 
+# for invoking myself
+prog=`basename $0`
+self=$EOTK_HOME/$prog
+
+# meta
+version=1.1alpha
+
 # set project directory; this path is hard-replicated elsewhere
 project_dir=$EOTK_HOME/projects.d
+
+# mirror directory
+mirrors_dir=$EOTK_HOME/mirrors.d
 
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
-# meta
-prog=`basename $0`
-version=1.3
-
-Warn() {
-    echo "$@" 1>&2
+# print a formatted message to stdout
+Print() {
+    echo "$prog:" "$@"
 }
 
-AllProjects() {
+# print a formatted message to stderr
+Warn() {
+    Print "$@" 1>&2
+}
+
+# essentially the projects.d folder is a little database
+ListProjects() {
     (
-        cd $project_dir
+        cd $project_dir || exit 1
         for d in *.d/ ; do
             echo `basename $d .d`
         done
     )
 }
 
-Action() {
+# what are the names of the remote workers?
+CloudHosts() { # fake this up for the moment
+    echo "localhost" # this will be magic
+    echo "rig1"
+    echo "rig2"
+    echo "rig3"
+    echo "rig4"
+    echo "rig5"
+    echo "rig6"
+}
+
+# push eotk directory to remote
+DestructivePush() {
+    for host in `CloudHosts` ; do
+        test "$host" = "localhost" && continue # skip self
+        echo :::: host: $host ::::
+        rsync $RSYNCFLAGS \
+            -av \
+            --delete \
+            --delete-excluded \
+            --exclude="*.log" \
+            --exclude="*~" \
+            --exclude=".git/" \
+            --exclude=".gitignore" \
+            --exclude="cached-certs" \
+            --exclude="cached-microdesc*" \
+            --exclude="configure*.log" \
+            --exclude="docs.d/" \
+            --exclude="hostname" \
+            --exclude="lock" \
+            --exclude="mirrors.d/" \
+            --exclude="ob*.yaml" \
+            --exclude="onion_service_non_anonymous" \
+            --exclude="private_key" \
+            --exclude="secrets.d/" \
+            --exclude="state" \
+            ${EOTK_HOME}/ \
+            $host:${EOTK_HOME}/
+    done
+}
+
+# mirror remote back for log review, backup, etc
+Mirror() {
+    for host in `CloudHosts` ; do
+        test "$host" = "localhost" && continue # skip self
+        echo :::: host: $host ::::
+        test -d $mirrors_dir || mkdir $mirrors_dir || exit 1
+        rsync $RSYNCFLAGS -av \
+              --delete \
+              --delete-excluded \
+              --exclude="cached-certs" \
+              --exclude="cached-microdesc*" \
+              $host:${EOTK_HOME}/ $mirrors_dir/$host/
+    done
+}
+
+RemoteAction() {
+    for host in `CloudHosts` ; do
+        echo :::: host: $host ::::
+        if [ "$host" = "localhost" ] ; then
+            $self "$@"
+        else
+            ssh "$host" "$self $*"
+        fi
+    done
+}
+
+# run a command in the context of the local projects directory
+LocalAction() {
     action=$1
     shift
 
     verbose=false
+
     if [ "x$1" = "x" ] ; then
-        Warn "missing project name, try: '$prog projects' for a list, or '-a' for all"
-        return
+        Print error: missing project name, try: $prog projects for a list, or -a for all
+        return 1
     elif [ "x$1" = "x-a" ] ; then
-        projects=`AllProjects`
+        projects=`ListProjects`
         verbose=true
     else
         projects="$*"
     fi
 
     for project in $projects ; do
-        $verbose && echo :::: $project ::::
+        $verbose && echo :::: project: $project ::::
         sh $project_dir/$project.d/$action.sh
     done
 }
 
+# implement kludge to insert freshly-generated onions into a "*.tconf"
+# template-configuration, so people don't have to type so much...
 Populate() {
+    if [ -t 0 ] ; then # if stdin is a terminal, provide diags
+        dots=true
+    else
+        dots=false
+    fi
+
     cat "$@" |
         while read line ; do
             case "$line" in
-                *%NEW_ONION%*)
-                    onion=secrets.d/`$EOTK_HOME/eotk genkey`
+                *%NEW_ONION%*) # legacy / shorter / more common
+                    onion=secrets.d/`$self genkey`
                     echo "$line" | sed -e "s!%NEW_ONION%!$onion!"
+                    ;;
+                *%NEW_HARD_ONION%*)
+                    onion=secrets.d/`$self genkey`
+                    echo "$line" | sed -e "s!%NEW_HARD_ONION%!$onion!"
+                    ;;
+                *%NEW_SOFT_ONION%*)
+                    onion=`$self genkey`
+                    onion=`basename $onion .key`
+                    echo "$line" | sed -e "s!%NEW_SOFT_ONION%!$onion!"
                     ;;
                 *)
                     echo "$line"
                     ;;
             esac
+
+            if $dots ; then
+                echo ".\c" >/dev/tty
+            fi
         done
+
+    if $dots ; then
+        echo "" >/dev/tty
+    fi
 }
 
-
+# get a config file and re/populate the projects directory with it
 Configure() {
     log=configure$$.log
 
     for file in "$@" ; do
-        echo :::: $file ::::
+        echo :::: file: $file ::::
 
         case "$file" in
+            *.conf)
+                : happy bunnies
+                ;;
+
             *.tconf)
                 file2=`basename $file .tconf`.conf
                 if [ -s $file2 ] ; then
-                    echo $prog: $file: using existing $file2
+                    Print info: $file: using existing $file2
                 else
-                    echo $prog: $file: populating $file2 with onions, please be very patient...
-                    Populate $file > $file2
+                    Print info: $file: populating $file2 with onions, please be patient...
+                    Populate $file >$file2
                 fi
                 file="$file2"
                 ;;
-            *) ;;
+
+            *)
+                Print error: bad config file suffix, was expecting: .conf, .tconf
+                exit 1
+                ;;
         esac
 
-        echo $prog: $file: processing
-
         if ! $EOTK_HOME/lib.d/do-configure.pl "$file" ; then
-            echo $prog: failure processing $file: see $log
+            Print error: failure processing $file: see $log
             exit 1
         fi
     done 2>$log
 
-    echo $prog: done
+    Print info: done, logfile: $log
 }
 
+# argument 'parser' - ha!
+
 cmd="$1"
-shift
+
+shift # we may need the remaining args
 
 case "$cmd" in
     version)
-        echo $prog: $version $EOTK_HOME
-        if [ -f .gitignore ] ; then
+        Print $version $EOTK_HOME `uname -a`
+        if [ -d .git ] ; then
             git show -s --oneline
         fi
         ;;
 
     projects|proj)
-        AllProjects
+        ListProjects
         ;;
 
     populate|pop)
@@ -120,57 +238,107 @@ case "$cmd" in
         ;;
 
     start) # project, or "-a"
-        Action start "$@"
+        LocalAction start "$@"
         ;;
 
     stop) # project, or "-a"
-        Action stop "$@"
+        LocalAction stop "$@"
         ;;
 
     bounce|restart|reload) # project, or "-a"
-        Action bounce "$@"
+        LocalAction bounce "$@"
         ;;
 
     nxreload) # project, or "-a"
-        Action nxreload "$@"
+        LocalAction nxreload "$@"
         ;;
 
     debugon) # project, or "-a"
-        Action debugon "$@"
+        LocalAction debugon "$@"
         ;;
 
     debugoff) # project, or "-a"
-        Action debugoff "$@"
+        LocalAction debugoff "$@"
         ;;
 
     harvest|onions) # project, or "-a"
-        Action harvest "$@"
+        LocalAction harvest "$@"
         ;;
 
     status) # project, or "-a"
-        Action status "$@"
+        LocalAction status "$@"
         ;;
 
     maps|map) # project, or "-a"
-        Action maps "$@"
+        LocalAction maps "$@"
         ;;
 
     ps)
-        ps auxww | grep /eotk/
+        ps auxww | egrep '\b(eotk)\b'
         ;;
 
     genkey|gen)
         secrets=secrets.d
         test -d $secrets || mkdir $secrets || exit 1
-        ( cd $secrets ; generate-onion-key.sh )
+        (
+            cd $secrets
+            generate-onion-key.sh
+        )
         ;;
 
     delete) # project, or "-a"
-        echo $prog: delete is tbd
+        Print delete is tbd
+        ;;
+
+    push)
+        Print push is destructive and has been renamed, see the documentation
+        ;;
+
+    # this used to be called 'push' but got renamed because oops.
+    # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
+    remote-nuke-and-push|rnap)
+        RemoteAction stop -a
+        DestructivePush
+        ;;
+
+    remote-mirror|mirror|pull)
+        Mirror
+        ;;
+
+    remote-test|test)
+        RemoteAction version
+        ;;
+
+    freeze-mirrors|freeze-mirror|freeze|backup)
+        (
+            ds=`date "+%Y%m%d%H%M%S"`
+            cd $mirrors_dir || exit 1
+            for directory in */ ; do
+                test -d "$directory" || exit 1 # did */ expand?
+                dir=`basename $directory` # strip trailing /
+                echo :::: freeze: $dir ::::
+                tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
+            done
+        )
+        ;;
+
+    remote)
+        RemoteAction "$@"
+        ;;
+
+    ob-config|obconfig)
+        if [ "x$1" = "x" ] ; then
+            Print error: missing project name, try: $prog projects for a list, or -a for all
+            exit 1
+        fi
+
+        $self remote map "$@" |
+            grep -v "^::::" |
+            lib.d/do-obconfig.pl > ob-config.yaml
         ;;
 
     *)
-        echo "usage: $prog args ... # see README.md for docs" 1>&2
+        Print usage: see README.md for documentation
         exit 1
         ;;
 esac

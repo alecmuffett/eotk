@@ -326,7 +326,7 @@ sub DoProject {
 &SetEnv("nginx_workers", 5);
 
 &SetEnv("tor_intros_per_daemon", 3);
-&SetEnv("tor_single_onion", 0);
+&SetEnv("tor_single_onion", 1);
 &SetEnv("tor_worker_prefix", "hs");
 
 &SetEnv("softmap_tor_workers", 4);
