@@ -349,7 +349,7 @@ case "$cmd" in
         ;;
 
     delete) # project, or "-a"
-        Print not yet implemented, sorry.
+        Print $cmd not yet implemented, sorry.
         ;;
 
     ## DIAGS
@@ -417,7 +417,7 @@ case "$cmd" in
         ;;
 
     ob-stop|obstop)
-        Print not yet implemented, sorry.
+        Print $cmd not yet implemented, sorry.
         ;;
 
     ## FREEZE/BACKUP
