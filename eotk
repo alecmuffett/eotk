@@ -1,11 +1,11 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
-#RSYNCFLAGS="-n" # safety/testing
+#rsync_flags="-n" # testing
 
+# expected by tools and libraries
 cd `dirname $0` || exit 1
-
-export EOTK_HOME=`pwd` # expected by tools
+export EOTK_HOME=`pwd`
 
 # for invoking myself
 prog=`basename $0`
@@ -20,8 +20,57 @@ project_dir=$EOTK_HOME/projects.d
 # mirror directory
 mirrors_dir=$EOTK_HOME/mirrors.d
 
+# onionbalance directory
+ob_dir=$EOTK_HOME/onionbalance.d
+
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
+
+##################################################################
+
+# argument stripping
+flag_remote=false
+while : ; do
+    case "x$1" in
+        x--remote)
+            flag_remote=true
+            shift
+            ;;
+        x--debug)
+            set -x
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+# what are the hostnames of the remote workers?
+host_list=$EOTK_HOME/eotk-hosts.conf
+
+CloudHosts() {
+    # use --remote hack to forcibly stop risk of recursion...
+    if $flag_remote ; then
+        echo "localhost" # this will be treated as a magic sentinel
+        return 0
+    fi
+
+    # todo: if eotk-hosts.conf exists,
+    # cat it (strip comments?)
+    # and return
+    if [ -s $host_list ] ; then
+        cat $host_list
+        return 0
+    fi
+
+    # else we are working just on this machine
+    echo "localhost" # this will be treated as a magic sentinel
+}
+
+cloud_hosts=`CloudHosts` # saves multiple invocations
+
+##################################################################
 
 # print a formatted message to stdout
 Print() {
@@ -43,51 +92,49 @@ ListProjects() {
     )
 }
 
-# what are the names of the remote workers?
-CloudHosts() { # fake this up for the moment
-    echo "localhost" # this will be magic
-    for i in 1 2 3 4 5 6 ; do
-        : echo rig$i
-    done
-}
+# TODO(alecm) resolve potential clashes between project names and
+# various other directory names ending in ".d"; maybe use ".proj"?
 
 # push eotk directory to remote
 DestructivePush() {
-    for host in `CloudHosts` ; do
-        test "$host" = "localhost" && continue # skip self
-        echo :::: host: $host ::::
-        rsync $RSYNCFLAGS \
-            -av \
-            --delete \
-            --delete-excluded \
-            --exclude="*.log" \
-            --exclude="*~" \
-            --exclude=".git/" \
-            --exclude=".gitignore" \
-            --exclude="cached-certs" \
-            --exclude="cached-microdesc*" \
-            --exclude="configure*.log" \
-            --exclude="docs.d/" \
-            --exclude="hostname" \
-            --exclude="lock" \
-            --exclude="mirrors.d/" \
-            --exclude="ob*.yaml" \
-            --exclude="onion_service_non_anonymous" \
-            --exclude="private_key" \
-            --exclude="secrets.d/" \
-            --exclude="state" \
-            ${EOTK_HOME}/ \
-            $host:${EOTK_HOME}/
+    for host in $cloud_hosts ; do
+        test "x$host" = "xlocalhost" && continue # skip self
+        echo :::: push $host ::::
+        rsync $rsync_flags \
+              -av \
+              --delete \
+              --delete-excluded \
+              --exclude="*.log" \
+              --exclude="*.pid" \
+              --exclude="*.sock" \
+              --exclude="*.yaml" \
+              --exclude="*~" \
+              --exclude="docs.d/" \
+              --exclude="mirrors.d/" \
+              --exclude="onionbalance.d/" \
+              --exclude="secrets.d/" \
+              --exclude=".git/" \
+              --exclude=".gitignore" \
+              --exclude="cached-certs" \
+              --exclude="cached-microdesc*" \
+              --exclude="configure*.log" \
+              --exclude="hostname" \
+              --exclude="lock" \
+              --exclude="onion_service_non_anonymous" \
+              --exclude="private_key" \
+              --exclude="state" \
+              ${EOTK_HOME}/ \
+              $host:${EOTK_HOME}/
     done
 }
 
 # mirror remote back for log review, backup, etc
 Mirror() {
-    for host in `CloudHosts` ; do
-        test "$host" = "localhost" && continue # skip self
-        echo :::: host: $host ::::
+    for host in $cloud_hosts ; do
+        test "x$host" = "xlocalhost" && continue # skip self
+        echo :::: mirror $host ::::
         test -d $mirrors_dir || mkdir -p $mirrors_dir || exit 1
-        rsync $RSYNCFLAGS -av \
+        rsync $rsync_flags -av \
               --delete \
               --delete-excluded \
               --exclude="cached-certs" \
@@ -96,37 +143,42 @@ Mirror() {
     done
 }
 
-RemoteAction() {
-    for host in `CloudHosts` ; do
-        echo :::: host: $host ::::
-        if [ "$host" = "localhost" ] ; then
-            $self "$@"
-        else
-            ssh "$host" "$self $*"
-        fi
-    done
-}
-
 # run a command in the context of the local projects directory
-LocalAction() {
+RunLocally() {
     action=$1
     shift
+    project=$1
+    shift
+    echo :::: $action $project $@ ::::
+    sh "$project_dir/$project.d/$action.sh" "$@"
+}
 
-    verbose=false
+# $1=action, rest = project names
+RunLocallyOverProjects() {
+    action=$1
+    shift # remaining arguments are projects
 
-    if [ "x$1" = "x" ] ; then
+    if [ "x$1" = "x" ] ; then # test for no args
         Print error: missing project name, try: $prog projects for a list, or -a for all
         return 1
-    elif [ "x$1" = "x-a" ] ; then
+    elif [ "x$1" = "x-a" ] ; then # test for / expand the "-a" flag
         projects=`ListProjects`
-        verbose=true
-    else
+    else # do what we are told
         projects="$*"
     fi
 
+    # loop
     for project in $projects ; do
-        $verbose && echo :::: project: $project ::::
-        sh $project_dir/$project.d/$action.sh
+        RunLocally $action $project
+    done
+}
+
+# run a command on remote machines, or possibly locally
+InvokeRemotely() {
+    for host in $cloud_hosts ; do
+        test "x$host" = "xlocalhost" && continue # skip self
+        echo :::: invoking $host $* ::::
+        ssh "$host" "$self --remote $*"
     done
 }
 
@@ -146,7 +198,7 @@ Populate() {
                     onion=secrets.d/`$self genkey`
                     echo "$line" | sed -e "s!%NEW_ONION%!$onion!"
                     ;;
-                *%NEW_HARD_ONION%*)
+                *%NEW_HARD_ONION%*) # same as NEW_ONION
                     onion=secrets.d/`$self genkey`
                     echo "$line" | sed -e "s!%NEW_HARD_ONION%!$onion!"
                     ;;
@@ -175,7 +227,7 @@ Configure() {
     log=configure$$.log
 
     for file in "$@" ; do
-        echo :::: file: $file ::::
+        echo :::: configure $file ::::
 
         case "$file" in
             *.conf)
@@ -205,175 +257,194 @@ Configure() {
         fi
     done 2>$log
 
-    Print info: done, logfile: $log
+    Print done. logfile is $log
 }
 
 # argument 'parser' - ha!
 
-cmd="$1"
+Main() {
+    cmd="$1" # we may need the remaining args
+    shift
 
-shift # we may need the remaining args
+    case "$cmd" in
+        version)
+            Print $version $EOTK_HOME `uname -a`
+            test -d .git && git show -s --oneline
+            ;;
 
-case "$cmd" in
-    version)
-        Print $version $EOTK_HOME `uname -a`
-        if [ -d .git ] ; then
-            git show -s --oneline
-        fi
-        ;;
+        projects|proj)
+            ListProjects
+            ;;
 
-    projects|proj)
-        ListProjects
-        ;;
+        populate|pop)
+            Populate "$@"
+            ;;
 
-    populate|pop)
-        Populate "$@"
-        ;;
+        configure|config|conf)
+            Configure "$@"
+            ;;
 
-    configure|config|conf)
-        Configure "$@"
-        ;;
+        genkey|gen)
+            secrets=secrets.d
+            test -d $secrets || mkdir -p $secrets || exit 1
+            (
+                cd $secrets
+                generate-onion-key.sh
+            )
+            ;;
 
-    start) # project, or "-a"
-        LocalAction start "$@"
-        ;;
+        test)
+            Main version # recurse!
+            InvokeRemotely version
+            ;;
 
-    stop) # project, or "-a"
-        LocalAction stop "$@"
-        ;;
+        ## ACTIONS
 
-    bounce|restart|reload) # project, or "-a"
-        LocalAction bounce "$@"
-        ;;
+        start) # project, or "-a"
+            RunLocallyOverProjects start "$@"
+            InvokeRemotely start "$@"
+            ;;
 
-    nxreload) # project, or "-a"
-        LocalAction nxreload "$@"
-        ;;
+        stop) # project, or "-a"
+            RunLocallyOverProjects stop "$@"
+            InvokeRemotely stop "$@"
+            ;;
 
-    debugon) # project, or "-a"
-        LocalAction debugon "$@"
-        ;;
+        bounce|restart|reload) # project, or "-a"
+            RunLocallyOverProjects bounce "$@"
+            InvokeRemotely bounce "$@"
+            ;;
 
-    debugoff) # project, or "-a"
-        LocalAction debugoff "$@"
-        ;;
+        nxreload) # project, or "-a"
+            RunLocallyOverProjects nxreload "$@"
+            InvokeRemotely nxreload "$@"
+            ;;
 
-    harvest|onions) # project, or "-a"
-        LocalAction harvest "$@"
-        ;;
+        debugon) # project, or "-a"
+            RunLocallyOverProjects debugon "$@"
+            InvokeRemotely debugon "$@"
+            ;;
 
-    status) # project, or "-a"
-        LocalAction status "$@"
-        ;;
+        debugoff) # project, or "-a"
+            RunLocallyOverProjects debugoff "$@"
+            InvokeRemotely debugoff "$@"
+            ;;
 
-    maps|map) # project, or "-a"
-        LocalAction maps "$@"
-        ;;
+        harvest|onions) # project, or "-a"
+            RunLocallyOverProjects harvest "$@"
+            InvokeRemotely harvest "$@"
+            ;;
 
-    ps)
-        ps auxww | egrep '\b(eotk)\b'
-        ;;
+        status) # project, or "-a"
+            RunLocallyOverProjects status "$@"
+            InvokeRemotely status "$@"
+            ;;
 
-    genkey|gen)
-        secrets=secrets.d
-        test -d $secrets || mkdir -p $secrets || exit 1
-        (
-            cd $secrets
-            generate-onion-key.sh
-        )
-        ;;
+        maps|map) # project, or "-a"
+            RunLocallyOverProjects maps "$@"
+            InvokeRemotely maps "$@"
+            ;;
 
-    delete) # project, or "-a"
-        Print delete is tbd
-        ;;
+        delete) # project, or "-a"
+            Print delete is to be done.
+            ;;
 
-    push)
-        Print push is destructive and has been renamed, see the documentation
-        ;;
+        ## DIAGS
 
-    # this used to be called 'push' but got renamed because oops.
-    # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
-    remote-nuke-and-push|rnap)
-        RemoteAction stop -a
-        DestructivePush
-        ;;
+        ps)
+            ps auxww | egrep '\b(eotk)\b'
+            InvokeRemotely ps
+            ;;
 
-    remote-mirror|mirror|pull)
-        Mirror
-        ;;
+        ## ONIONBALANCE
 
-    remote-test|test)
-        RemoteAction version
-        ;;
+        push)
+            Print push is destructive and has been renamed, see the documentation
+            ;;
 
-    freeze-mirrors|freeze-mirror|freeze|backup)
-        (
-            ds=`date "+%Y%m%d%H%M%S"`
-            cd $mirrors_dir || exit 1
-            for directory in */ ; do
-                test -d "$directory" || exit 1 # did */ expand?
-                dir=`basename $directory` # strip trailing /
-                echo :::: freeze: $dir ::::
-                tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
-            done
-        )
-        ;;
+        # this used to be called 'push' but got renamed because oops.
+        # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
+        remote-nuke-and-push|rnap)
+            Main stop -a
+            DestructivePush
+            ;;
 
-    remote) # todo: wire this into all actions?
-        RemoteAction "$@"
-        ;;
+        ob-config|obconfig)
+            if [ "x$1" = "x" ] ; then
+                Print error: missing project name, try: $prog projects for a list, or -a for all
+                exit 1
+            fi
 
-    ob-config|obconfig)
-        if [ "x$1" = "x" ] ; then
-            Print error: missing project name, try: $prog projects for a list, or -a for all
+            # TODO: check if they are extant first, and if so, exit with error
+
+            # ob storage
+            ob_dir=$project_dir/onionbalance.run
+            test -d $ob_dir || mkdir -p $ob_dir || exit 1
+
+            # config files
+            ob_conf=$ob_dir/config.yaml
+            tor_conf=$ob_dir/tor.conf
+            tor_control=$ob_dir/tor-control.sock
+
+            # make tor conf
+            (
+                echo DataDirectory $ob_dir
+                echo ControlPort unix:$tor_control
+                echo PidFile $ob_dir/tor.pid
+                echo Log info file $ob_dir/tor.log
+                echo SafeLogging 1
+                echo HeartbeatPeriod 60 minutes
+                echo RunAsDaemon 1
+                echo "#" onionbalance
+                # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
+                echo SocksPort 127.0.0.1:9050 # meh
+                echo CookieAuthentication 1
+                echo MaxClientCircuitsPending 1024
+            ) > $tor_conf
+
+            # make ob conf
+            $self map "$@" | grep -v "^::::" | do-obconfig.pl > $ob_conf
+
+            # to be done
+            # echo tor -f $tor_conf
+            # echo onionbalance -s $tor_control -c $ob_conf -v info
+            ;;
+
+        ob-start|obstart)
+            ;;
+
+        ob-stop|obstop)
+            ;;
+
+        ## FREEZE/BACKUP
+
+        mirror|pull)
+            Mirror
+            ;;
+
+        freeze|backup)
+            Mirror
+            (
+                ds=`date "+%Y%m%d%H%M%S"`
+                cd $mirrors_dir || exit 1
+                for directory in */ ; do
+                    test -d "$directory" || exit 1 # did */ expand?
+                    dir=`basename $directory` # strip trailing /
+                    echo :::: freeze $dir ::::
+                    tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
+                done
+            )
+            ;;
+
+        *)
+            Print usage: see README.md for documentation
             exit 1
-        fi
+            ;;
+    esac
+}
 
-        # TODO: check if they are extant first, and if so, exit with error
+##################################################################
 
-        # ob storage
-        ob_dir=$project_dir/onionbalance.run
-        test -d $ob_dir || mkdir -p $ob_dir || exit 1
-
-        # config files
-        ob_conf=$ob_dir/config.yaml
-        tor_conf=$ob_dir/tor.conf
-        tor_control=$ob_dir/tor-control.sock
-
-        # make tor conf
-        (
-            echo DataDirectory $ob_dir
-            echo ControlPort unix:$tor_control
-            echo PidFile $ob_dir/tor.pid
-            echo Log info file $ob_dir/tor.log
-            echo SafeLogging 1
-            echo HeartbeatPeriod 60 minutes
-            echo RunAsDaemon 1
-            echo "#" onionbalance
-            # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
-            echo SocksPort 127.0.0.1:9050 # meh
-            echo CookieAuthentication 1
-            echo MaxClientCircuitsPending 1024
-        ) > $tor_conf
-
-        # make ob conf
-        $self remote map "$@" | grep -v "^::::" | do-obconfig.pl > $ob_conf
-
-        # to be done
-        # echo tor -f $tor_conf
-        # echo onionbalance -s $tor_control -c $ob_conf -v info
-        ;;
-
-    ob-start|obstart)
-        ;;
-
-    ob-stop|obstop)
-        ;;
-
-    *)
-        Print usage: see README.md for documentation
-        exit 1
-        ;;
-esac
+Main "$@"
 
 exit 0
