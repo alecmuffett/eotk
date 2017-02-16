@@ -2,6 +2,12 @@
 # eotk (c) 2017 Alec Muffett
 cd %PROJECT_DIR% || exit 1
 
+lockfile=nginx.pid
+if [ -s $lockfile ] ; then
+    echo "$0: $lockfile exists, %PROJECT% may already be started, aborting!"
+    exit 1
+fi
+
 %%IF %IS_SOFTMAP%
 conffiles=`echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/tor.conf`
 %%ELSE

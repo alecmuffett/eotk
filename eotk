@@ -378,7 +378,6 @@ Main() {
             # TODO: check if they are extant first, and if so, exit with error
 
             # ob storage
-            ob_dir=$project_dir/onionbalance.run
             test -d $ob_dir || mkdir -p $ob_dir || exit 1
 
             # config files
