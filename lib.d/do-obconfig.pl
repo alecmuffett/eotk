@@ -33,12 +33,6 @@ while (<>) {
 
 $indent = "    ";
 
-print <<"EOT";
-INITIAL_DELAY: 60
-# PUBLISH_CHECK_INTERVAL
-# REFRESH_INTERVAL: 600
-EOT
-
 print "services:\n";
 foreach my $project (sort keys %data) {
     print "# PROJECT $project\n";

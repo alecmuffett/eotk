@@ -13,8 +13,6 @@ opt.d/*
 !opt.d/build*.sh
 
 mirrors.d/
+onionbalance.d/
 projects.d/
 secrets.d/
-
-# delete this eventually
-ob-tor.d/

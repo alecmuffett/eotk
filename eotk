@@ -22,6 +22,10 @@ mirrors_dir=$EOTK_HOME/mirrors.d
 
 # onionbalance directory
 ob_dir=$EOTK_HOME/onionbalance.d
+ob_conf=$ob_dir/config.yaml
+ob_status_sock=$ob_dir/ob-status.sock
+ob_tor_conf=$ob_dir/tor.conf
+ob_tor_control_sock=$ob_dir/tor-control.sock
 
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
@@ -262,188 +266,184 @@ Configure() {
 
 # argument 'parser' - ha!
 
-Main() {
-    cmd="$1" # we may need the remaining args
-    shift
+cmd="$1" # we may need the remaining args
+shift
 
-    case "$cmd" in
-        version)
-            Print $version $EOTK_HOME `uname -a`
-            test -d .git && git show -s --oneline
-            ;;
+case "$cmd" in
+    version)
+        Print $version $EOTK_HOME `uname -a`
+        test -d .git && git show -s --oneline
+        ;;
 
-        projects|proj)
-            ListProjects
-            ;;
+    projects|proj)
+        ListProjects
+        ;;
 
-        populate|pop)
-            Populate "$@"
-            ;;
+    populate|pop)
+        Populate "$@"
+        ;;
 
-        configure|config|conf)
-            Configure "$@"
-            ;;
+    configure|config|conf)
+        Configure "$@"
+        ;;
 
-        genkey|gen)
-            secrets=secrets.d
-            test -d $secrets || mkdir -p $secrets || exit 1
-            (
-                cd $secrets
-                generate-onion-key.sh
-            )
-            ;;
+    genkey|gen)
+        secrets=secrets.d
+        test -d $secrets || mkdir -p $secrets || exit 1
+        (
+            cd $secrets
+            generate-onion-key.sh
+        )
+        ;;
 
-        test)
-            Main version # recurse!
-            InvokeRemotely version
-            ;;
+    test)
+        $self version # recurse!
+        InvokeRemotely version
+        ;;
 
-        ## ACTIONS
+    ## ACTIONS
 
-        start) # project, or "-a"
-            RunLocallyOverProjects start "$@"
-            InvokeRemotely start "$@"
-            ;;
+    start) # project, or "-a"
+        RunLocallyOverProjects start "$@"
+        InvokeRemotely start "$@"
+        ;;
 
-        stop) # project, or "-a"
-            RunLocallyOverProjects stop "$@"
-            InvokeRemotely stop "$@"
-            ;;
+    stop) # project, or "-a"
+        RunLocallyOverProjects stop "$@"
+        InvokeRemotely stop "$@"
+        ;;
 
-        bounce|restart|reload) # project, or "-a"
-            RunLocallyOverProjects bounce "$@"
-            InvokeRemotely bounce "$@"
-            ;;
+    bounce|restart|reload) # project, or "-a"
+        RunLocallyOverProjects bounce "$@"
+        InvokeRemotely bounce "$@"
+        ;;
 
-        nxreload) # project, or "-a"
-            RunLocallyOverProjects nxreload "$@"
-            InvokeRemotely nxreload "$@"
-            ;;
+    nxreload) # project, or "-a"
+        RunLocallyOverProjects nxreload "$@"
+        InvokeRemotely nxreload "$@"
+        ;;
 
-        debugon) # project, or "-a"
-            RunLocallyOverProjects debugon "$@"
-            InvokeRemotely debugon "$@"
-            ;;
+    debugon) # project, or "-a"
+        RunLocallyOverProjects debugon "$@"
+        InvokeRemotely debugon "$@"
+        ;;
 
-        debugoff) # project, or "-a"
-            RunLocallyOverProjects debugoff "$@"
-            InvokeRemotely debugoff "$@"
-            ;;
+    debugoff) # project, or "-a"
+        RunLocallyOverProjects debugoff "$@"
+        InvokeRemotely debugoff "$@"
+        ;;
 
-        harvest|onions) # project, or "-a"
-            RunLocallyOverProjects harvest "$@"
-            InvokeRemotely harvest "$@"
-            ;;
+    harvest|onions) # project, or "-a"
+        RunLocallyOverProjects harvest "$@"
+        InvokeRemotely harvest "$@"
+        ;;
 
-        status) # project, or "-a"
-            RunLocallyOverProjects status "$@"
-            InvokeRemotely status "$@"
-            ;;
+    status) # project, or "-a"
+        RunLocallyOverProjects status "$@"
+        InvokeRemotely status "$@"
+        ;;
 
-        maps|map) # project, or "-a"
-            RunLocallyOverProjects maps "$@"
-            InvokeRemotely maps "$@"
-            ;;
+    maps|map) # project, or "-a"
+        RunLocallyOverProjects maps "$@"
+        InvokeRemotely maps "$@"
+        ;;
 
-        delete) # project, or "-a"
-            Print delete is to be done.
-            ;;
+    delete) # project, or "-a"
+        Print not yet implemented, sorry.
+        ;;
 
-        ## DIAGS
+    ## DIAGS
 
-        ps)
-            ps auxww | egrep '\b(eotk)\b'
-            InvokeRemotely ps
-            ;;
+    ps)
+        ps auxww | egrep '\b(eotk)\b'
+        InvokeRemotely ps
+        ;;
 
-        ## ONIONBALANCE
+    ## ONIONBALANCE
 
-        push)
-            Print push is destructive and has been renamed, see the documentation
-            ;;
+    push)
+        Print push is destructive and has been renamed, see the documentation
+        ;;
 
-        # this used to be called 'push' but got renamed because oops.
-        # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
-        remote-nuke-and-push|rnap)
-            Main stop -a
-            DestructivePush
-            ;;
+    # this used to be called 'push' but got renamed because oops.
+    # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
+    remote-nuke-and-push|rnap)
+        $self stop -a
+        DestructivePush
+        ;;
 
-        ob-config|obconfig)
-            if [ "x$1" = "x" ] ; then
-                Print error: missing project name, try: $prog projects for a list, or -a for all
-                exit 1
-            fi
-
-            # TODO: check if they are extant first, and if so, exit with error
-
-            # ob storage
-            test -d $ob_dir || mkdir -p $ob_dir || exit 1
-
-            # config files
-            ob_conf=$ob_dir/config.yaml
-            tor_conf=$ob_dir/tor.conf
-            tor_control=$ob_dir/tor-control.sock
-
-            # make tor conf
-            (
-                echo DataDirectory $ob_dir
-                echo ControlPort unix:$tor_control
-                echo PidFile $ob_dir/tor.pid
-                echo Log info file $ob_dir/tor.log
-                echo SafeLogging 1
-                echo HeartbeatPeriod 60 minutes
-                echo RunAsDaemon 1
-                echo "#" onionbalance
-                # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
-                echo SocksPort 127.0.0.1:9050 # meh
-                echo CookieAuthentication 1
-                echo MaxClientCircuitsPending 1024
-            ) > $tor_conf
-
-            # make ob conf
-            $self map "$@" | grep -v "^::::" | do-obconfig.pl > $ob_conf
-
-            # to be done
-            # echo tor -f $tor_conf
-            # echo onionbalance -s $tor_control -c $ob_conf -v info
-            ;;
-
-        ob-start|obstart)
-            ;;
-
-        ob-stop|obstop)
-            ;;
-
-        ## FREEZE/BACKUP
-
-        mirror|pull)
-            Mirror
-            ;;
-
-        freeze|backup)
-            Mirror
-            (
-                ds=`date "+%Y%m%d%H%M%S"`
-                cd $mirrors_dir || exit 1
-                for directory in */ ; do
-                    test -d "$directory" || exit 1 # did */ expand?
-                    dir=`basename $directory` # strip trailing /
-                    echo :::: freeze $dir ::::
-                    tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
-                done
-            )
-            ;;
-
-        *)
-            Print usage: see README.md for documentation
+    ob-config|obconfig)
+        if [ "x$1" = "x" ] ; then
+            Print error: missing project name, try: $prog projects for a list, or -a for all
             exit 1
-            ;;
-    esac
-}
+        fi
 
-##################################################################
+        # TODO: check if they are extant first, and if so, exit with error
 
-Main "$@"
+        # ob storage
+        test -d $ob_dir || mkdir -p $ob_dir || exit 1
+
+        # make tor conf
+        (
+            echo DataDirectory $ob_dir
+            echo ControlPort unix:$ob_tor_control_sock
+            echo PidFile $ob_dir/tor.pid
+            echo Log info file $ob_dir/tor.log
+            echo SafeLogging 1
+            echo HeartbeatPeriod 60 minutes
+            echo RunAsDaemon 1
+            echo "#" onionbalance
+            # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
+            echo SocksPort 127.0.0.1:9050 # meh
+            echo CookieAuthentication 1
+            echo MaxClientCircuitsPending 1024
+        ) > $ob_tor_conf
+
+        # make ob conf
+        (
+            echo STATUS_SOCKET_LOCATION: $ob_status_sock
+            echo INITIAL_DELAY: 300
+            echo REFRESH_INTERVAL: 600
+            echo PUBLISH_CHECK_INTERVAL: 900
+            $self map "$@" | grep -v "^::::" | do-obconfig.pl
+        ) > $ob_conf
+        ;;
+
+    ob-start|obstart)
+        Print starting Tor
+        tor -f $ob_tor_conf
+        Print starting OnionBalance
+        onionbalance -s $ob_tor_control_sock -c $ob_conf -v info
+        ;;
+
+    ob-stop|obstop)
+        Print not yet implemented, sorry.
+        ;;
+
+    ## FREEZE/BACKUP
+
+    mirror|pull)
+        Mirror
+        ;;
+
+    freeze|backup)
+        Mirror
+        (
+            ds=`date "+%Y%m%d%H%M%S"`
+            cd $mirrors_dir || exit 1
+            for directory in */ ; do
+                test -d "$directory" || exit 1 # did */ expand?
+                dir=`basename $directory` # strip trailing /
+                echo :::: freeze $dir ::::
+                tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
+            done
+        )
+        ;;
+
+    *)
+        Print usage: see README.md for documentation
+        exit 1
+        ;;
+esac
 
 exit 0
