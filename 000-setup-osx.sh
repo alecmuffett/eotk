@@ -6,13 +6,13 @@
 brew update || exit 1
 brew upgrade || exit 1
 
-: install tor and openssl
-brew install openssl tor
+: install tor, openssl, tools...
+brew install openssl tor socat
 
 : do not worry if the next step fails
 brew unlink nginx
 
-: go for the full nginx
+: install the full nginx
 brew tap homebrew/nginx
 brew install \
      nginx-full \
@@ -27,6 +27,5 @@ BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
 if [ -f $BREW_OPENSSL ] ; then
     ( cd opt.d ; ln -s $BREW_OPENSSL )
 fi
-
 
 exit 0
