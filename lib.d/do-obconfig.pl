@@ -31,7 +31,7 @@ while (<>) {
 
 # output
 
-$indent = "    ";
+$indent = "  ";
 
 print "services:\n";
 foreach my $project (sort keys %data) {
@@ -40,14 +40,14 @@ foreach my $project (sort keys %data) {
         my $keyfile = "$ENV{EOTK_HOME}/secrets.d/$master_onion.key";
         $keyfile =~ s!\.onion\.!.!; # remove .onion from MIDDLE OF FILENAME
 
-        print "$indent# $dnsmap{$master_onion} => $master_onion\n";
-        print "$indent- key: $keyfile\n";
-        print "$indent  instances:\n";
+        print "${indent}# $dnsmap{$master_onion} => $master_onion\n";
+        print "${indent}- key: $keyfile\n";
+        print "${indent}${indent}instances:\n";
 
 	foreach my $worker_onion (sort keys %{$data{$project}{$master_onion}}) {
             $worker = $worker_onion;
             $worker =~ s!\.onion!!; # OB vomits on trailing ".onion"
-            print "$indent$indent- address: $worker\n";
+            print "${indent}${indent}${indent}- address: '$worker'\n";
         }
     }
 }

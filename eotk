@@ -410,7 +410,10 @@ case "$cmd" in
             echo STATUS_SOCKET_LOCATION: $ob_status_sock
             echo INITIAL_DELAY: 60
             echo REFRESH_INTERVAL: 600
+            echo DESCRIPTOR_UPLOAD_PERIOD: 600
+            echo DESCRIPTOR_VALIDITY_PERIOD: 1800
             echo PUBLISH_CHECK_INTERVAL: 900
+            echo LOG_LEVEL: debug
             $self map "$@" | grep -v "^::::" | do-obconfig.pl
         ) > $ob_conf
         ;;
@@ -421,8 +424,7 @@ case "$cmd" in
         Print starting OnionBalance
         onionbalance \
             -s $ob_tor_control_sock \
-            -c $ob_conf \
-            -v debug </dev/null >$ob_dir/onionbalance.log 2>&1 & # bg
+            -c $ob_conf </dev/null >$ob_dir/onionbalance.log 2>&1 & # bg
         ob_pid=$!
         echo $ob_pid >$ob_dir/ob.pid
         ;;
