@@ -310,47 +310,47 @@ case "$cmd" in
     ## ACTIONS
 
     start) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects start "$@"
+        $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
     stop) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects stop "$@"
+        $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
     bounce|restart|reload) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects bounce "$@"
+        $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
     nxreload) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects nxreload "$@"
+        $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
     debugon) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects debugon "$@"
+        $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
     debugoff) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects debugoff "$@"
+        $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
     harvest|onions) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects harvest "$@"
+        $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
     status) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects status "$@"
+        $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
     maps|map) # project, or "-a"
-        $need_to_run_locally || RunLocallyOverProjects maps "$@"
+        $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
 
