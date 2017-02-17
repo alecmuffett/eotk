@@ -411,13 +411,23 @@ case "$cmd" in
 
     ob-start|obstart)
         Print starting Tor
-        tor -f $ob_tor_conf
+        tor -f $ob_tor_conf >$ob_dir/tor-startup.log 2>&1
         Print starting OnionBalance
-        onionbalance -s $ob_tor_control_sock -c $ob_conf -v info
+        onionbalance \
+            -s $ob_tor_control_sock \
+            -c $ob_conf \
+            -v info </dev/null >$ob_dir/ob-startup.log 2>&1 & # bg
+        ob_pid=$!
+        echo $ob_pid >$ob_dir/ob.pid
         ;;
 
     ob-stop|obstop)
-        Print $cmd not yet implemented, sorry.
+        for pidfile in $ob_dir/ob.pid $ob_dir/tor.pid ; do
+            test -s $pidfile || continue
+            pid=`cat $pidfile`
+            Print sending SIGTERM to $pid in $pidfile
+            kill $pid
+        done
         ;;
 
     ## FREEZE/BACKUP
