@@ -73,6 +73,10 @@ CloudHosts() {
 }
 
 cloud_hosts=`CloudHosts` # saves multiple invocations
+need_to_run_locally=false
+for host in $cloud_hosts ; do
+    test "x$host" = "xlocalhost" && need_to_run_locally=true
+done
 
 ##################################################################
 
@@ -89,6 +93,7 @@ Warn() {
 # essentially the projects.d folder is a little database
 ListProjects() {
     (
+        test -d $project_dir || exit 1
         cd $project_dir || exit 1
         for d in *.d/ ; do
             echo `basename $d .d`
@@ -153,6 +158,7 @@ RunLocally() {
     shift
     project=$1
     shift
+
     echo :::: $action $project $@ ::::
     sh "$project_dir/$project.d/$action.sh" "$@"
 }
@@ -304,47 +310,47 @@ case "$cmd" in
     ## ACTIONS
 
     start) # project, or "-a"
-        RunLocallyOverProjects start "$@"
+        $need_to_run_locally || RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
     stop) # project, or "-a"
-        RunLocallyOverProjects stop "$@"
+        $need_to_run_locally || RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
     bounce|restart|reload) # project, or "-a"
-        RunLocallyOverProjects bounce "$@"
+        $need_to_run_locally || RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
     nxreload) # project, or "-a"
-        RunLocallyOverProjects nxreload "$@"
+        $need_to_run_locally || RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
     debugon) # project, or "-a"
-        RunLocallyOverProjects debugon "$@"
+        $need_to_run_locally || RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
     debugoff) # project, or "-a"
-        RunLocallyOverProjects debugoff "$@"
+        $need_to_run_locally || RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
     harvest|onions) # project, or "-a"
-        RunLocallyOverProjects harvest "$@"
+        $need_to_run_locally || RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
     status) # project, or "-a"
-        RunLocallyOverProjects status "$@"
+        $need_to_run_locally || RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
     maps|map) # project, or "-a"
-        RunLocallyOverProjects maps "$@"
+        $need_to_run_locally || RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
 
@@ -416,7 +422,7 @@ case "$cmd" in
         onionbalance \
             -s $ob_tor_control_sock \
             -c $ob_conf \
-            -v info </dev/null >$ob_dir/ob-startup.log 2>&1 & # bg
+            -v debug </dev/null >$ob_dir/onionbalance.log 2>&1 & # bg
         ob_pid=$!
         echo $ob_pid >$ob_dir/ob.pid
         ;;
@@ -428,6 +434,7 @@ case "$cmd" in
             Print sending SIGTERM to $pid in $pidfile
             kill $pid
         done
+        rm -f $ob_dir/ob.pid
         ;;
 
     ## FREEZE/BACKUP
