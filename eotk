@@ -408,7 +408,7 @@ case "$cmd" in
         # make ob conf
         (
             echo STATUS_SOCKET_LOCATION: $ob_status_sock
-            echo INITIAL_DELAY: 300
+            echo INITIAL_DELAY: 60
             echo REFRESH_INTERVAL: 600
             echo PUBLISH_CHECK_INTERVAL: 900
             $self map "$@" | grep -v "^::::" | do-obconfig.pl
