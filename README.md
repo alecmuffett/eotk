@@ -433,7 +433,3 @@ the rest of the FB-over-Tor team.  Hugs.
 ### softmap 4
 
 ![softmap 4](docs.d/softmap-4.png)
-
-### horcrux 1
-
-![horcrux 1](docs.d/horcrux-1.png)
