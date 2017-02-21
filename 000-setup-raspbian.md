@@ -75,7 +75,7 @@ Do:
 sudo easy_install onionbalance # also warms-up sudo
 
 # install socat for log review
-aptitude install socat
+sudo aptitude install socat
 
 # check: this should print `/usr/local/bin/onionbalance`
 sudo which onionbalance
