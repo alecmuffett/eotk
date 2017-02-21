@@ -392,6 +392,24 @@ case "$cmd" in
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
 
+        # sanity check that args are provided
+        if [ "x$1" = "x" ] ; then
+            Print error: missing project name, try: $prog projects for a list, or -a for all
+            exit 1
+        fi
+
+        # make ob conf
+        (
+            echo STATUS_SOCKET_LOCATION: $ob_status_sock
+            echo INITIAL_DELAY: 60
+            echo REFRESH_INTERVAL: 600
+            echo DESCRIPTOR_UPLOAD_PERIOD: 600
+            echo DESCRIPTOR_VALIDITY_PERIOD: 1800
+            echo PUBLISH_CHECK_INTERVAL: 900
+            echo LOG_LEVEL: debug
+            $self maps "$@" | grep -v "^::::" | do-obconfig.pl # consumes args
+        ) > $ob_conf
+
         # make tor conf
         (
             echo DataDirectory $ob_dir
@@ -407,18 +425,6 @@ case "$cmd" in
             echo CookieAuthentication 1
             echo MaxClientCircuitsPending 1024
         ) > $ob_tor_conf
-
-        # make ob conf
-        (
-            echo STATUS_SOCKET_LOCATION: $ob_status_sock
-            echo INITIAL_DELAY: 60
-            echo REFRESH_INTERVAL: 600
-            echo DESCRIPTOR_UPLOAD_PERIOD: 600
-            echo DESCRIPTOR_VALIDITY_PERIOD: 1800
-            echo PUBLISH_CHECK_INTERVAL: 900
-            echo LOG_LEVEL: debug
-            $self map "$@" | grep -v "^::::" | do-obconfig.pl
-        ) > $ob_conf
         ;;
 
     ob-start|obstart)
