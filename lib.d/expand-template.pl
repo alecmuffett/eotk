@@ -230,7 +230,11 @@ sub PrintBlock {
     if ($begin > $end) {
         warn "begin: $template[$begin]";
         warn "end: $template[$end]";
-	die "PrintBlock: end($end) before begin($begin)\n";
+        if (($begin - $end) == 1) {
+            warn "PrintBlock: info: empty block\n";
+        } else {
+            die "PrintBlock: end($end) before begin($begin)\n";
+        }
 	return;
     }
 
