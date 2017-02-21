@@ -211,17 +211,21 @@ See also: the next question:
 
 ### How do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
 
-#### OLD METHOD
+#### MANUAL METHOD
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
 * Alternately get a tool like `scallion` or `shallot` and use that to
   "mine" a desirable onion address.
+  * https://github.com/katmagic/Shallot - in C, for CPUs
+    * Seems okay on Linux, not sure about other platforms
+  * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
+    * Advertised as working on Windows, Linux; works well on OSX under "Mono"
 * Be sure to store your mined private keys in `secrets.d` with a
   filename like `xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the
   corresponding onion address.
 
-#### NEW METHOD
+#### AUTOMATIC METHOD
 
 Create a config file with a `.tconf` suffix, and use this syntax:
 
