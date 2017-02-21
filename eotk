@@ -365,27 +365,30 @@ case "$cmd" in
         InvokeRemotely ps
         ;;
 
-    ## ONIONBALANCE
+    ## ---- ONIONBALANCE ----
 
     push)
         Print push is destructive and has been renamed, see the documentation
         ;;
 
     # this used to be called 'push' but got renamed because oops.
-    # DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES
-    remote-nuke-and-push|rnap)
+    # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
+    ob-remote-nuke-and-push|rnap)
         $self stop -a
         DestructivePush
         ;;
 
-    ob-config|obconfig)
-        if [ "x$1" = "x" ] ; then
-            Print error: missing project name, try: $prog projects for a list, or -a for all
-            exit 1
-        fi
+    ob-nxpush)
+        # gently push only the nginx configs to the workers
+        Print TO BE DONE
+        ;;
 
-        # TODO: check if they are extant first, and if so, exit with error
+    ob-torpush)
+        # gently push only the tor configs to the workers
+        Print TO BE DONE
+        ;;
 
+    ob-config|obconfig|ob-configure|obconfigure)
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
 
