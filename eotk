@@ -51,7 +51,7 @@ while : ; do
 done
 
 # what are the hostnames of the remote workers?
-host_list=$EOTK_HOME/eotk-hosts.conf
+host_list=$EOTK_HOME/eotk-workers.conf
 
 CloudHosts() {
     # use --remote hack to forcibly stop risk of recursion...
