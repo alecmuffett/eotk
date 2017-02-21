@@ -99,7 +99,7 @@ Defaults in (parentheses)
 * NEW_ONION / NEW_HARD_ONION
 * NEW_SOFT_ONION
 
-Used only in template configs (`*.tconf` files) to show the point where 
+Used only in template configs (`*.tconf` files) to show the point where
 a newly created onion and/or keyfile path should be inserted.
 
 # Template Syntax
@@ -200,10 +200,7 @@ title: x
   body y z
 ```
 
-Also you can nest RANGE and IF/ELSE/ENDIF in obvious ways, within a
-BEGIN/END body
-
-There is currently a fatal block on empty IF or ELSE template bodies.
-
-The overall concept is to make a template which is easy to portably
-generate/regenerate, containing lots of hard-codeables for simplicity.
+* you can nest RANGE and IF/ELSE/ENDIF in obvious ways, within a
+  BEGIN/END body
+* The goal is to make a template which is easy to portably generate
+  and regenerate, containing lots of hard-codeables for simplicity.
