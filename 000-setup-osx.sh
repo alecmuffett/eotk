@@ -20,10 +20,16 @@ brew install \
      --with-subs-filter-module \
      --with-headers-more-module
 
+: install onionbalance
+sudo easy_install onionbalance # also warms-up sudo
+
+: fix(?) the resulting permissions trainwreck
+PYDIRS="/usr/local/bin /usr/local/lib /Library/Python"
+sudo find $PYDIRS -perm -0400 -print0 | sudo xargs -0 chmod a+r
+sudo find $PYDIRS -perm -0100 -print0 | sudo xargs -0 chmod a+x
+
 : prioritise a sane openssl
-
 BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
-
 if [ -f $BREW_OPENSSL ] ; then
     ( cd opt.d ; ln -s $BREW_OPENSSL )
 fi
