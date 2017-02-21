@@ -209,7 +209,7 @@ eotk start myproject
 
 See also: the next question:
 
-### How do I create my own "secrets.d/xxxxxxxxxxxxxxxx.key"?
+### How do I create my own Onion Address?
 
 #### MANUAL METHOD
 
