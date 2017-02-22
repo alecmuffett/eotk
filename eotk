@@ -127,6 +127,7 @@ DestructivePush() {
               --exclude="cached-certs" \
               --exclude="cached-microdesc*" \
               --exclude="configure*.log" \
+              --exclude="eotk-workers.conf" \
               --exclude="hostname" \
               --exclude="lock" \
               --exclude="onion_service_non_anonymous" \
@@ -400,13 +401,14 @@ case "$cmd" in
 
         # make ob conf
         (
-            echo STATUS_SOCKET_LOCATION: $ob_status_sock
-            echo INITIAL_DELAY: 60
-            echo REFRESH_INTERVAL: 600
-            echo DESCRIPTOR_UPLOAD_PERIOD: 600
-            echo DESCRIPTOR_VALIDITY_PERIOD: 1800
-            echo PUBLISH_CHECK_INTERVAL: 900
             echo LOG_LEVEL: debug
+            echo REFRESH_INTERVAL: 600
+            echo PUBLISH_CHECK_INTERVAL: 300 # non-default
+            echo INITIAL_DELAY: 60 # non-default
+            echo STATUS_SOCKET_LOCATION: $ob_status_sock
+            echo DESCRIPTOR_VALIDITY_PERIOD: 86400
+            echo DESCRIPTOR_OVERLAP_PERIOD: 3600
+            echo DESCRIPTOR_UPLOAD_PERIOD: 3600
             $self maps "$@" | grep -v "^::::" | do-obconfig.pl # consumes args
         ) > $ob_conf
 
