@@ -13,6 +13,7 @@
 
 ## Changes
 
+# first cut of onionbalance / softmap
 * have declared a stable alpha release
 * architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
@@ -107,36 +108,65 @@ On OSX, these are available via Homebrew.
 
 ## Command List
 
-Intuitively obvious to the most casual observer:
+### Configuration
 
 * `eotk config [filename]` # default `onions.conf`
   * *synonyms:* `conf`, `configure`
   * parses the config file and sets up and populates the projects
-* `eotk status projectname ...` # or: `-a` for all
-  * process status
 * `eotk maps projectname ...` # or: `-a` for all
-  * print which onions correspond to which dns domains
-* `eotk start projectname ...` # or: `-a` for all
-  * start projects
-* `eotk stop projectname ...` # or: `-a` for all
-  * stop projects
-* `eotk bounce projectname ...` # or: `-a` for all
-  * *synonyms:* `restart`, `reload`
-  * stop, and restart, projects
-* `eotk nxreload projectname ...` # or: `-a` for all
-  * politely ask NGINX to reload its config files
+  * prints which onions correspond to which dns domains
+  * for softmap, this list may not show until after `ob-config` and `ob-start`
+* `eotk harvest projectname ...` # or: `-a` for all
+  * *synonyms:* `onions`
+  * prints list of onions used by projects
+
+### Onion Generation
+
+* `eotk genkey`
+  * *synonyms:* `gen`
+  * generate an onion key and stash it in `secrets.d`
+
+### Project Status & Debugging
+
+* `eotk status projectname ...` # or: `-a` for all
+  * active per-project status
+* `eotk ps`
+  * do a basic grep for possibly-orphaned processes
 * `eotk debugon projectname ...` # or: `-a` for all
   * enable verbose tor logs
 * `eotk debugoff projectname ...` # or: `-a` for all
   * disable verbose tor logs
-* `eotk harvest projectname ...` # or: `-a` for all
-  * *synonyms:* `onions`
-  * print list of onions used by projects
-* `eotk ps`
-  * do a stupid grep for possibly orphaned processes
-* `eotk genkey`
-  * *synonyms:* `gen`
-  * generate an onion key and stash it in `secrets.d`
+
+### Starting & Stopping Projects
+
+* `eotk start projectname ...` # or: `-a` for all
+  * start projects
+* `eotk stop projectname ...` # or: `-a` for all
+  * stop projects
+* `eotk restart projectname ...` # or: `-a` for all
+  * *synonyms:* `bounce`, `reload`
+  * stop, and restart, projects
+* `eotk nxreload projectname ...` # or: `-a` for all
+  * politely ask NGINX to reload its config files
+
+
+### Starting & Stopping OnionBalance
+
+* `eotk ob-config`
+* `eotk ob-start`
+* `eotk ob-stop`
+* `eotk ob-status`
+
+### Configuring Remote Workers
+
+* `eotk ob-remote-nuke-and-push`
+* `eotk ob-torpush`
+* `eotk ob-nxpush`
+
+### Backing-Up Remote Workers
+
+* eotk `mirror`
+* eotk `backup`
 
 ## Installation
 
@@ -167,10 +197,7 @@ machine.
 
 If you want to experiment with some prefabricated projects, try this:
 
-* `sh ./001-configure-demo.sh` # creates a working config file,
-  `demo.conf`
-* `eotk config demo.conf` # creates tor & nginx config files; lists
-  onion sites
+* `sh ./010-configure-demo.sh` # creates a working config file + tor & nginx config files
 * `eotk start default`
 * Now you can...
   * Connect to one of the onions cited on screen for the `default`
@@ -179,7 +206,7 @@ If you want to experiment with some prefabricated projects, try this:
   * Browse a little...
 * `eotk stop default`
 
-## This is really complex, do you have something similar I can play with?
+## This involves lots of software, do you have something similar I can play with?
 
 There's
 [another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md),
@@ -191,12 +218,14 @@ anything permanent.
 ## I want to create a new project / my own configuration!
 
 You can either add a new project to the demo config file, or you can
-create a new config for yourself.  If you want an onion for `foo.com`,
-the simplest configuration file probably looks like this:
+create a new config for yourself.
+
+If you want an onion for `foo.com`, the simplest configuration file
+looks like this:
 
 ```
 set project myproject
-hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com
 ```
 
 ...and if you create a file called `project.conf` containing those
@@ -209,7 +238,7 @@ eotk start myproject
 
 See also: the next question:
 
-### How do I create my own Onion Address?
+### But how do I create my own Onion Address?
 
 #### MANUAL METHOD
 
@@ -222,7 +251,7 @@ See also: the next question:
   * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
     * Advertised as working on Windows, Linux; works well on OSX under "Mono"
 * Be sure to store your mined private keys in `secrets.d` with a
-  filename like `xxxxxxxxxxxxxxxx.key` where `xxxxxxxxxxxxxxxx` is the
+  filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is the
   corresponding onion address.
 
 #### AUTOMATIC METHOD
@@ -289,13 +318,13 @@ Subdomains are supported like this:
 
 ```
 set project myproject
-hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev
 ```
 
 ...and if you have multiple subdomains:
 
 ```
-hardmap secrets.d/xxxxxxxxxxxxxxxx.key foo.com dev blogs dev.blogs [...]
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev blogs dev.blogs [...]
 ```
 
 ## My company has a bunch of site/domains!

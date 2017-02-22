@@ -468,7 +468,7 @@ case "$cmd" in
         Mirror
         ;;
 
-    freeze|backup)
+    backup|freeze)
         Mirror
         (
             ds=`date "+%Y%m%d%H%M%S"`
@@ -476,7 +476,7 @@ case "$cmd" in
             for directory in */ ; do
                 test -d "$directory" || exit 1 # did */ expand?
                 dir=`basename $directory` # strip trailing /
-                echo :::: freeze $dir ::::
+                echo :::: backup $dir ::::
                 tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
             done
         )
