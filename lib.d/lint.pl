@@ -9,10 +9,12 @@ my %known =
      # dns source domains
      'DNS_DOMAIN' => 1, # site being mapped
      'DNS_DOMAIN_RE' => 1, # ...with dots escaped
+     'DNS_DOMAIN_RE2' => 1, # ...with dots double-escaped
 
      # onion destination addresses
      'ONION_ADDRESS' => 1, # onion being mapped-to
      'ONION_ADDRESS_RE' => 1, # with dots escaped
+     'ONION_ADDRESS_RE2' => 1, # with dots double-escaped
 
      # ssl cert prefix
      'CERT_PREFIX' => 1,
@@ -33,6 +35,7 @@ my %known =
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
      'NGINX_RLIM' => 1,
+     'NGINX_SYSLOG' => 1,
      'NGINX_TEMPLATE' => 1,
      'NGINX_TIMEOUT' => 1,
      'NGINX_WORKERS' => 1,
@@ -40,8 +43,14 @@ my %known =
      'SOFTMAP_TOR_WORKERS' => 1,
      'TOR_INTROS_PER_DAEMON' => 1,
      'TOR_SINGLE_ONION' => 1,
+     'TOR_SYSLOG' => 1,
      'TOR_TEMPLATE' => 1,
      'TOR_WORKER_PREFIX' => 1,
+
+     # demo fakes
+     'NEW_ONION' => 1,
+     'NEW_HARD_ONION' => 1,
+     'NEW_SOFT_ONION' => 1,
 
      # in the control scripts
      'SCRIPT_PAUSE' => 1,
