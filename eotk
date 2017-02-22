@@ -1,6 +1,13 @@
 #!/bin/sh
 # Enterprise Onion Toolkit
 
+# A NOTE TO CONTRIBUTORS: yes this is a big script, but it's also
+# written to be easy to understand (and reason about) what it is
+# doing; this is why there are `for` loops around `scp` rather than
+# tarballing up a bunch of file and shipping them to remote machines,
+# unpacking them there. This is (mostly) why there are some
+# long_variable_names. I plan to keep it that way.
+
 #rsync_flags="-n" # testing
 
 # expected by tools and libraries
@@ -12,7 +19,7 @@ prog=`basename $0`
 self=$EOTK_HOME/$prog
 
 # meta
-version=1.1alpha
+version=1.2
 
 # set project directory; this path is hard-replicated elsewhere
 project_dir=$EOTK_HOME/projects.d
@@ -104,11 +111,25 @@ ListProjects() {
 # TODO(alecm) resolve potential clashes between project names and
 # various other directory names ending in ".d"; maybe use ".proj"?
 
+SpotPush() {
+    for filename in "$@" ; do
+        files=`find $EOTK_HOME/projects.d -type f -name "$filename" | sort`
+        for host in $cloud_hosts ; do
+            test "x$host" = "xlocalhost" && continue # skip self
+            echo :::: push $host ::::
+            for filepath in $files ; do
+                Print copying $filepath to $host
+                scp -p $filepath $host:$filepath || exit 1
+            done
+        done
+    done
+}
+
 # push eotk directory to remote
 DestructivePush() {
     for host in $cloud_hosts ; do
         test "x$host" = "xlocalhost" && continue # skip self
-        echo :::: push $host ::::
+        echo :::: rnap $host ::::
         rsync $rsync_flags \
               -av \
               --delete \
@@ -386,12 +407,17 @@ case "$cmd" in
 
     ob-nxpush)
         # gently push only the nginx configs to the workers
-        Print $cmd not yet implemented, sorry.
+        SpotPush nginx.conf
         ;;
 
     ob-torpush)
         # gently push only the tor configs to the workers
-        Print $cmd not yet implemented, sorry.
+        SpotPush tor.conf
+        ;;
+
+    ob-spotpush)
+        # gently push only the tor configs to the workers
+        SpotPush "$@"
         ;;
 
     ob-config|obconfig|ob-configure|obconfigure)

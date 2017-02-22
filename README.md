@@ -170,9 +170,11 @@ On OSX, these are available via Homebrew.
     * other (remote) systems are accessed via `ssh`, `scp` & `rsync`
 * `eotk ob-remote-nuke-and-push`
   * *synonyms:*
+* `eotk ob-nxpush`
+  * *synonyms:*
 * `eotk ob-torpush`
   * *synonyms:*
-* `eotk ob-nxpush`
+* `eotk ob-spotpush`
   * *synonyms:*
 
 ### Backing-Up Remote Workers
