@@ -398,6 +398,11 @@ case "$cmd" in
         Print push is destructive and has been renamed, see the documentation
         ;;
 
+    shutdown)
+        $self ob-stop
+        $self stop -a
+        ;;
+
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
     ob-remote-nuke-and-push|rnap)
