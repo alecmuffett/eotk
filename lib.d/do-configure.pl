@@ -114,7 +114,7 @@ sub Dotify { # dotify a regexp
 sub DoMap {
     warn "DoMap @_\n";
     my ($what, $from, $to, @subdomains) = @_;
-    my $foo;
+    my $ptype;
 
     my $project = $ENV{PROJECT}; # the instantaneous value of `project` is stored
 
@@ -127,9 +127,9 @@ sub DoMap {
         $projects{$project}{IS_SOFTMAP} = ($what eq "softmap" ? 1 : 0);
     }
 
-    $foo = $projects{$project}{TYPE};
-    if ($foo ne $what) {
-        die "DoMap: you cannot add $what ($from/$to) to an existing $foo project\n";
+    $ptype = $projects{$project}{TYPE};
+    if ($ptype ne $what) {
+        die "DoMap: you cannot add $what ($from/$to) to an existing $ptype project\n";
     }
 
     my $keyfile = $unset_variable;
@@ -153,7 +153,7 @@ sub DoMap {
     }
     $onion = "$onion.onion"; # restore trailing .onion
 
-    warn "mapping $what($keyfile) from=$onion to=$to san=(@subdomains)\n";
+    warn "$ptype $what($keyfile) from=$onion to=$to san=(@subdomains)\n";
 
     if (!defined($projects{$project}{FIRST_ONION})) {
         $projects{$project}{FIRST_ONION} = $onion;
@@ -338,7 +338,7 @@ sub DoProject {
 &SetEnv("header_hpkp_suppress", 1);
 &SetEnv("header_hsts_suppress", 1);
 
-&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh");
+&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting

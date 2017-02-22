@@ -320,22 +320,27 @@ case "$cmd" in
         InvokeRemotely stop "$@"
         ;;
 
-    bounce|restart|reload) # project, or "-a"
+    restart|bounce|reload) # project, or "-a"
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload) # project, or "-a"
+    nxreload|nx-reload) # project, or "-a"
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    debugon) # project, or "-a"
+    torreload|tor-reload) # project, or "-a"
+        $need_to_run_locally && RunLocallyOverProjects torreload "$@"
+        InvokeRemotely torreload "$@"
+        ;;
+
+    debugon|debug-on) # project, or "-a"
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff) # project, or "-a"
+    debugoff|debug-off) # project, or "-a"
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
@@ -381,12 +386,12 @@ case "$cmd" in
 
     ob-nxpush)
         # gently push only the nginx configs to the workers
-        Print TO BE DONE
+        Print $cmd not yet implemented, sorry.
         ;;
 
     ob-torpush)
         # gently push only the tor configs to the workers
-        Print TO BE DONE
+        Print $cmd not yet implemented, sorry.
         ;;
 
     ob-config|obconfig|ob-configure|obconfigure)

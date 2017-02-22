@@ -153,20 +153,34 @@ On OSX, these are available via Homebrew.
 ### Starting & Stopping OnionBalance
 
 * `eotk ob-config`
+  * *synonyms:*
 * `eotk ob-start`
+  * *synonyms:*
 * `eotk ob-stop`
+  * *synonyms:*
 * `eotk ob-status`
+  * *synonyms:*
 
 ### Configuring Remote Workers
 
+* `eotk-workers.conf`
+  * if not present, only `localhost` will be used
+  * if present, contains one hostname per line, no comments
+    * the label `localhost` is a hardcoded synonym for local activity
+    * other (remote) systems are accessed via `ssh`, `scp` & `rsync`
 * `eotk ob-remote-nuke-and-push`
+  * *synonyms:*
 * `eotk ob-torpush`
+  * *synonyms:*
 * `eotk ob-nxpush`
+  * *synonyms:*
 
 ### Backing-Up Remote Workers
 
 * eotk `mirror`
+  * *synonyms:*
 * eotk `backup`
+  * *synonyms:*
 
 ## Installation
 
