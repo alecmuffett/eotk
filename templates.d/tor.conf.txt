@@ -7,12 +7,12 @@
 DataDirectory %TOR_DIR%
 ControlPort unix:%TOR_DIR%/tor-control.sock
 PidFile %TOR_DIR%/tor.pid
-Log info file %TOR_DIR%/tor.log
+Log %TOR_SYSLOG% file %TOR_DIR%/tor.log
 %%ELSE
 DataDirectory %PROJECT_DIR%
 ControlPort unix:%PROJECT_DIR%/tor-control.sock
 PidFile %PROJECT_DIR%/tor.pid
-Log info file %LOG_DIR%/tor.log
+Log %TOR_SYSLOG% file %LOG_DIR%/tor.log
 %%ENDIF
 SafeLogging 1
 HeartbeatPeriod 60 minutes

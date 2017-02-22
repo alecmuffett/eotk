@@ -5,7 +5,7 @@
 
 # logs and pids
 pid %PROJECT_DIR%/nginx.pid;
-error_log %LOG_DIR%/nginx-error.log debug;
+error_log %LOG_DIR%/nginx-error.log %NGINX_SYSLOG%;
 
 # performance
 %%IF %IS_SOFTMAP%

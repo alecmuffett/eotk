@@ -4,7 +4,7 @@ all:
 distclean dist-clean:
 	eotk ob-stop
 	eotk stop -a
-	rm -rf projects.d onionbalance.d
+	rm -rf projects.d onionbalance.d configure*.log
 
 test-ob-tor:
 	@echo this should print: onion

@@ -6,28 +6,30 @@
 #################### hardmap examples ####################
 
 # hardmap is designed to run on a single machine, for protoyping,
-# testing, or for small deployments.
+# testing, and for small production deployments.
 
 # in hardmap a `project` contains onion services with pre-established
 # ("hard coded") onion keys, and a single tor daemon (per project)
-# feeds requests for 1/more onion addresses into nginx, which remaps
-# and rewrites them, passing the request onto the backend website.
+# which feeds requests for 1/more onion addresses into nginx, which
+# remaps & rewrites them, finally passing the request onto the backend
+# website and rewriting the website's response in return
 
 # "default" project
-hardmap secrets.d/%NEW_ONION%.key aclu.org
-hardmap secrets.d/%NEW_ONION%.key liberty-human-rights.org.uk
+hardmap %NEW_ONION% aclu.org
+hardmap %NEW_ONION% liberty-human-rights.org.uk
 
 # a topical project
 set project digital-rights
-hardmap secrets.d/%NEW_ONION%.key openrightsgroup.org
-hardmap secrets.d/%NEW_ONION%.key eff.org
-hardmap secrets.d/%NEW_ONION%.key accessnow.org
-hardmap secrets.d/%NEW_ONION%.key digitalrights.ie
-# privacy international already have privacyintyqcroe.onion
+hardmap %NEW_ONION% openrightsgroup.org
+hardmap %NEW_ONION% eff.org
+hardmap %NEW_ONION% accessnow.org
+hardmap %NEW_ONION% digitalrights.ie
+
+# aside: privacy international already have privacyintyqcroe.onion
 
 # another project
 set project journalists
-hardmap secrets.d/%NEW_ONION%.key cpj.org
+hardmap %NEW_ONION% cpj.org
 
 #################### softmap examples ####################
 
@@ -65,25 +67,16 @@ hardmap secrets.d/%NEW_ONION%.key cpj.org
 # instead each softmap instance should choose its own keys, which
 # should subsequently be configured into onionbalance.
 
-# onioncloud: 7x servers, each with 4 cores => 28 cores
-
-set project onioncloud
-
-# softmap only: per-host-per-project number of tor workers; tor is
-# very efficient, so this generally does not have to be a big number.
-# also: this number will be multiplied by the number of times you
-# deploy the project, ie: this number in each machine or container.
-
-set softmap_tor_workers 4
-
-# softmap only: the per-host-per-project number of nginx workers per
-# machine or container; let's guess "5x per tor worker" => 5 * 4 = 20;
-# possibly a bigger multiplier - 7x? 10x? - may eventually be needed.
-
-set softmap_nginx_workers 20
-
-# example
-
-# softmap secrets.d/%NEW_ONION%.key site.tld sub1 sub2 sub3.sub2
-
-# end
+set project wiki
+softmap %NEW_SOFT_ONION% wikipedia.org m
+softmap %NEW_SOFT_ONION% wikimedia.org m
+softmap %NEW_SOFT_ONION% mediawiki.org m
+softmap %NEW_SOFT_ONION% wikibooks.org m
+softmap %NEW_SOFT_ONION% wikidata.org m
+softmap %NEW_SOFT_ONION% wikinews.org m
+softmap %NEW_SOFT_ONION% wikiquote.org m
+softmap %NEW_SOFT_ONION% wikisource.org m
+softmap %NEW_SOFT_ONION% wikiversity.org m
+softmap %NEW_SOFT_ONION% wikivoyage.org m
+softmap %NEW_SOFT_ONION% wiktionary.org m
+# more?

@@ -4,28 +4,41 @@
 cd `dirname $0`
 
 INPUT=templates.d/demo.conf.txt
+TEMPLATE=demo.tconf
 OUTPUT=demo.conf
 
-echo "Generating: $OUTPUT"
-echo "Patience, please - this may take a minute or so..."
+cp $INPUT $TEMPLATE
 
-while read line ; do
-    case "$line" in
-        *%NEW_ONION%*)
-            onion=`./eotk genkey`
-            onion=`basename $onion .key`
-            echo "$line" | sed -e "s/%NEW_ONION%/$onion/"
-            ;;
-        *)
-            echo "$line"
-            ;;
-    esac
-    echo ".\c" 1>&2
-done < $INPUT > $OUTPUT
+eotk configure $TEMPLATE || exit 1
 
+echo "----"
 echo ""
-echo "done"
 
-echo "The demo configuration file is $OUTPUT"
-echo "Take a look, and then run: eotk config $OUTPUT"
+echo Demo setup is complete.
+echo The template was $TEMPLATE
+echo The resulting configuration file is $OUTPUT
+echo ""
+
+echo The following per-project mappings are set up:
+echo ""
+
+echo "----"
+eotk maps -a
+echo "----"
+echo ""
+
+echo The projects cited in $OUTPUT may now be started, e.g.:
+echo ""
+echo "  $" eotk start default
+echo ""
+
+echo Those projects which are listed as "'softmap'" will require
+echo the following additional steps AFTER being started:
+echo ""
+echo "  1)" eotk ob-config
+echo "  2)" eotk ob-start
+echo "  3)" eotk maps -a "#" to see what is happening
+echo ""
+
+echo Done.
 exit 0

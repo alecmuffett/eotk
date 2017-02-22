@@ -324,10 +324,12 @@ sub DoProject {
 &SetEnv("nginx_rlim", 1024);
 &SetEnv("nginx_timeout", 30);
 &SetEnv("nginx_workers", 5);
+&SetEnv("nginx_syslog", "error"); # https://nginx.org/en/docs/ngx_core_module.html#error_log
 
 &SetEnv("tor_intros_per_daemon", 3);
 &SetEnv("tor_single_onion", 1);
 &SetEnv("tor_worker_prefix", "hs");
+&SetEnv("tor_syslog", "notice"); # https://www.torproject.org/docs/tor-manual.html.en
 
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4); # nginx_workers * softmap_tor_workers
