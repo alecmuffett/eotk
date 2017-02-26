@@ -3,16 +3,23 @@
 exit 0 # just in case anyone thinks this is a script
 
 * We will assume that you are running Ubuntu Server 16.04.1
-  * Your mileage may vary
-
-If running on Ubuntu 16.04 the NGINX modules are outdated, and there
-may be issues with permissions; in case of failure, or if you want to
-run the most up to date code, use the raspbian-build scripts in
-`opt.d` to create a fresh copy.
-
-# Tor Installation
+  * If using something else, your mileage may vary
 
 EOTK requires Tor 0.2.9.9+
+
+EOTK requires recent `nginx` with the following modules/features enabled:
+
+* `headers_more`
+* `ngx_http_substitutions_filter_module`
+* `http_sub`
+* `http_ssl`
+
+On Ubuntu 16.04 these NGINX modules are outdated, and there may be
+issues with permissions; in case of failure, or if you want to run the
+most up to date code, use the raspbian-build scripts in `opt.d` to
+create a fresh copy.
+
+# Tor Installation
 
 In a browser elsewhere, retreive the instructions for installing Tor
 from https://www.torproject.org/docs/debian.html.en
@@ -33,12 +40,7 @@ from https://www.torproject.org/docs/debian.html.en
 
 # NGINX Installation
 
-EOTK requires recent `nginx` with the following modules/features enabled:
-
-* `headers_more`
-* `ngx_http_substitutions_filter_module`
-* `http_sub`
-* `http_ssl`
+Through `apt-get`; logfiles are tweaked to be writable by admin users.
 
 ## Installation Process
 
@@ -47,8 +49,8 @@ EOTK requires recent `nginx` with the following modules/features enabled:
 
 # OnionBalance Installation
 
-Necessary for `softmap` and load-balancing; using `pip` tends to
-mangle permissions, hence the find/xargs-chmod commands.
+Through `apt-get` and `pip`; using `pip` tends to mangle permissions,
+hence the find/xargs-chmod commands.
 
 ## Installation Process
 
