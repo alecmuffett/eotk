@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-Primary Supported Platforms:
+## Primary Supported Platforms
 
 * OSX Sierra with Homebrew, Latest Updates
 * Raspbian Jessie/Jessie-Lite, Latest Updates
