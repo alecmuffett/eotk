@@ -494,6 +494,12 @@ case "$cmd" in
         rm -f $ob_dir/ob.pid
         ;;
 
+    ob-restart)
+        $self ob-stop
+        $self ob-config "$@"
+        $self ob-start
+        ;;
+
     ob-status|obstatus)
         (
             cd $ob_dir || exit 1
