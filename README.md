@@ -200,20 +200,22 @@ Currently works on OSX with Homebrew:
 * install homebrew - http://brew.sh/
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `sh ./000-setup-osx.sh` # installs required software; if you're
-  worried, check it first
+* `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
+  * you will need to follow this process to install the software on all workers
 
 ### Ubuntu
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * **Read** [000-setup-ubuntu.md](000-setup-raspbian.md) and follow the instructions.
+  * you will need to follow this process to install the software on all workers
 
 ### Raspbian
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * **Read** [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
+  * for Raspbian, the binaries are copied to workers via `rsync`
 
 ### Debian
 
