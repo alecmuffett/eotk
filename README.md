@@ -80,9 +80,9 @@ many "broken links" which are due to the SSL certificate not being
 valid.  This is *expected* and *proper* behaviour.
 
 To help cope with this, for any domain (eg:
-www.foofoofoofoofoof.onion) the EOTK provides a fixed url:
+www.a2s3c4d5e6f7g8h9.onion) the EOTK provides a fixed url:
 
-* `https://www.foofoofoofoofoof.onion/hello-onion/`
+* `https://www.a2s3c4d5e6f7g8h9.onion/hello-onion/`
 
 ...which (`/hello-onion/`) is internally served by the NGINX proxy and
 provides a stable, fixed URL for SSL certificate acceptance; inside
