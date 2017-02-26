@@ -1,24 +1,29 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-## Status
+Primary Supported Platforms:
 
-### NEW RELEASES
-
-* Apparently Stable v1.0 Alpha
-  * Downloadable from https://github.com/alecmuffett/eotk/releases
-  * I recommend that you use this if you feel at all uncertain about systems administration or tweaking code
-* Trunk
-  * See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
+* OSX Sierra with Homebrew, Latest Updates
+* Raspbian Jessie/Jessie-Lite, Latest Updates
+* Ubuntu 16.04+, Latest Updates
 
 ## Changes
 
-# first cut of onionbalance / softmap
+### v1.2
+* custom install process for Ubuntu, tested on Ubuntu Server 16.04.2-LTS
+* renaming / factor-out of Raspbian install code
+* fixes to onionbalance support
+
+### v1.1
+* first cut of onionbalance / softmap
+
+### v1.0
 * have declared a stable alpha release
 * architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
 * ["tunables"](TUNEABLES.md) documentation for template content
 * `troubleshooting` section near the bottom of this page
+* See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
 
 ## Introduction
 
