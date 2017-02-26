@@ -429,6 +429,8 @@ case "$cmd" in
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
 
+        chmod 700 $ob_dir # otherwise tor complains
+
         # sanity check that args are provided
         if [ "x$1" = "x" ] ; then
             Print error: missing project name, try: $prog projects for a list, or -a for all
