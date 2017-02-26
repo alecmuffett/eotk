@@ -23,7 +23,7 @@ echo The following per-project mappings are set up:
 echo ""
 
 echo "----"
-eotk maps -a
+./eotk maps -a
 echo "----"
 echo ""
 
