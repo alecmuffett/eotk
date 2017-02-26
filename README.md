@@ -201,18 +201,21 @@ Currently works on OSX with Homebrew:
 * `sh ./000-setup-osx.sh` # installs required software; if you're
   worried, check it first
 
+### Ubuntu
+
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* **Read** [000-setup-ubuntu.md](000-setup-raspbian.md) and follow the instructions.
+
 ### Raspbian
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * **Read** [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
 
-### Debian and Ubuntu
+### Debian
 
-Try the same instructions as for Raspbian, it seems to work okay
-although you *may* need to install a compiler first. The installation
-involves a lot of compilation and may take 20..30 minutes on a slow
-machine.
+Not sure.  Somewhere between Ubuntu and Raspbian may work.
 
 ## I don't own a site, but I want to experiment!
 
