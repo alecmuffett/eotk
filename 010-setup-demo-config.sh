@@ -29,15 +29,14 @@ echo ""
 
 echo The projects cited in $OUTPUT may now be started, e.g.:
 echo ""
-echo "  $" eotk start default
+echo "  1)" eotk start -a
 echo ""
 
 echo Those projects which are listed as "'softmap'" will require
 echo the following additional steps AFTER being started:
 echo ""
-echo "  1)" eotk start wiki
-echo "  2)" eotk ob-config wiki
-echo "  3)" eotk ob-start wiki
+echo "  2)" eotk ob-config wiki "#" wiki is a softmap project
+echo "  3)" eotk ob-start
 echo "  4)" eotk maps -a "#" to see what is happening
 echo ""
 
