@@ -9,7 +9,7 @@ OUTPUT=demo.conf
 
 cp $INPUT $TEMPLATE
 
-eotk configure $TEMPLATE || exit 1
+./eotk configure $TEMPLATE || exit 1
 
 echo "----"
 echo ""

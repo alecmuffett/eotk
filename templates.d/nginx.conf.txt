@@ -66,7 +66,10 @@ http {
   proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
   %%END
 
-  # o2d_lookup -> if cannot remap, return input.
+  # o2d_lookup -> if cannot remap, return input.  note: old versions
+  # of lua-plugin cannot cope with code like o2d_mappings[o[1]]
+  # because of `long bracket syntax`; the `[o[` freaks it out.
+  # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
     slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, "\n<<", s, ">>\n")
@@ -79,7 +82,8 @@ http {
     %%END
 
     o2d_lookup = function (o)
-      return ( o2d_mappings[o[1]] or o[1] )
+      local k = o[1]
+      return ( o2d_mappings[k] or k )
     end
 
     onion2dns = function (i)

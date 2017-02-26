@@ -27,8 +27,8 @@ two options for you:
 although the actual compilation may take a long time.  It's your
 choice.  If you choose the latter option, do this:
 
-- `./opt.d/build-nginx-on-debian.sh`
-- `./opt.d/build-tor-on-debian.sh`
+- `./opt.d/build-nginx-on-raspbian.sh`
+- `./opt.d/build-tor-on-raspbian.sh`
 
 ...as appropriate.
 
@@ -66,6 +66,6 @@ EOTK; but please be aware that that means you are probably not my main
 audience.  Or you can install `pip` of your own accord, and use that
 to install `onionbalance`, with my blessing.
 
-## Installation On Debian / Raspbian / Ubuntu
+## Installation
 
-Do: `./opt.d/install-onionbalance-on-debian.sh`
+Do: `./opt.d/install-onionbalance-on-raspbian.sh`
