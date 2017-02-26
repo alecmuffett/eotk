@@ -435,9 +435,14 @@ case "$cmd" in
             exit 1
         fi
 
+        tor_address=127.0.0.1
+        tor_port=9055
+
         # make ob conf
         (
             echo LOG_LEVEL: debug
+            echo TOR_ADDRESS: $tor_address
+            echo TOR_PORT: $tor_port
             echo REFRESH_INTERVAL: 600
             echo PUBLISH_CHECK_INTERVAL: 300 # non-default
             echo INITIAL_DELAY: 60 # non-default
@@ -459,7 +464,7 @@ case "$cmd" in
             echo RunAsDaemon 1
             echo "#" onionbalance
             # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
-            echo SocksPort 127.0.0.1:9050 # meh
+            echo SocksPort $tor_address:$tor_port
             echo CookieAuthentication 1
             echo MaxClientCircuitsPending 1024
         ) > $ob_tor_conf
