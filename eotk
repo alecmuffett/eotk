@@ -165,6 +165,7 @@ Mirror() {
         test "x$host" = "xlocalhost" && continue # skip self
         echo :::: mirror $host ::::
         test -d $mirrors_dir || mkdir -p $mirrors_dir || exit 1
+        chmod 700 $mirrors_dir || exit 1
         rsync $rsync_flags -av \
               --delete \
               --delete-excluded \
@@ -316,10 +317,11 @@ case "$cmd" in
         ;;
 
     genkey|gen)
-        secrets=secrets.d
-        test -d $secrets || mkdir -p $secrets || exit 1
+        secrets_dir=secrets.d
+        test -d $secrets_dir || mkdir -p $secrets_dir || exit 1
+        chmod 700 $secrets_dir || exit 1
         (
-            cd $secrets
+            cd $secrets_dir
             generate-onion-key.sh
         )
         ;;
@@ -428,7 +430,6 @@ case "$cmd" in
     ob-config|obconfig|ob-configure|obconfigure)
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
-
         chmod 700 $ob_dir # otherwise tor complains
 
         # sanity check that args are provided
