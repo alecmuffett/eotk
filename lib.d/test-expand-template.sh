@@ -561,4 +561,67 @@ EOF
 
 Test empty1 </dev/null
 
+##################################################################
+
+Template <<EOF
+%%IF foo eq foo
+true1
+%%ENDIF
+%%IF foo ne bar
+true2
+%%ENDIF
+%%IF foo ne foo
+false1
+%%ENDIF
+%%IF foo eq bar
+false2
+%%ENDIF
+
+%%IF 1 == 1
+true3
+%%ENDIF
+%%IF 1 != 2
+true4
+%%ENDIF
+
+%%IF 1 >= 1
+true5
+%%ENDIF
+%%IF 2 >= 1
+true6
+%%ENDIF
+
+%%IF foobarbaz contains barb
+true7
+%%ENDIF
+%%IF foobarbaz !contains eek
+true8
+%%ENDIF
+%%IF foobarbaz !contains barb
+false3
+%%ENDIF
+%%IF foobarbaz contains eek
+false4
+%%ENDIF
+EOF
+
+Expect <<EOF
+true1
+true2
+
+true3
+true4
+
+true5
+true6
+
+true7
+true8
+EOF
+
+Test more conditionals </dev/null
+
+##################################################################
+
+
 exit 0

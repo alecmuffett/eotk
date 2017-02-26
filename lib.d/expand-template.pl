@@ -38,6 +38,50 @@ sub Lookup {
     die "lookup: $var not set\n";
 }
 
+sub Evaluate {
+    &Warn("Evaluate @_");
+    my @args = @_;
+
+    if ($#args == 0) { # single word? return it, let Perl evaluate
+        return $args[0];
+    }
+
+    if ($#args == 1 and $args[0] eq "not") {
+        return ! $args[0];
+    }
+
+    if ($#args == 2) {
+        my ($a, $op, $b, @junk) = @args;
+
+        # numeric
+        return $a == $b if ($op eq "==");
+        return $a != $b if ($op eq "!=");
+        return $a >= $b if ($op eq ">=");
+        return $a <= $b if ($op eq "<=");
+        return $a > $b if ($op eq ">");
+        return $a < $b if ($op eq "<");
+
+        # string
+        return $a eq $b if ($op eq "eq");
+        return $a ne $b if ($op eq "ne");
+        return $a ge $b if ($op eq "ge");
+        return $a le $b if ($op eq "le");
+        return $a gt $b if ($op eq "gt");
+        return $a lt $b if ($op eq "lt");
+
+        # logic
+        return $a and $b if ($op eq "and");
+        return $a or $b if ($op eq "or");
+        return $a xor $b if ($op eq "xor");
+
+        # substr
+        return (index($a, $b) >= 0) if ($op eq "contains");
+        return !(index($a, $b) >= 0) if ($op eq "!contains");
+    }
+
+    die "Evaluate: expression not parsed, sorry: @args\n";
+}
+
 sub Echo {
     &Warn("Echo1 @_");
     my $line = shift;
@@ -199,13 +243,16 @@ sub PrintIf { # having %%ELSE makes this a little more complex
     }
     die "runaway search for %%ENDIF\n" if (!defined($fi_ptr));
 
+    # expand all %VARIABLES%
     $cond =~ s/%([\w+]+)%/&Lookup($1)/ge;
-    &Warn("evaluate: $cond");
+    &Warn("if-expand: $cond");
 
-    my $result = (split(" ", $cond))[1];
-    die "bad conditional: $template[$start]\n" if (!defined($result));
+    # evaluate the resulting string
+    my ($ifstmt, @args) = split(" ", $cond);
+    my $result = &Evaluate(@args);
     &Warn("result: $result\n");
 
+    # act on the result
     if ($result) { # true
 	&Warn("print true block\n");
 	my $begin2 = $start + 1;
