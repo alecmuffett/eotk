@@ -102,7 +102,7 @@ rendering these issues moot.
   * `http_sub`
   * `http_ssl`
 
-On Linux, scripts are provided to compile these.
+On Linux, instructions are provided to help install, or scripts are provided to compile these.
 
 On OSX, these are available via Homebrew.
 
@@ -157,9 +157,11 @@ On OSX, these are available via Homebrew.
 
 ### Starting & Stopping OnionBalance
 
-* `eotk ob-config`
+* `eotk ob-config projectname ...` # or: `-a` for all, if applicable
   * *synonyms:*
 * `eotk ob-start`
+  * *synonyms:*
+* `eotk ob-restart projectname ...` # or: `-a` for all, if applicable
   * *synonyms:*
 * `eotk ob-stop`
   * *synonyms:*
