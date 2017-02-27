@@ -10,8 +10,8 @@
 *~
 
 opt.d/*
-!opt.d/build*debian.sh
-!opt.d/install*debian.sh
+!opt.d/build*.sh
+!opt.d/install*.sh
 
 mirrors.d/
 onionbalance.d/
