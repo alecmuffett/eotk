@@ -454,7 +454,7 @@ case "$cmd" in
         Print gathering mappings for OnionBalance for projects: $projects
         mappings=__om$$.tmp
         $self maps $projects |
-            awk '/^::::/ {next;} $2=="softmap"{print;}' >$mappings
+            awk '/^::::/{next;} $2=="softmap"{print;}' >$mappings
 
         # check the mappings
         for p in $projects ; do
@@ -556,6 +556,12 @@ case "$cmd" in
             echo ""
             socat - unix-connect:$ob_dir/ob-status.sock
         )
+        ;;
+
+    ob-maps|obmaps) # project ..., or "-a"
+        $self maps "$@" |
+            awk '/^::::/{next;} $2=="softmap"{print $3, $4}' |
+            sort -u
         ;;
 
     ## FREEZE/BACKUP
