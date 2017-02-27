@@ -14,7 +14,7 @@ sudo apt-get --yes update || exit 1
 sudo apt-get --yes install tor deb.torproject.org-keyring socat python-pip || exit 1
 
 echo $0: if you are already running a webserver then nginx will whine about port80, do not worry
-sudo apt-get --yes nginx-extras
+sudo apt-get --yes install nginx-extras
 sudo systemctl stop nginx # is there a way to install-without-enable?
 sudo systemctl disable nginx # we don't need the system to run it
 
