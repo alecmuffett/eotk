@@ -9,12 +9,13 @@ gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 |
 
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add - || exit 1
 
-sudo apt-get update || exit 1
+sudo apt-get --yes update || exit 1
 
-sudo apt-get install tor deb.torproject.org-keyring nginx-extras socat python-pip || exit 1
+sudo apt-get --yes install tor deb.torproject.org-keyring nginx-extras socat python-pip || exit 1
 
 sudo find /var/log/nginx/ -type f -perm -0200 -print0 | sudo xargs -0 chmod g+w || exit 1
 
+echo $0: this will probably whine about pip versions, do not worry about it.
 sudo pip install onionbalance || exit 1
 
 sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmod a+r || exit 1
