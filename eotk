@@ -438,22 +438,26 @@ case "$cmd" in
         chmod 700 $ob_dir # otherwise tor complains
 
         # sanity check that args are provided
-        if [ "x$1" = "x" ] ; then
+        if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all
             exit 1
+        elif [ "x$1" = "x-a" ] ; then # test for / expand the "-a" flag
+            projects=`ListProjects`
+        else # do what we are told
+            projects="$*"
         fi
 
         tor_address=127.0.0.1
         tor_port=9055
 
         # get the mappings
-        Print gathering mappings for OnionBalance for projects: "$@"
+        Print gathering mappings for OnionBalance for projects: $projects
         mappings=__om$$.tmp
-        $self maps "$@" |
+        $self maps $projects |
             awk '/^::::/ {next;} $2=="softmap"{print;}' >$mappings
 
         # check the mappings
-        for p in "$@" ; do
+        for p in $projects ; do
             n=`awk '$1=="'"$p"'"'<$mappings  | wc -l`
             if [ $n = 0 ] ; then
                 Warn no mappings available for project $p, does it exist / is it not a softmap project"?"
