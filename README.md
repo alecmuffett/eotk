@@ -198,9 +198,6 @@ with some prefabricated projects, try this:
   * Browse a little...
 * `eotk stop default`
 
-
-
-
 ## I want to create my own project!
 
 Okay, there are two ways to create your own project:
@@ -297,9 +294,9 @@ correctness of the self-signed SSL-Certificates - which are going to
 be weird, anyway - and the rest of the HTML-rewriting code in EOTK
 will be blind to subdomains.
 
-### Subdomain Solution
+### Subdomain Summary
 
-Subdomains are supported like this:
+Subdomains are supported like this, for `dev` as an example:
 
 ```
 set project myproject
@@ -314,11 +311,17 @@ hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev blogs dev.blogs [...]
 
 ## My company has a lot of sites/domains!
 
-Example: `www.foo.com.au`, `www.syd.foo.com.au`, `www.per.foo.com.au`,
-`www.cdn.foo.net`, `www.foo.aws.amazon.com`...
+Example:
+
+* `www.foo.com.au`
+* `www.syd.foo.com.au`
+* `www.per.foo.com.au`,
+* `www.cdn.foo.net`
+* `www.foo.aws.amazon.com`
+* ...
 
 Put them all in the same project as separate mappings, remembering to
-avoid "hostnames" as above:
+avoid the actual "hostnames" as described above:
 
 ```
 set project fooproj
@@ -328,7 +331,6 @@ hardmap %NEW_ONION% foo.aws.amazon.com
 ```
 
 Onion mapping/translations will be applied for all sites in the same project.
-
 
 ## Troubleshooting
 
