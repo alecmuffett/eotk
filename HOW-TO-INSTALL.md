@@ -1,9 +1,4 @@
-# Setting up EOTK on Ubuntu
-
-exit 0 # just in case anyone thinks this is a script
-
-* We will assume that you are running Ubuntu Server 16.04.1
-  * If using something else, your mileage may vary
+# Notes
 
 EOTK requires Tor 0.2.9.9+
 
@@ -14,17 +9,41 @@ EOTK requires recent `nginx` with the following modules/features enabled:
 * `http_sub`
 * `http_ssl`
 
-On Ubuntu 16.04 these NGINX modules are outdated, and there may be
-issues with permissions; in case of failure, or if you want to run the
-most up to date code, use the raspbian-build scripts in `opt.d` to
-create a fresh copy.
+# Fresh Installations (by platform)
 
-# Tor Installation
+Where you don't have Tor, NGINX or OnionBalance, or much other stuff
+currently installed:
+
+## OSX Sierra (prebuilt via homebrew)
+
+* install Homebrew: http://brew.sh
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/install-everything-on-osx.sh`
+
+## Ubuntu 16.04 (prebuilt via tor and canonical)
+
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/install-everything-on-ubuntu-16.04.sh`
+
+## Raspbian Jessie / Jessie-Lite (manual builds)
+
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/build-nginx-on-raspbian.sh`
+* `./opt.d/build-tor-on-raspbian.sh`
+* `./opt.d/install-onionbalance-on-raspbian.sh`
+
+# Piecemeal Installation Notes
+
+You only need this section if you have to do installation in bits
+because pre-existing software:
+
+## Ubuntu Tor Installation
 
 In a browser elsewhere, retreive the instructions for installing Tor
 from https://www.torproject.org/docs/debian.html.en
-
-## Installation Process (MANUAL)
 
 * Set the menu options for:
   * run *Ubuntu Xenial Xerus*
@@ -38,27 +57,19 @@ from https://www.torproject.org/docs/debian.html.en
 * Do the apt update thing
 * Do the tor installation thing
 
-# NGINX Installation
+## Ubuntu NGINX Installation
 
 Through `apt-get`; logfiles are tweaked to be writable by admin users.
-
-## Installation Process
 
 * `sudo apt-get install nginx-extras`
 * `sudo find /var/log/nginx/ -type f -perm -0200 -print0 | sudo xargs -0 chmod g+w`
 
-# OnionBalance Installation
+## Ubuntu OnionBalance Installation
 
 Through `apt-get` and `pip`; using `pip` tends to mangle permissions,
 hence the find/xargs-chmod commands.
-
-## Installation Process
 
 * `sudo apt-get install socat python-pip`
 * `sudo pip install onionbalance`
 * `sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmod a+r`
 * `sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x`
-
-Finally, this should say: onionbalance 0.1.7 -- or higher
-
-`onionbalance --version`

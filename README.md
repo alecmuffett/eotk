@@ -10,6 +10,7 @@
 ## Changes
 
 ### v1.2
+* new [How To Install](HOW-TO-INSTALL.md) guide
 * custom install process for Ubuntu, tested on Ubuntu Server 16.04.2-LTS
 * renaming / factor-out of Raspbian install code
 * fixes to onionbalance support
@@ -35,15 +36,11 @@ The results are essentially a "man in the middle" proxy; set them up
 only for your own sites or for sites which do not require login
 credentials of any kind.
 
-The resulting NGINX configs are probably both buggy and not terribly
-well tuned; please consider this project to be very much "early days",
-but I shall try not to modify the configuration file format.
+The resulting NGINX configs are probably not terribly well tuned;
+please review for your own consideration. I shall try not to modify
+the configuration file format.
 
-The `softmap` support is untested, and needs some more work to make it
-nice to launch and integrate with OnionBalance; please avoid it for
-the moment.
-
-## An Important Note About Anonymity
+## Important Note About Anonymity
 
 The presumed use-case of EOTK is that you have an already-public
 website and that you wish to give it a corresponding Onion address.
@@ -72,7 +69,7 @@ If you want to set up a server which includes anonymity **as well as**
 all of the aforementioned qualities, you
 [want to be reading an entirely different document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
 
-## Usage Notes
+## EOTK Usage Notes
 
 When connecting to the resulting onions over HTTP/SSL, you will be
 using wildcard self-signed SSL certificates - you *will* encounter
@@ -92,24 +89,6 @@ images and resources "in a new Tab" and accept the certificate there.
 In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
-
-## Requirements
-
-* `tor` (latest stable)
-* `nginx` (latest stable) with the following features & modules
-  * `headers_more`
-  * `ngx_http_substitutions_filter_module`
-  * `http_sub`
-  * `http_ssl`
-
-On Linux, instructions are provided to help install, or scripts are provided to compile these.
-
-On OSX, these are available via Homebrew.
-
-## Video Demonstrations
-
-* [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
-* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
 
 ## Command List
 
@@ -157,9 +136,7 @@ On OSX, these are available via Homebrew.
 
 ### Starting & Stopping OnionBalance
 
-* `eotk ob-config projectname ...` # or: `-a` for all, if applicable
-  * *synonyms:*
-* `eotk ob-start`
+* `eotk ob-start projectname ...` # or: `-a` for all, if applicable
   * *synonyms:*
 * `eotk ob-restart projectname ...` # or: `-a` for all, if applicable
   * *synonyms:*
@@ -191,41 +168,28 @@ On OSX, these are available via Homebrew.
 * eotk `backup`
   * *synonyms:*
 
+
 ## Installation
 
-### OSX
+Please see [How To Install](HOW-TO-INSTALL.md) guide
 
-Currently works on OSX with Homebrew:
+## Video Demonstrations
 
-* install homebrew - http://brew.sh/
-* `git clone https://github.com/alecmuffett/eotk.git`
-* `cd eotk`
-* `sh ./000-setup-osx.sh` # installs required software; if you're worried, check it first
-  * you will need to follow this process to install the software on all workers
+These videos are instructive, but slightly dated. Commands may have
+changed slightly, but not much, and I will try to help you understand
+what has changed rather than break the command entirely.
 
-### Ubuntu
+* [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
+* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
+* [Using OnionBalance](https://www.youtube.com/watch?v=HNJaMNVCb-U)
 
-* `git clone https://github.com/alecmuffett/eotk.git`
-* `cd eotk`
-* **Read** [000-setup-ubuntu.md](000-setup-raspbian.md) and follow the instructions.
-  * you will need to follow this process to install the software on all workers
 
-### Raspbian
+## Experimenting
 
-* `git clone https://github.com/alecmuffett/eotk.git`
-* `cd eotk`
-* **Read** [000-setup-raspbian.md](000-setup-raspbian.md) and follow the instructions.
-  * for Raspbian, the binaries are copied to workers via `rsync`
+After [installation](HOW-TO-INSTALL.md), if you want to experiment
+with some prefabricated projects, try this:
 
-### Debian
-
-Not sure.  Somewhere between Ubuntu and Raspbian may work.
-
-## I don't own a site, but I want to experiment!
-
-If you want to experiment with some prefabricated projects, try this:
-
-* `sh ./010-configure-demo.sh` # creates a working config file + tor & nginx config files
+* `./010-configure-demo.sh` # creates a working config file + tor & nginx config files
 * `eotk start default`
 * Now you can...
   * Connect to one of the onions cited on screen for the `default`
@@ -234,57 +198,17 @@ If you want to experiment with some prefabricated projects, try this:
   * Browse a little...
 * `eotk stop default`
 
-## This involves lots of software, do you have something similar I can play with?
 
-There's
-[another document I wrote](https://github.com/alecmuffett/the-onion-diaries/blob/master/building-proof-of-concept.md),
-showing how to do something very similar to `eotk` by using a tool
-called `mitmproxy`; if you can use a Linux commandline it will give
-you something relevant to play with, and you won't have to setup
-anything permanent.
 
-## I want to create a new project / my own configuration!
 
-You can either add a new project to the demo config file, or you can
-create a new config for yourself.
+## I want to create my own project!
 
-If you want an onion for `foo.com`, the simplest configuration file
-looks like this:
+Okay, there are two ways to create your own project:
 
-```
-set project myproject
-hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com
-```
+### EASY WITH AUTOMATIC ONIONS
 
-...and if you create a file called `project.conf` containing those
-lines, then you should be able to do:
-
-```
-eotk configure project.conf
-eotk start myproject
-```
-
-See also: the next question:
-
-### But how do I create my own Onion Address?
-
-#### MANUAL METHOD
-
-* Do `eotk genkey` - it will print the name of the onion it generates
-  * Do this as many times as you wish/need.
-* Alternately get a tool like `scallion` or `shallot` and use that to
-  "mine" a desirable onion address.
-  * https://github.com/katmagic/Shallot - in C, for CPUs
-    * Seems okay on Linux, not sure about other platforms
-  * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
-    * Advertised as working on Windows, Linux; works well on OSX under "Mono"
-* Be sure to store your mined private keys in `secrets.d` with a
-  filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is the
-  corresponding onion address.
-
-#### AUTOMATIC METHOD
-
-Create a config file with a `.tconf` suffix, and use this syntax:
+Create a config file with a `.tconf` suffix - we'll pretend it's
+`foo.tconf` - and use this kind of syntax:
 
 ```
 set project myproject
@@ -293,16 +217,49 @@ hardmap %NEW_ONION% foo.co.uk
 hardmap %NEW_ONION% foo.de
 ```
 
-...and then run `eotk config foo.tconf`; this will create the onions
-for you and will populate a `foo.conf` for you, and it will configure
-from *that*.
+...and then run
 
-You should probably *delete* `foo.tconf` afterwards, since reusing it
-will trash your existing onions.
+`eotk config foo.tconf`
 
-## Help! I have both www.foo.com and www.DEV.foo.com!
+...which will create the onions for you and will populate a `foo.conf`
+for you, and it will then configure EOTK from *that*.  You should
+probably *delete* `foo.tconf` afterwards, since forcibly reusing it
+would trash your existing onions.
 
-### A Little Background
+### SLIGHTLY HARDER WITH MANUAL ONIONS
+
+* Do `eotk genkey` - it will print the name of the onion it generates
+  * Do this as many times as you wish/need.
+  * Alternately get a tool like `scallion` or `shallot` and use that to "mine" a desirable onion address.
+    * https://github.com/katmagic/Shallot - in C, for CPUs
+      * Seems okay on Linux, not sure about other platforms
+    * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
+      * Advertised as working on Windows, Linux; works well on OSX under "Mono"
+    * Be sure to store your mined private keys in `secrets.d` with a
+      filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is
+      the corresponding onion address.
+* Create a config file with a `.conf` suffix - we'll pretend it's
+  `foo.conf` - and use this kind of syntax, substituting
+  `a2s3c4d5e6f7g8h9` for the onion address that you generated.
+
+```
+set project myproject
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com
+```
+
+...and then (IMPORTANT) run:
+
+`eotk config foo.conf`
+
+...which will configure EOTK.
+
+### THEN START YOUR PROJECT
+
+Like this:
+
+`eotk start myproject`
+
+## What if I have subdomains?
 
 When you are setting up the mappings in a config file, you may have to
 accomodate "subdomains"; the general form of a internet hostname is
@@ -340,7 +297,7 @@ correctness of the self-signed SSL-Certificates - which are going to
 be weird, anyway - and the rest of the HTML-rewriting code in EOTK
 will be blind to subdomains.
 
-### Solution
+### Subdomain Solution
 
 Subdomains are supported like this:
 
@@ -355,7 +312,7 @@ hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev
 hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev blogs dev.blogs [...]
 ```
 
-## My company has a bunch of site/domains!
+## My company has a lot of sites/domains!
 
 Example: `www.foo.com.au`, `www.syd.foo.com.au`, `www.per.foo.com.au`,
 `www.cdn.foo.net`, `www.foo.aws.amazon.com`...
@@ -375,7 +332,8 @@ Onion mapping/translations will be applied for all sites in the same project.
 
 ## Troubleshooting
 
-Firstly, the logs for any given project will reside in `projects.d/<PROJECTNAME>.d/logs.d/`
+The logs for any given project will reside in
+`projects.d/<PROJECTNAME>.d/logs.d/`
 
 If something is problematic, first try:
 
