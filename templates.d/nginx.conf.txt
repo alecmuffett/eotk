@@ -52,18 +52,30 @@ http {
   ;
 
   # subs filters
+  # - named capture groups appear not to work
+  # - anchor slightly more firmly with a single slash
+  # -- double-slash would break https:\/\/foo.net\/ weirdness
   %%BEGIN
-  subs_filter \b%DNS_DOMAIN%\b %ONION_ADDRESS% ri;
+  subs_filter
+  /(([-0-9a-z]+\.)+)?%DNS_DOMAIN_RE%\b
+  /$1%ONION_ADDRESS%
+  gir;
   %%END
 
   # fix the cookies
   %%BEGIN
-  proxy_cookie_domain %DNS_DOMAIN% %ONION_ADDRESS%;
+  proxy_cookie_domain
+  %DNS_DOMAIN%
+  %ONION_ADDRESS%
+  ;
   %%END
 
   # fix the header-redirects
   %%BEGIN
-  proxy_redirect ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$ $1%ONION_ADDRESS%$2;
+  proxy_redirect
+  ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$
+  $1%ONION_ADDRESS%$2
+  ;
   %%END
 
   # o2d_lookup -> if cannot remap, return input.  note: old versions
@@ -165,24 +177,24 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock ssl;
     %%ENDIF
 
-    # subdomain regexp captures trailing dot, use carefully
+    # subdomain regexp captures trailing dot, use carefully; does not need "~*"
     server_name
     %ONION_ADDRESS%
-    ~^(?<subdomain>.+\.)%ONION_ADDRESS_RE%$
+    ~^(?<snsd>([-0-9a-z]+\.)+)%ONION_ADDRESS_RE%$
     ;
 
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
-    location ~ ^/hello[-_]onion/?$ {
+    location ~*^/hello[-_]onion/?$ {
       return 200 "Hello, Onion User!";
     }
     %%ENDIF
 
     # for traffic
     location / {
-      proxy_pass "$scheme://${subdomain}%DNS_DOMAIN%"; # note $scheme
+      proxy_pass "$scheme://${snsd}%DNS_DOMAIN%"; # note $scheme
       proxy_http_version 1.1;
-      proxy_set_header Host "${subdomain}%DNS_DOMAIN%";
+      proxy_set_header Host "${snsd}%DNS_DOMAIN%";
       proxy_set_header Accept-Encoding ""; # but putting this in `http` fails?
       proxy_set_header Connection $connection_upgrade; # SSL
       proxy_set_header Upgrade $http_upgrade; # SSL
