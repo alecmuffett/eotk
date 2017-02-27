@@ -208,7 +208,7 @@ http {
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
     server_name
     %ONION_ADDRESS%
-    ~^(?<snsd>([-0-9a-z]+\.)+)%ONION_ADDRESS_RE%$
+    ~^(?<snsd>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
     ;
 
     %%IF %NGINX_HELLO_ONION%
