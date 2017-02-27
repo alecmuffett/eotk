@@ -439,7 +439,7 @@ case "$cmd" in
 
         # sanity check that args are provided
         if [ "x$1" = "x" ] ; then # test for no args
-            Print error: missing project name, try: $prog projects for a list, or -a for all
+            Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
         elif [ "x$1" = "x-a" ] ; then # test for / expand the "-a" flag
             projects=`ListProjects`
