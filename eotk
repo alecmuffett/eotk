@@ -461,7 +461,11 @@ case "$cmd" in
                 rm $mappings
                 exit 1
             else
-                Print project $p maps to $n worker onions
+                m=`awk '$1=="'"$p"'"{print $3}'<$mappings | sort -u | wc -l`
+                w=`awk '$1=="'"$p"'"{print $6}'<$mappings | sort -u | wc -l`
+                Print project $p contains $n mappings
+                Print project $p uses $m master onions
+                Print project $p uses $w worker onions
             fi
         done
 
