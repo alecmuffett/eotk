@@ -333,57 +333,57 @@ case "$cmd" in
 
     ## ACTIONS
 
-    start) # project, or "-a"
+    start) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
-    stop) # project, or "-a"
+    stop) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
-    restart|bounce|reload) # project, or "-a"
+    restart|bounce|reload) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload) # project, or "-a"
+    nxreload|nx-reload) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    torreload|tor-reload) # project, or "-a"
+    torreload|tor-reload) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects torreload "$@"
         InvokeRemotely torreload "$@"
         ;;
 
-    debugon|debug-on) # project, or "-a"
+    debugon|debug-on) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff|debug-off) # project, or "-a"
+    debugoff|debug-off) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
-    harvest|onions) # project, or "-a"
+    harvest|onions) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
-    status) # project, or "-a"
+    status) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
-    maps|map) # project, or "-a"
+    maps|map) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
 
-    delete) # project, or "-a"
+    delete) # project ..., or "-a"
         Print $cmd not yet implemented, sorry.
         ;;
 
@@ -428,6 +428,13 @@ case "$cmd" in
         ;;
 
     ob-config|obconfig|ob-configure|obconfigure)
+        Print ob-configure had been rolled into ob-start
+        Print please skip forward to: $prog ob-start project ...
+        ;;
+
+    ob-gather|obgather) # project ..., or "-a"
+        Print gathering mappings for OnionBalance of  "$@"
+
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
@@ -441,7 +448,24 @@ case "$cmd" in
         tor_address=127.0.0.1
         tor_port=9055
 
-        # make ob conf
+        # get the mappings
+        mappings=__om$$.tmp
+        $self maps "$@" |
+            awk '/^::::/ {next;} $2=="softmap"{print;}' >$mappings
+
+        # check the mappings
+        for p in "$@" ; do
+            n=`awk '$1=="'"$p"'"'<$mappings  | wc -l`
+            if [ $n = 0 ] ; then
+                Warn no mappings available for project $p, does it exist / is it not a softmap project"?"
+                rm $mappings
+                exit 1
+            else
+                Print project $p maps to $n worker onions
+            fi
+        done
+
+        Print building OnionBalance configurations...
         (
             echo LOG_LEVEL: debug
             echo TOR_ADDRESS: $tor_address
@@ -453,10 +477,13 @@ case "$cmd" in
             echo DESCRIPTOR_VALIDITY_PERIOD: 86400
             echo DESCRIPTOR_OVERLAP_PERIOD: 3600
             echo DESCRIPTOR_UPLOAD_PERIOD: 3600
-            $self maps "$@" | grep -v "^::::" | do-obconfig.pl # consumes args
+            do-obconfig.pl <$mappings
         ) > $ob_conf
 
-        # make tor conf
+        # clean up
+        rm $mappings
+
+        Print building OnionBalance-Tor configurations...
         (
             echo DataDirectory $ob_dir
             echo ControlPort unix:$ob_tor_control_sock
@@ -473,9 +500,12 @@ case "$cmd" in
         ) > $ob_tor_conf
         ;;
 
-    ob-start|obstart)
-        Print starting Tor
+    ob-start|obstart) # project ..., or "-a"
+        $self ob-gather "$@" || exit 1
+
+        Print starting OnionBalance-Tor
         tor -f $ob_tor_conf >$ob_dir/tor-startup.log 2>&1
+
         Print starting OnionBalance
         onionbalance \
             -s $ob_tor_control_sock \
@@ -494,10 +524,9 @@ case "$cmd" in
         rm -f $ob_dir/ob.pid
         ;;
 
-    ob-restart)
+    ob-restart) # project ..., or "-a"
         $self ob-stop
-        $self ob-config "$@"
-        $self ob-start
+        $self ob-start "$@"
         ;;
 
     ob-status|obstatus)

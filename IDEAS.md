@@ -4,3 +4,4 @@
   * stop onions accessing certain subdomains
 * BLACKHOLE_PATH_RE
   * stop onions accessing certain /path/to/wherever
+* merge ob-configure into ob-start
