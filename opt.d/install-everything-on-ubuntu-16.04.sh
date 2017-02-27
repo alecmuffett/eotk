@@ -19,7 +19,8 @@ sudo apt-get --yes install nginx-extras
 sudo systemctl stop nginx # is there a way to install-without-enable?
 sudo systemctl disable nginx # we don't need the system to run it
 
-sudo find /var/log/nginx/ -type f -perm -0200 -print0 | sudo xargs -0 chmod g+w || exit 1
+# files and directories
+sudo find /var/log/nginx/ -perm -0200 -print0 | sudo xargs -0 chmod g+w || exit 1
 
 echo ""
 echo $0: this will probably whine about pip versions, do not worry about it.
