@@ -433,8 +433,6 @@ case "$cmd" in
         ;;
 
     ob-gather|obgather) # project ..., or "-a"
-        Print gathering mappings for OnionBalance of  "$@"
-
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
@@ -449,6 +447,7 @@ case "$cmd" in
         tor_port=9055
 
         # get the mappings
+        Print gathering mappings for OnionBalance for projects: "$@"
         mappings=__om$$.tmp
         $self maps "$@" |
             awk '/^::::/ {next;} $2=="softmap"{print;}' >$mappings
