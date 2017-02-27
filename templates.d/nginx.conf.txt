@@ -51,15 +51,43 @@ http {
   text/xml
   ;
 
-  # subs filters
-  # - named capture groups appear not to work
-  # - anchor slightly more firmly with a single slash
-  # -- double-slash would break https:\/\/foo.net\/ weirdness
+  # subs_filter: these patterns bear some explanation; the goal is to
+  # work regular expressions really hard in order to minimise the
+  # number of expressions which are used in the basic config, so the
+  # basic pattern is to capture zero/more "sub." in "//sub.foo.com"
+  # and interpolate that into "//sub.xxxxxxxx.onion"; so far?
+
+  # but it turns out that some JSON libraries like to "escape" the
+  # forward slashes in JSON content, leading to input like (literal)
+  # "http:\/\/sub.foo.com\/foo.html" - so you need to add the
+  # backslashes, but then you need to escape the backslashes, except
+  # they need double-escaping in the regexp because of string
+  # interpolation; hence 4x backslash -> 1x matched character
+
+  # likewise we use the "_RE2" form of the re-escaped domain name in
+  # order to coerce the regexp to match literal dots, not wildcards.
+
+  # there seems to be some sort of shortcut at play here; the trailing
+  # "\\b" also seems to work as "\b" however that would apparently
+  # break the double-escaping that is necessary/works everywhere else
+  # in subs_filter.
+
+  # also, regrettably, named capture groups appear not to work, we're
+  # fortunate that there appear not to be more than 9 capture groups
+  # by default, lest "$1" bleed into the subsequent digits of an onion
+  # address: $1234567abcdefghij.onion
+
   %%BEGIN
   subs_filter
-  /(([-0-9a-z]+\.)+)?%DNS_DOMAIN_RE%\b
-  /$1%ONION_ADDRESS%
+  //(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  //$1%ONION_ADDRESS%
   gir;
+
+  subs_filter
+  \\\\/\\\\/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  \\/\\/$1%ONION_ADDRESS%
+  gir;
+
   %%END
 
   # fix the cookies
@@ -70,10 +98,10 @@ http {
   ;
   %%END
 
-  # fix the header-redirects
+  # fix the header-redirects; TODO: CHECK THIS DWYW
   %%BEGIN
   proxy_redirect
-  ~*^(.*?)\b%DNS_DOMAIN_RE%\b(.*)$
+  ~*^(.*?)\\b%DNS_DOMAIN_RE2%\\b(.*)$
   $1%ONION_ADDRESS%$2
   ;
   %%END
