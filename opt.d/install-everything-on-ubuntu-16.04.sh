@@ -11,7 +11,12 @@ gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add - || ex
 
 sudo apt-get --yes update || exit 1
 
-sudo apt-get --yes install tor deb.torproject.org-keyring nginx-extras socat python-pip || exit 1
+sudo apt-get --yes install tor deb.torproject.org-keyring socat python-pip || exit 1
+
+echo $0: if you are already running a webserver then nginx will whine about port80, do not worry
+sudo apt-get --yes nginx-extras
+sudo systemctl stop nginx # is there a way to install-without-enable?
+sudo systemctl disable nginx # we don't need the system to run it
 
 sudo find /var/log/nginx/ -type f -perm -0200 -print0 | sudo xargs -0 chmod g+w || exit 1
 
