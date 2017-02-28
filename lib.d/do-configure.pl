@@ -321,6 +321,7 @@ sub DoProject {
 
 &SetEnv("nginx_hello_onion", 1);
 &SetEnv("nginx_resolver", "8.8.8.8");
+&SetEnv("nginx_resolver_flags", "");
 &SetEnv("nginx_rlim", 1024);
 &SetEnv("nginx_timeout", 30);
 &SetEnv("nginx_workers", 5);
