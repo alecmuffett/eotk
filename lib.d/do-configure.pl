@@ -320,7 +320,7 @@ sub DoProject {
 # in-template settings
 
 &SetEnv("nginx_cache_size", "16m");
-&SetEnv("nginx_cache_validity", 0);
+&SetEnv("nginx_cache_seconds", 0);
 &SetEnv("nginx_hello_onion", 1);
 &SetEnv("nginx_resolver", "8.8.8.8");
 &SetEnv("nginx_resolver_flags", "");

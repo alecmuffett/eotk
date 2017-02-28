@@ -34,8 +34,8 @@ http {
   proxy_temp_file_write_size 64k;
   proxy_temp_path "/tmp";
 
-  %%IF %NGINX_CACHE_VALIDITY%
-  # nginx caching static responses for %NGINX_CACHE_VALIDITY% seconds
+  %%IF %NGINX_CACHE_SECONDS%
+  # nginx caching static responses for %NGINX_CACHE_SECONDS% seconds
   # - this is a lightweight cache to reduce "storms", hence the global
   # approch of "cache everything for a small number of seconds"
   # https://nginx.org/en/docs/http/ngx_http_proxy_module.html
@@ -44,7 +44,7 @@ http {
   proxy_cache_revalidate on;
   proxy_cache_use_stale timeout updating;
   # "proxy_cache_valid any" includes things like 404s
-  proxy_cache_valid any %NGINX_CACHE_VALIDITY%s;
+  proxy_cache_valid any %NGINX_CACHE_SECONDS%s;
   %%ELSE
   # nginx caching disabled
   %%ENDIF

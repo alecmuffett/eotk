@@ -29,8 +29,8 @@ my %known =
 
      # in-template settings
      'IS_SOFTMAP' => 1,
+     'NGINX_CACHE_SECONDS' => 1,
      'NGINX_CACHE_SIZE' => 1,
-     'NGINX_CACHE_VALIDITY' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
      'NGINX_RESOLVER_FLAGS' => 1,
