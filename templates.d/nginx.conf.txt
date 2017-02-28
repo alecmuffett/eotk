@@ -7,6 +7,10 @@
 pid %PROJECT_DIR%/nginx.pid;
 error_log %LOG_DIR%/nginx-error.log %NGINX_SYSLOG%;
 
+# TODO: notes for custom 403 error-handling pages:
+# https://www.cyberciti.biz/faq/unix-linux-nginx-custom-error-403-page-configuration/
+# https://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
+
 # performance
 %%IF %IS_SOFTMAP%
 worker_processes %SOFTMAP_NGINX_WORKERS%; # softmap
