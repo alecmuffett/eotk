@@ -144,7 +144,7 @@ http {
     %%END
 
     o2d_lookup = function (o)
-      local k = o[1]
+      local k = o[1] -- see note above
       return ( o2d_mappings[k] or k )
     end
 
@@ -156,12 +156,19 @@ http {
       return o
     end
 
-    dns2onion = function (i) -- inherently a bit flaky because ordering, boundaries; avoid
+    dns2onion = function (i) -- take care when using, because ordering
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
       %%END
       return i
+    end
+
+    fix_acao = function (i)
+      if i == nil or i == "*" then
+        return i -- yay for Lua interning short strings for comparison
+      end
+      return dns2onion(i)
     end
   }
 
@@ -266,8 +273,14 @@ http {
     location / {
       proxy_pass "$scheme://${snsd}%DNS_DOMAIN%"; # note $scheme
       proxy_http_version 1.1;
+
+      # a note on proxy_set_header, add_header, similar methods, etc;
+      # if you override *any* header then you will lose the other
+      # headers inherited from the parent contexts:
+      # https://blog.g3rt.nl/nginx-add_header-pitfall.html
+
       proxy_set_header Host "${snsd}%DNS_DOMAIN%";
-      proxy_set_header Accept-Encoding ""; # but putting this in `http` fails?
+      proxy_set_header Accept-Encoding "";
       proxy_set_header Connection $connection_upgrade; # SSL
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
@@ -310,6 +323,12 @@ http {
       %%ELSE
       # no host regular expression blocking
       %%ENDIF
+
+      # fix CORS / Access-Control-Allow-Origin
+      header_filter_by_lua_block {
+        local acao = "Access-Control-Allow-Origin"
+        ngx.header[acao] = fix_acao(ngx.header[acao])
+      }
     }
   }
 

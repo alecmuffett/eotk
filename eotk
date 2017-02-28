@@ -554,7 +554,7 @@ case "$cmd" in
 
     ob-ps)
         test -d $ob_dir || exit 0
-        pidfiles=`find $obdir -name "*.pid"`
+        pidfiles=`find $ob_dir -name "*.pid"`
         if [ "x$pidfiles" != "x" ] ; then
             ps -p `cat $pidfiles`
         fi
