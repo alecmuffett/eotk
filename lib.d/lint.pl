@@ -28,9 +28,9 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
-     'HEADER_CSP_SUPPRESS' => 1,
-     'HEADER_HPKP_SUPPRESS' => 1,
-     'HEADER_HSTS_SUPPRESS' => 1,
+     'SUPPRESS_HEADER_CSP' => 1,
+     'SUPPRESS_HEADER_HPKP' => 1,
+     'SUPPRESS_HEADER_HSTS' => 1,
      'IS_SOFTMAP' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,

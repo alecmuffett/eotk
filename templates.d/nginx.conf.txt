@@ -146,7 +146,7 @@ http {
     end
   }
 
-  %%IF %HEADER_CSP_SUPPRESS%
+  %%IF %SUPPRESS_HEADER_CSP%
   # csp suppression
   proxy_hide_header "Content-Security-Policy";
   proxy_hide_header "Content-Security-Policy-Report-Only";
@@ -154,14 +154,14 @@ http {
   # csp not suppressed
   %%ENDIF
 
-  %%IF %HEADER_HSTS_SUPPRESS%
+  %%IF %SUPPRESS_HEADER_HSTS%
   # hsts suppression
   proxy_hide_header "Strict-Transport-Security";
   %%ELSE
   # hsts not suppressed
   %%ENDIF
 
-  %%IF %HEADER_HPKP_SUPPRESS%
+  %%IF %SUPPRESS_HEADER_HPKP%
   # hpkp suppression
   proxy_hide_header "Public-Key-Pins";
   proxy_hide_header "Public-Key-Pins-Report-Only";

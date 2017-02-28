@@ -67,9 +67,6 @@ Defaults in (parentheses)
 ### NGINX Configuration
 
 * NGINX_HELLO_ONION (on)
-* HEADER_CSP_SUPPRESS (on)
-* HEADER_HPKP_SUPPRESS (on)
-* HEADER_HSTS_SUPPRESS (on)
 * NGINX_RESOLVER (8.8.8.8)
 * NGINX_RESOLVER_FLAGS
 * NGINX_RLIM (1024)
@@ -77,6 +74,9 @@ Defaults in (parentheses)
 * NGINX_TIMEOUT (30 seconds)
 * NGINX_WORKERS (5)
 * SOFTMAP_NGINX_WORKERS (20)
+* SUPPRESS_HEADER_CSP (on)
+* SUPPRESS_HEADER_HPKP (on)
+* SUPPRESS_HEADER_HSTS (on)
 
 ### Tor Configuration
 
