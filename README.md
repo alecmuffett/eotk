@@ -10,6 +10,10 @@
 ## Changes
 
 ### v1.2
+* new features:
+  * optional blocks to methods other than GET/HEAD
+  * optional 403/Forbidden blocks for accesses to certain Locations or Hosts, including as regexps
+  * optional time-based caching of static content for `N` seconds, with selectable cache size (def: 16Mb)
 * new [How To Install](HOW-TO-INSTALL.md) guide
 * custom install process for Ubuntu, tested on Ubuntu Server 16.04.2-LTS
 * renaming / factor-out of Raspbian install code
