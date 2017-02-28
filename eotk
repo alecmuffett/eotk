@@ -368,6 +368,11 @@ case "$cmd" in
         InvokeRemotely debugoff "$@"
         ;;
 
+    syntax) # project ..., or "-a"
+        $need_to_run_locally && RunLocallyOverProjects syntax "$@"
+        InvokeRemotely syntax "$@"
+        ;;
+
     harvest|onions) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
