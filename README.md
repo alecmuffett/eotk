@@ -1,6 +1,8 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
+### *"Does for Onions what LetsEncrypt does for SSL..." - anon*
+
 ## Primary Supported Platforms
 
 * OSX Sierra with Homebrew, Latest Updates
