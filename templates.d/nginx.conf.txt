@@ -163,13 +163,6 @@ http {
       %%END
       return i
     end
-
-    fix_acao = function (i)
-      if i == nil or i == "*" then
-        return i -- yay for Lua interning short strings for comparison
-      end
-      return dns2onion(i)
-    end
   }
 
   %%IF %SUPPRESS_HEADER_CSP%
@@ -327,7 +320,10 @@ http {
       # fix CORS / Access-Control-Allow-Origin
       header_filter_by_lua_block {
         local acao = "Access-Control-Allow-Origin"
-        ngx.header[acao] = fix_acao(ngx.header[acao])
+        local h = ngx.header[acao]
+        if h ~= nil and h ~= "*" then
+          ngx.header[acao] = dns2onion(h)
+        end
       }
     }
   }
