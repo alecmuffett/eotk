@@ -33,6 +33,7 @@ my %known =
      'NGINX_CACHE_VALIDITY' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
+     'NGINX_RESOLVER_FLAGS' => 1,
      'NGINX_RLIM' => 1,
      'NGINX_SYSLOG' => 1,
      'NGINX_TEMPLATE' => 1,
