@@ -390,7 +390,7 @@ case "$cmd" in
     ## DIAGS
 
     ps)
-        ps auxww | egrep '\b(eotk)\b'
+        ps auxww | egrep '\b(eotk|onionbalance)\b'
         InvokeRemotely ps
         ;;
 
@@ -503,7 +503,7 @@ case "$cmd" in
             # echo SocksPort unix:$ob_dir/tor-socks.sock # curl 7.38 does not like this
             echo SocksPort $tor_address:$tor_port
             echo CookieAuthentication 1
-            echo MaxClientCircuitsPending 1024
+            # echo MaxClientCircuitsPending 1024
         ) > $ob_tor_conf
         ;;
 
