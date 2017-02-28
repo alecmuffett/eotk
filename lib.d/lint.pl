@@ -28,6 +28,10 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
+     'BLOCK_HOST' => 1,
+     'BLOCK_HOST_RE' => 1,
+     'BLOCK_LOCATION' => 1,
+     'BLOCK_LOCATION_RE' => 1,
      'IS_SOFTMAP' => 1,
      'NGINX_CACHE_SECONDS' => 1,
      'NGINX_CACHE_SIZE' => 1,

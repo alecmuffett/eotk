@@ -233,11 +233,29 @@ http {
 
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
-    location ~*^/hello[-_]onion/?$ {
+    location ~* ^/hello[-_]onion/?$ {
       return 200 "Hello, Onion User!";
     }
     %%ELSE
     # no "hello-onion" endpoint
+    %%ENDIF
+
+    %%IF %BLOCK_LOCATION%
+    # block locations by name
+    location %BLOCK_LOCATION% {
+      return 403 "URI not supported over Onion. Sorry.";
+    }
+    %%ELSE
+    # no named location blocking
+    %%ENDIF
+
+    %%IF %BLOCK_LOCATION_RE%
+    # block locations matching this regular expression
+    location ~* %BLOCK_LOCATION_RE% {
+      return 403 "URI not supported over Onion. Sorry.";
+    }
+    %%ELSE
+    # no location regular expression blocking
     %%ENDIF
 
     # for traffic
@@ -267,6 +285,26 @@ http {
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
+      %%ENDIF
+
+      %%IF %BLOCK_HOST%
+      # block hosts matching this name
+      if ( $host = %BLOCK_HOST% ) {
+        # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+        return 403 "Host not supported over Onion. Sorry.";
+      }
+      %%ELSE
+      # no named host blocking
+      %%ENDIF
+
+      %%IF %BLOCK_HOST_RE%
+      # block hosts matching this regular expression
+      if ( $host ~* %BLOCK_HOST_RE% ) {
+          # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+          return 403 "Host not supported over Onion. Sorry.";
+      }
+      %%ELSE
+      # no host regular expression blocking
       %%ENDIF
     }
   }

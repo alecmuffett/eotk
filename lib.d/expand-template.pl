@@ -42,16 +42,26 @@ sub Evaluate {
     &Warn("Evaluate @_");
     my @args = @_;
 
+    if ($#args < 0) {
+        &Warn("EvaluateUndef");
+        return undef;
+    }
+
     if ($#args == 0) { # single word? return it, let Perl evaluate
+        &Warn("Evaluate0 $args[0]");
         return $args[0];
     }
 
     if ($#args == 1 and $args[0] eq "not") {
+        &Warn("Evaluate1 ! $args[0]");
         return ! $args[0];
     }
 
     if ($#args == 2) {
         my ($a, $op, $b, @junk) = @args;
+        &Warn("Evaluate2 $a");
+        &Warn("Evaluate2 $op");
+        &Warn("Evaluate2 $b");
 
         # numeric
         return $a == $b if ($op eq "==");

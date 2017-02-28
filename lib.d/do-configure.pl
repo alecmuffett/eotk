@@ -342,6 +342,11 @@ sub DoProject {
 &SetEnv("suppress_header_hsts", 1);
 &SetEnv("suppress_methods_except_get", 0);
 
+&SetEnv("block_host", "");
+&SetEnv("block_host_re", "");
+&SetEnv("block_location", "");
+&SetEnv("block_location_re", "");
+
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 

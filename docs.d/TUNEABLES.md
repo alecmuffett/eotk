@@ -66,6 +66,10 @@ Defaults in (parentheses)
 
 ### NGINX Configuration
 
+* BLOCK_HOST (none)
+* BLOCK_HOST_RE (none)
+* BLOCK_LOCATION (none)
+* BLOCK_LOCATION_RE (none)
 * NGINX_CACHE_SECONDS (0)
 * NGINX_CACHE_SIZE (16m)
 * NGINX_HELLO_ONION (on)
