@@ -77,6 +77,7 @@ Defaults in (parentheses)
 * SUPPRESS_HEADER_CSP (on)
 * SUPPRESS_HEADER_HPKP (on)
 * SUPPRESS_HEADER_HSTS (on)
+* SUPPRESS_METHODS_EXCEPT_GET (off)
 
 ### Tor Configuration
 

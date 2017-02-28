@@ -28,9 +28,6 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
-     'SUPPRESS_HEADER_CSP' => 1,
-     'SUPPRESS_HEADER_HPKP' => 1,
-     'SUPPRESS_HEADER_HSTS' => 1,
      'IS_SOFTMAP' => 1,
      'NGINX_HELLO_ONION' => 1,
      'NGINX_RESOLVER' => 1,
@@ -41,6 +38,10 @@ my %known =
      'NGINX_WORKERS' => 1,
      'SOFTMAP_NGINX_WORKERS' => 1,
      'SOFTMAP_TOR_WORKERS' => 1,
+     'SUPPRESS_HEADER_CSP' => 1,
+     'SUPPRESS_HEADER_HPKP' => 1,
+     'SUPPRESS_HEADER_HSTS' => 1,
+     'SUPPRESS_METHODS_EXCEPT_GET' => 1,
      'TOR_INTROS_PER_DAEMON' => 1,
      'TOR_SINGLE_ONION' => 1,
      'TOR_SYSLOG' => 1,
