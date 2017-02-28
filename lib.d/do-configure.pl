@@ -338,6 +338,7 @@ sub DoProject {
 &SetEnv("suppress_header_csp", 1); # eventually header_csp_rewrite?
 &SetEnv("suppress_header_hpkp", 1);
 &SetEnv("suppress_header_hsts", 1);
+&SetEnv("suppress_methods_except_get", 0);
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);

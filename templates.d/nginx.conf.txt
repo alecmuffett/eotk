@@ -101,7 +101,7 @@ http {
   ;
   %%END
 
-  # fix the header-redirects; TODO: CHECK THIS DWYW
+  # fix the header-redirects
   %%BEGIN
   proxy_redirect
   ~*^(.*?)\\b%DNS_DOMAIN_RE2%\\b(.*)$
@@ -221,6 +221,8 @@ http {
     location ~*^/hello[-_]onion/?$ {
       return 200 "Hello, Onion User!";
     }
+    %%ELSE
+    # no "hello-onion" endpoint
     %%ENDIF
 
     # for traffic
@@ -242,6 +244,15 @@ http {
         return onion2dns(ngx.var.http_origin)
       }
       proxy_set_header Origin $origin2;
+
+      %%IF %SUPPRESS_METHODS_EXCEPT_GET%
+      # suppress non-GET methods (e.g.: POST)
+      limit_except GET {
+        deny all;
+      }
+      %%ELSE
+      # non-GET methods (e.g.: POST) are not suppressed
+      %%ENDIF
     }
   }
 
