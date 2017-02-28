@@ -66,6 +66,8 @@ Defaults in (parentheses)
 
 ### NGINX Configuration
 
+* NGINX_CACHE_VALIDITY (0)
+* NGINX_CACHE_SIZE (16m)
 * NGINX_HELLO_ONION (on)
 * NGINX_RESOLVER (8.8.8.8)
 * NGINX_RESOLVER_FLAGS

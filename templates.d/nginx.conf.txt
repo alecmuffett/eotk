@@ -34,6 +34,21 @@ http {
   proxy_temp_file_write_size 64k;
   proxy_temp_path "/tmp";
 
+  %%IF %NGINX_CACHE_VALIDITY%
+  # nginx caching static responses for %NGINX_CACHE_VALIDITY% seconds
+  # - this is a lightweight cache to reduce "storms", hence the global
+  # approch of "cache everything for a small number of seconds"
+  # https://nginx.org/en/docs/http/ngx_http_proxy_module.html
+  proxy_cache_path /tmp/nginx-cache-%PROJECT% levels=1:2 keys_zone=%PROJECT%:%NGINX_CACHE_SIZE%;
+  proxy_cache %PROJECT%;
+  proxy_cache_revalidate on;
+  proxy_cache_use_stale timeout updating;
+  # "proxy_cache_valid any" includes things like 404s
+  proxy_cache_valid any %NGINX_CACHE_VALIDITY%s;
+  %%ELSE
+  # nginx caching disabled
+  %%ENDIF
+
   # logs
   access_log %LOG_DIR%/nginx-access.log;
 
