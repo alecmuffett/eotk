@@ -379,12 +379,7 @@ case "$cmd" in
         ;;
 
     status) # project ..., or "-a"
-        if [ -d $ob_dir ] ; then
-            pidfiles=`find $ob_dir -name "*.pid"`
-            if [ "x$pidfiles" != "x" ] ; then
-                ps -p `cat $pidfiles`
-            fi
-        fi
+        $self ob-ps
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
@@ -557,16 +552,20 @@ case "$cmd" in
         $self ob-start "$@"
         ;;
 
+    ob-ps)
+        test -d $ob_dir || exit 0
+        pidfiles=`find $obdir -name "*.pid"`
+        if [ "x$pidfiles" != "x" ] ; then
+            ps -p `cat $pidfiles`
+        fi
+        ;;
+
     ob-status|obstatus)
-        (
-            cd $ob_dir || exit 1
-            pidfiles=`find . -name "*.pid"`
-            if [ "x$pidfiles" != "x" ] ; then
-                ps -p `cat $pidfiles`
-            fi
+        $self ob-ps
+        if [ -S $ob_status_sock ] ; then
             echo ""
-            socat - unix-connect:$ob_dir/ob-status.sock
-        )
+            socat - unix-connect:$ob_status_sock
+        fi
         ;;
 
     ob-maps|obmaps) # project ..., or "-a"
