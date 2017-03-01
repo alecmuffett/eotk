@@ -99,6 +99,15 @@ rendering these issues moot.
 
 ## Command List
 
+### Flags
+
+* `--local`: ignore the presence of `eotk-workers.conf` and operate
+  upon local projects; used to administer projects running locally on
+  a machine which might *also* be running onionbalance.
+* `--remote`: functionally the same as `--local` but denotes remote
+  execution on a worker; used to inhibit recursion and loops amongst
+  worker machines, of A calls B calls A calls B ...
+
 ### Configuration
 
 * `eotk config [filename]` # default `onions.conf`

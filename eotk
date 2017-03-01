@@ -41,10 +41,15 @@ export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
 # argument stripping
 flag_remote=false
+flag_local=false
 while : ; do
     case "x$1" in
         x--remote)
             flag_remote=true
+            shift
+            ;;
+        x--local)
+            flag_local=true
             shift
             ;;
         x--debug)
@@ -64,6 +69,12 @@ CloudHosts() {
     # use --remote hack to forcibly stop risk of recursion...
     if $flag_remote ; then
         echo "localhost" # this will be treated as a magic sentinel
+        return 0
+    fi
+
+    # perversely, --local, exactly the same
+    if $flag_local ; then
+        echo "localhost"
         return 0
     fi
 
