@@ -101,15 +101,10 @@ http {
 
   %%BEGIN
   subs_filter
-  //(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  //$1%ONION_ADDRESS%
-  gir;
-
-  subs_filter
-  \\\\/\\\\/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  \\/\\/$1%ONION_ADDRESS%
-  gir;
-
+  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  $1/$2%ONION_ADDRESS%
+  gir
+  ;
   %%END
 
   # fix the cookies
