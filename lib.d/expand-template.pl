@@ -35,7 +35,7 @@ sub Lookup {
     }
     &Warn("finish dumping scopes\n");
 
-    die "lookup: $var not set\n";
+    die "lookup: variable named '$var' not set\n";
 }
 
 sub Evaluate {
@@ -64,25 +64,25 @@ sub Evaluate {
         &Warn("Evaluate2 $b");
 
         # numeric
-        return $a == $b if ($op eq "==");
-        return $a != $b if ($op eq "!=");
-        return $a >= $b if ($op eq ">=");
-        return $a <= $b if ($op eq "<=");
-        return $a > $b if ($op eq ">");
-        return $a < $b if ($op eq "<");
+        return ($a == $b) if ($op eq "==");
+        return ($a != $b) if ($op eq "!=");
+        return ($a >= $b) if ($op eq ">=");
+        return ($a <= $b) if ($op eq "<=");
+        return ($a > $b) if ($op eq ">");
+        return ($a < $b) if ($op eq "<");
 
         # string
-        return $a eq $b if ($op eq "eq");
-        return $a ne $b if ($op eq "ne");
-        return $a ge $b if ($op eq "ge");
-        return $a le $b if ($op eq "le");
-        return $a gt $b if ($op eq "gt");
-        return $a lt $b if ($op eq "lt");
+        return ($a eq $b) if ($op eq "eq");
+        return ($a ne $b) if ($op eq "ne");
+        return ($a ge $b) if ($op eq "ge");
+        return ($a le $b) if ($op eq "le");
+        return ($a gt $b) if ($op eq "gt");
+        return ($a lt $b) if ($op eq "lt");
 
         # logic
-        return $a and $b if ($op eq "and");
-        return $a or $b if ($op eq "or");
-        return $a xor $b if ($op eq "xor");
+        return ($a and $b) if ($op eq "and");
+        return ($a or $b) if ($op eq "or");
+        return ($a xor $b) if ($op eq "xor");
 
         # substr
         return (index($a, $b) >= 0) if ($op eq "contains");
@@ -197,6 +197,42 @@ sub PrintRange {
     &Warn("scope $#scopes popped\n");
 }
 
+sub PrintCsv {
+    my ($line, $begin, $end) = @_;
+
+    &Warn("csv begin: $begin $template[$begin]");
+    &Warn("csv end: $end $template[$end]");
+
+    # limits
+    $line =~ s/%([\w+]+)%/&Lookup($1)/ge;
+    my ($crap, @csvs) = split(" ", $line);
+    &Warn("csv: @csvs\n");
+
+    foreach my $csv (@csvs) {
+        # push down a scope
+        my %scope = ();
+        unshift(@scopes, \%scope);
+        &Warn("scope $#scopes pushed\n");
+
+        # %0% = whole thing
+        $scope{"0"} = $csv;
+
+        # %1%... = elements
+        my $i = 1;
+        foreach my $element (split(/,/, $csv)) {
+            $scope{"$i"} = $element;
+            $i++;
+        }
+
+        # print the block
+        &PrintBlock($begin, $end);
+
+        # nuke the scope
+        shift(@scopes);
+        &Warn("scope $#scopes popped\n");
+    }
+}
+
 sub PrintIf { # having %%ELSE makes this a little more complex
     my $start = shift;
     my $cond = $template[$start];
@@ -267,6 +303,10 @@ sub FindMatchingEndRange {
     return &FindMatching('%%RANGE', '%%ENDRANGE', @_);
 }
 
+sub FindMatchingEndCsv {
+    return &FindMatching('%%CSV', '%%ENDCSV', @_);
+}
+
 sub PrintBlock {
     my ($begin, $end) = @_; # inclusive
 
@@ -302,6 +342,19 @@ sub PrintBlock {
 		&Warn("empty or negative range block: $begin2 $end2\n");
 	    }
 	    $i = $end2 + 1; # point at %%ENDRANGE
+	    next; # bump pointer and continue
+	}
+
+	if ($line =~ /^\s*%%CSV\b/) {
+	    my $begin2 = $i + 1;
+	    my $end2 = FindMatchingEndCsv($begin2) - 1;
+	    if ($end2 >= $begin2) {
+		&PrintCsv($line, $begin2, $end2);
+	    }
+	    else {
+		&Warn("empty or negative csv block: $begin2 $end2\n");
+	    }
+	    $i = $end2 + 1; # point at %%ENDCSV
 	    next; # bump pointer and continue
 	}
 

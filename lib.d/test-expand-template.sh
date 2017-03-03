@@ -623,5 +623,27 @@ Test more conditionals </dev/null
 
 ##################################################################
 
+# see if this works
+
+Template <<EOF
+foo
+%%CSV %var%
+%0% a=%1%
+b=%2% c=%3%
+%%ENDCSV
+bar
+EOF
+
+Expect <<EOF
+foo
+a,b,c a=a
+b=b c=c
+A,B,C a=A
+b=B c=C
+bar
+EOF
+
+export var="a,b,c A,B,C"
+Test csv1 < /dev/null
 
 exit 0
