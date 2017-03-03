@@ -101,15 +101,10 @@ http {
 
   %%BEGIN
   subs_filter
-  //(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  //$1%ONION_ADDRESS%
-  gir;
-
-  subs_filter
-  \\\\/\\\\/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  \\/\\/$1%ONION_ADDRESS%
-  gir;
-
+  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  $1/$2%ONION_ADDRESS%
+  gir
+  ;
   %%END
 
   # fix the cookies
@@ -144,7 +139,7 @@ http {
     %%END
 
     o2d_lookup = function (o)
-      local k = o[1] -- see note above
+      local k = o[1] -- see note above re: array syntax
       return ( o2d_mappings[k] or k )
     end
 
@@ -156,7 +151,12 @@ http {
       return o
     end
 
-    dns2onion = function (i) -- take care when using, because ordering
+    d2o_mappings = {} -- this is for future use, if `megaregexps` become fruitful
+    %%BEGIN
+    d2o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
+    %%END
+
+    dns2onion = function (i) -- *not* using megaregexps yet, because line length
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
