@@ -5,7 +5,7 @@ cd $here || exit 1
 here=`pwd`
 
 # install socat for log review
-sudo aptitude install -y socat python-pip || exit 1
+sudo aptitude install -y socat python-pip python-dev || exit 1
 
 # install onionbalance
 sudo pip install onionbalance || exit 1
