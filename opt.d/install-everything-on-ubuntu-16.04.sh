@@ -9,7 +9,7 @@ gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 |
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add - || exit 1
 
 sudo apt-get --yes update || exit 1
-sudo apt-get --yes install tor deb.torproject.org-keyring socat python-pip || exit 1
+sudo apt-get --yes install tor deb.torproject.org-keyring socat python-dev python-pip || exit 1
 sudo systemctl stop tor # is there a way to install-without-enable?
 sudo systemctl disable tor # we don't need the system to run it
 
