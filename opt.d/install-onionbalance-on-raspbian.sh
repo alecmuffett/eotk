@@ -4,11 +4,11 @@ here=`dirname $0`
 cd $here || exit 1
 here=`pwd`
 
+# install socat for log review
+sudo aptitude install socat python-setuptools
+
 # install onionbalance
 sudo easy_install onionbalance # also warms-up sudo
-
-# install socat for log review
-sudo aptitude install socat
 
 # check: this should print `/usr/local/bin/onionbalance`
 sudo which onionbalance
