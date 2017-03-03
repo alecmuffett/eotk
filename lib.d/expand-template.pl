@@ -102,6 +102,30 @@ sub Echo {
     print $line;
 }
 
+sub FindMatching {
+    my $btoken = shift;
+    my $etoken = shift;
+    my $i = shift;
+    my $nestlevel = 0;
+    &Warn("looking for $etoken starting from $i $template[$i]");
+    for (undef; $i <= $#template; $i++) {
+        if ($template[$i] =~ /^\s*$btoken\b/) {
+            $nestlevel++;
+            next;
+        }
+        if ($template[$i] =~ /^\s*$etoken\b/) {
+            if ($nestlevel > 0) {
+                &Warn("found nested($nestlevel) $etoken at $i $template[$i]");
+                $nestlevel--;
+                next;
+            }
+            &Warn("found $etoken at $i $template[$i]");
+            return $i;
+        }
+    }
+    die "runaway search for $etoken\n";
+}
+
 sub PrintExpansion {
     my ($begin, $end) = @_; # inclusive
 
@@ -173,50 +197,6 @@ sub PrintRange {
     &Warn("scope $#scopes popped\n");
 }
 
-sub FindMatchingEnd {
-    my $i = shift;
-    my $nestlevel = 0;
-    &Warn("looking for %%END starting from $i $template[$i]");
-    for (undef; $i <= $#template; $i++) {
-        if ($template[$i] =~ /^\s*%%BEGIN\b/) {
-            $nestlevel++;
-            next;
-        }
-        if ($template[$i] =~ /^\s*%%END\b/) {
-            if ($nestlevel > 0) {
-                &Warn("found nested($nestlevel) %%END at $i $template[$i]");
-                $nestlevel--;
-                next;
-            }
-            &Warn("found %%END at $i $template[$i]");
-            return $i;
-        }
-    }
-    die "runaway search for %%END\n";
-}
-
-sub FindMatchingEndRange { # yes it's cut and paste, no i don't care yet
-    my $i = shift;
-    my $nestlevel = 0;
-    &Warn("looking for %%ENDRANGE starting from $i $template[$i]");
-    for (undef; $i <= $#template; $i++) {
-        if ($template[$i] =~ /^\s*%%RANGE\b/) {
-            $nestlevel++;
-            next;
-        }
-        if ($template[$i] =~ /^\s*%%ENDRANGE\b/) {
-            if ($nestlevel > 0) {
-                &Warn("found nested($nestlevel) %%ENDRANGE at $i $template[$i]");
-                $nestlevel--;
-                next;
-            }
-            &Warn("found %%ENDRANGE at $i $template[$i]");
-            return $i;
-        }
-    }
-    die "runaway search for %%ENDRANGE\n";
-}
-
 sub PrintIf { # having %%ELSE makes this a little more complex
     my $start = shift;
     my $cond = $template[$start];
@@ -277,6 +257,14 @@ sub PrintIf { # having %%ELSE makes this a little more complex
     }
 
     return $fi_ptr;
+}
+
+sub FindMatchingEnd {
+    return &FindMatching('%%BEGIN', '%%END', @_);
+}
+
+sub FindMatchingEndRange {
+    return &FindMatching('%%RANGE', '%%ENDRANGE', @_);
 }
 
 sub PrintBlock {
