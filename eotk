@@ -526,12 +526,12 @@ case "$cmd" in
 
     ob-start|obstart) # project ..., or "-a"
         if [ -f $ob_dir/ob.pid ] ; then
-            Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running, stopping.
+            Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running, aborting.
             exit 1
         fi
 
         if [ -f $ob_dir/tor.pid ] ; then
-            Warn file $ob_dir/tor.pid already exists, OnionBalance-Tor may already be running, stopping.
+            Warn file $ob_dir/tor.pid already exists, OnionBalance-Tor may already be running, aborting.
             exit 1
         fi
 
