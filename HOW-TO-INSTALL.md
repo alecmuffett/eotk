@@ -29,7 +29,8 @@ currently installed:
 
 ## Raspbian Jessie / Jessie-Lite (manual builds)
 
-Serially, this takes about 1h30 on a PiZero, or 30m on a Pi3b
+Serially, this takes about 1h45m on a PiZero, or about 30m on a Pi3b.
+These figures should improve when recent Tor updates sediment into Raspbian.
 
 * `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
