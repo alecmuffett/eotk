@@ -9,6 +9,8 @@ die "$0: needs EOTK_HOME environment variable to be set\n"
 # state
 
 my %projects = ();
+my %foreign_by_domain = ();
+my %foreign_by_onion = ();
 my $unset_variable = "<-UNSET-VARIABLE->";
 my $here = $ENV{EOTK_HOME};
 
@@ -89,6 +91,20 @@ sub Dotify { # dotify a regexp
     my $arg = shift;
     $arg =~ s!\.!\\.!g;
     return $arg;
+}
+
+##################################################################
+
+sub DoForeign {
+    warn "DoForeign @_\n";
+    my ($what, $onion, $domain, @crap) = @_;
+    $onion =~ s!\.(onion)!!; # cleanup dups
+    $onion = "$onion.onion"; # restore trailing .onion
+    die "DoForeign: wtf?\n" if ($what ne "foreignmap");
+    die "DoForeign: duplicate onion $onion\n" if ($foreign_by_onion{$onion});
+    die "DoForeign: duplicate domain $domain\n" if ($foreign_by_domain{$domain});
+    $foreign_by_onion{$onion} = $domain;
+    $foreign_by_domain{$domain} = $onion;
 }
 
 ##################################################################
@@ -180,6 +196,8 @@ sub DoMap {
     # push a reference to the row
     push(@{$projects{$project}{ROWS}}, \%row);
 }
+
+##################################################################
 
 sub DoProject {
     warn "DoProject @_\n";
@@ -389,6 +407,9 @@ foreach (@config) {
     elsif ($cmd eq "softmap") {
         &DoMap($cmd, @args);
     }
+    elsif ($cmd eq "foreignmap") {
+        &DoForeign($cmd, @args);
+    }
     else {
         die "error: what does '$cmd @args' mean?";
     }
@@ -400,6 +421,31 @@ warn Dumper(\%projects);
 
 # create a home
 &MakeDir($ENV{PROJECTS_HOME});
+
+# prep the foreigns
+my @flist = ();
+foreach $domain (sort keys %foreign_by_domain) {
+    my $x;
+    my $onion = $foreign_by_domain{$domain};
+    my @elements = ();
+
+    $x = $onion; # onion
+    push(@elements, $x);
+    $x = &Dotify($x); # _RE
+    push(@elements, $x);
+    $x = &Dotify($x); # _RE2
+    push(@elements, $x);
+
+    $x = $domain; # domain
+    push(@elements, $x);
+    $x = &Dotify($x); # _RE
+    push(@elements, $x);
+    $x = &Dotify($x); # _RE2
+    push(@elements, $x);
+
+    push(@flist, join(",", @elements));
+}
+&SetEnv("foreignmap_csv", join(" ", @flist));
 
 # lay it out
 foreach my $project (sort keys %projects) {

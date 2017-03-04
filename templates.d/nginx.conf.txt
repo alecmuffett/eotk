@@ -107,6 +107,20 @@ http {
   ;
   %%END
 
+  %%IF %FOREIGNMAP_CSV%
+  # foreignmap subs
+  %%CSV %FOREIGNMAP_CSV%
+  # for %4% -> %1%
+  subs_filter
+  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%6%\\b
+  $1/$2%1%
+  gir
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no foreignmap subs
+  %%ENDIF
+
   # fix the cookies
   %%BEGIN
   proxy_cookie_domain
