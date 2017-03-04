@@ -31,7 +31,7 @@ echo The projects cited in $OUTPUT may now be started, e.g.:
 echo ""
 echo "  1)" eotk start -a
 echo "  2)" eotk maps -a
-echo "  3)" eotk status
+echo "  3)" eotk status -a
 echo ""
 
 echo Those projects which are listed as "'softmap'" will require
