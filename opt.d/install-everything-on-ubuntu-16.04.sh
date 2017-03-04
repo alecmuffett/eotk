@@ -29,8 +29,8 @@ sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmo
 sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x || exit 1
 
 echo ""
-echo IMPORTANT: some versions of Ubuntu packages are unfortunately old. 
-echo Because of this, when starting projects you may see messages like: 
+echo IMPORTANT: some versions of Ubuntu packages are unfortunately old.
+echo Because of this, when starting projects you may see messages like:
 echo ">" could not open error log file: open /var/log/nginx/error.log failed
 echo ...and these specific messages may be safely ignored.
 echo done.
