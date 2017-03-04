@@ -360,6 +360,7 @@ sub DoProject {
 &SetEnv("suppress_header_hsts", 1);
 &SetEnv("suppress_methods_except_get", 0);
 
+&SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
 &SetEnv("block_host", "");
 &SetEnv("block_host_re", "");
 &SetEnv("block_location", "");
