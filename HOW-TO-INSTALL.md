@@ -29,6 +29,9 @@ currently installed:
 
 ## Raspbian Jessie / Jessie-Lite (manual builds)
 
+Serially, this takes about 1h30 on a PiZero, or 30m on a Pi3b
+
+* `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/build-nginx-on-raspbian.sh`
