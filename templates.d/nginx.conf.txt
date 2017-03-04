@@ -261,7 +261,7 @@ http {
     %%IF %BLOCK_LOCATION%
     # block locations by name
     location %BLOCK_LOCATION% {
-      return 403 "URI not supported over Onion. Sorry.";
+      return 403 "%BLOCK_ERR%";
     }
     %%ELSE
     # no named location blocking
@@ -270,7 +270,7 @@ http {
     %%IF %BLOCK_LOCATION_RE%
     # block locations matching this regular expression
     location ~* %BLOCK_LOCATION_RE% {
-      return 403 "URI not supported over Onion. Sorry.";
+      return 403 "%BLOCK_ERR%";
     }
     %%ELSE
     # no location regular expression blocking
@@ -315,7 +315,7 @@ http {
       # block hosts matching this name
       if ( $host = %BLOCK_HOST% ) {
         # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-        return 403 "Host not supported over Onion. Sorry.";
+        return 403 "%BLOCK_ERR%";
       }
       %%ELSE
       # no named host blocking
@@ -325,7 +325,7 @@ http {
       # block hosts matching this regular expression
       if ( $host ~* %BLOCK_HOST_RE% ) {
           # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-          return 403 "Host not supported over Onion. Sorry.";
+          return 403 "%BLOCK_ERR%";
       }
       %%ELSE
       # no host regular expression blocking
