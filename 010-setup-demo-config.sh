@@ -30,13 +30,16 @@ echo ""
 echo The projects cited in $OUTPUT may now be started, e.g.:
 echo ""
 echo "  1)" eotk start -a
+echo "  2)" eotk maps -a
+echo "  3)" eotk status
 echo ""
 
 echo Those projects which are listed as "'softmap'" will require
 echo the following additional steps AFTER being started:
 echo ""
-echo "  2)" eotk ob-start wiki "#" wiki is a softmap project
-echo "  3)" eotk maps -a "#" to see what is happening
+echo "  4)" eotk ob-start wiki "#" wiki is a softmap project
+echo "  5)" eotk ob-maps wiki "#" to see what soft onions point where
+echo "  6)" eotk ob-status "#" to see what onionbalance is doing
 echo ""
 
 echo Done.
