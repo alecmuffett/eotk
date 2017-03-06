@@ -647,3 +647,21 @@ export var="a,b,c A,B,C"
 Test csv1 < /dev/null
 
 exit 0
+
+##################################################################
+
+# see if this works
+
+Templace <<EOF
+foo
+%%CAT /etc/passwd /etc/group
+bar
+EOF
+
+(
+    echo foo
+    cat /etc/passwd /etc/group
+    echo bar
+) | Expect
+
+Test file cat < /dev/null

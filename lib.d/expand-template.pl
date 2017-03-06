@@ -26,7 +26,7 @@ sub Lookup {
     }
 
     if (defined($ENV{$var})) {
-	return $ENV{$var};
+        return $ENV{$var};
     }
 
     &Warn("start dumping scopes\n");
@@ -47,7 +47,7 @@ sub Evaluate {
         return undef;
     }
 
-    if ($#args == 0) { # single word? return it, let Perl evaluate
+    if ($#args == 0) {     # single word? return it, let Perl evaluate
         &Warn("Evaluate0 $args[0]");
         return $args[0];
     }
@@ -96,7 +96,7 @@ sub Echo {
     &Warn("Echo1 @_");
     my $line = shift;
     if ($line =~ /%/) {
-	$line =~ s/%([\w+]+)%/&Lookup($1)/ge;
+        $line =~ s/%([\w+]+)%/&Lookup($1)/ge;
     }
     &Warn("Echo2 $line");
     print $line;
@@ -127,7 +127,7 @@ sub FindMatching {
 }
 
 sub PrintExpansion {
-    my ($begin, $end) = @_; # inclusive
+    my ($begin, $end) = @_;     # inclusive
 
     &Warn("expand begin: $begin $template[$begin]");
     &Warn("expand end: $end $template[$end]");
@@ -143,23 +143,23 @@ sub PrintExpansion {
     # load the variables into the local scope
     for (my $i = 1; $i <= $#dataset; $i++) { # 2nd line onwards
 
-	# split the input
-	my @vals = split(" ", $dataset[$i]);
-	&Warn("vals: @vals\n");
+        # split the input
+        my @vals = split(" ", $dataset[$i]);
+        &Warn("vals: @vals\n");
 
-	# sanity check
-	die "array mismatch:\n@vars\n@vals\n" if ($#vars != $#vals);
+        # sanity check
+        die "array mismatch:\n@vars\n@vals\n" if ($#vars != $#vals);
 
-	# populate the scope
-	my $j = 0;
-	foreach my $val (@vals) {
-	    $var = $vars[$j++];
-	    $scope{$var} = $val;
-	    &Warn("setting $var = $val in scope $#scopes\n");
-	}
+        # populate the scope
+        my $j = 0;
+        foreach my $val (@vals) {
+            $var = $vars[$j++];
+            $scope{$var} = $val;
+            &Warn("setting $var = $val in scope $#scopes\n");
+        }
 
-	# print the block
-	&PrintBlock($begin, $end);
+        # print the block
+        &PrintBlock($begin, $end);
     }
 
     # nuke the scope
@@ -185,11 +185,11 @@ sub PrintRange {
 
     # loop
     for (my $val = $start; $val <= $finish; $val++) {
-	# populate the scope
+        # populate the scope
         $scope{$var} = $val;
 
-	# print the block
-	&PrintBlock($begin, $end);
+        # print the block
+        &PrintBlock($begin, $end);
     }
 
     # nuke the scope
@@ -233,7 +233,7 @@ sub PrintCsv {
     }
 }
 
-sub PrintIf { # having %%ELSE makes this a little more complex
+sub PrintIf {         # having %%ELSE makes this a little more complex
     my $start = shift;
     my $cond = $template[$start];
     my $nestlevel = 0;
@@ -244,28 +244,28 @@ sub PrintIf { # having %%ELSE makes this a little more complex
     my $else_ptr = undef;
 
     for (my $i = $start + 1; $i <= $#template; $i++) {
-	if ($template[$i] =~ /^\s*%%IF\b/) { # nested
-	    &Warn("found nested($nestlevel) %%IF at $i: $template[$i]");
-	    $nestlevel++;
+        if ($template[$i] =~ /^\s*%%IF\b/) { # nested
+            &Warn("found nested($nestlevel) %%IF at $i: $template[$i]");
+            $nestlevel++;
             next;
-	}
+        }
 
-	if ($template[$i] =~ /^\s*%%ENDIF\b/) {
+        if ($template[$i] =~ /^\s*%%ENDIF\b/) {
             if ($nestlevel > 0) {
                 &Warn("found nested($nestlevel) %%ENDIF at $i: $template[$i]");
                 $nestlevel--;
                 next;
             }
             &Warn("found %%ENDIF at $i: $template[$i]");
-	    $fi_ptr = $i;
-	    last;
-	}
+            $fi_ptr = $i;
+            last;
+        }
 
-	if ($template[$i] =~ /^\s*%%ELSE\b/) {
+        if ($template[$i] =~ /^\s*%%ELSE\b/) {
             next if ($nestlevel > 0); # stay blind to nested code
-	    &Warn("found %%ELSE at $i: $template[$i]");
-	    $else_ptr = $i;
-	}
+            &Warn("found %%ELSE at $i: $template[$i]");
+            $else_ptr = $i;
+        }
     }
     die "runaway search for %%ENDIF\n" if (!defined($fi_ptr));
 
@@ -279,17 +279,17 @@ sub PrintIf { # having %%ELSE makes this a little more complex
     &Warn("result: $result\n");
 
     # act on the result
-    if ($result) { # true
-	&Warn("print true block\n");
-	my $begin2 = $start + 1;
-	my $end2 = defined($else_ptr) ? ($else_ptr - 1) : ($fi_ptr - 1);
-	&PrintBlock($begin2, $end2);
+    if ($result) {              # true
+        &Warn("print true block\n");
+        my $begin2 = $start + 1;
+        my $end2 = defined($else_ptr) ? ($else_ptr - 1) : ($fi_ptr - 1);
+        &PrintBlock($begin2, $end2);
     }
     elsif (defined($else_ptr)) { # false, maybe print else-block?
-	&Warn("print else block\n");
-	my $begin2 = $else_ptr + 1;
-	my $end2 = $fi_ptr - 1;
-	&PrintBlock($begin2, $end2);
+        &Warn("print else block\n");
+        my $begin2 = $else_ptr + 1;
+        my $end2 = $fi_ptr - 1;
+        &PrintBlock($begin2, $end2);
     }
 
     return $fi_ptr;
@@ -307,8 +307,23 @@ sub FindMatchingEndCsv {
     return &FindMatching('%%CSV', '%%ENDCSV', @_);
 }
 
+sub Cat { # THIS IS NOT THE SAME AS "#include" / CONTENTS NOT PROCESSED
+    &Warn("Cat: @_\n");
+    my $flist = shift;
+    my ($junk, @filenames) = split(" ", $flist);
+    foreach my $file (@filenames) {
+        &Warn("Catting: $file\n");
+        open(FILE, $file) || die "Cat: $file: $!\n";
+        my $line;
+        while ($line = <FILE>) {
+            print $line;        # why bother slurping?
+        }
+        close(FILE);
+    }
+}
+
 sub PrintBlock {
-    my ($begin, $end) = @_; # inclusive
+    my ($begin, $end) = @_;     # inclusive
 
     &Warn("PrintBlock: begin at $begin, end at $end\n");
 
@@ -320,58 +335,63 @@ sub PrintBlock {
         } else {
             die "PrintBlock: end($end) before begin($begin)\n";
         }
-	return;
+        return;
     }
 
     for (my $i = $begin; $i <= $end; $i++) {
-	my $line = $template[$i];
+        my $line = $template[$i];
 
-	if ($line =~ /^\s*%%IF\b/) {
-	    $i = &PrintIf($i); # point at %%ENDIF
-	    die "bounds error $begin/$i/$end\n" if ($i < $begin or $i > $end);
-	    next; # bump pointer and continue
-	}
+        if ($line =~ /^\s*%%IF\b/) {
+            $i = &PrintIf($i);  # point at %%ENDIF
+            die "bounds error $begin/$i/$end\n" if ($i < $begin or $i > $end);
+            next;               # bump pointer and continue
+        }
 
-	if ($line =~ /^\s*%%RANGE\b/) {
-	    my $begin2 = $i + 1;
-	    my $end2 = FindMatchingEndRange($begin2) - 1;
-	    if ($end2 >= $begin2) {
-		&PrintRange($line, $begin2, $end2);
-	    }
-	    else {
-		&Warn("empty or negative range block: $begin2 $end2\n");
-	    }
-	    $i = $end2 + 1; # point at %%ENDRANGE
-	    next; # bump pointer and continue
-	}
+        if ($line =~ /^\s*%%RANGE\b/) {
+            my $begin2 = $i + 1;
+            my $end2 = FindMatchingEndRange($begin2) - 1;
+            if ($end2 >= $begin2) {
+                &PrintRange($line, $begin2, $end2);
+            }
+            else {
+                &Warn("empty or negative range block: $begin2 $end2\n");
+            }
+            $i = $end2 + 1;     # point at %%ENDRANGE
+            next;               # bump pointer and continue
+        }
 
-	if ($line =~ /^\s*%%CSV\b/) {
-	    my $begin2 = $i + 1;
-	    my $end2 = FindMatchingEndCsv($begin2) - 1;
-	    if ($end2 >= $begin2) {
-		&PrintCsv($line, $begin2, $end2);
-	    }
-	    else {
-		&Warn("empty or negative csv block: $begin2 $end2\n");
-	    }
-	    $i = $end2 + 1; # point at %%ENDCSV
-	    next; # bump pointer and continue
-	}
+        if ($line =~ /^\s*%%CSV\b/) {
+            my $begin2 = $i + 1;
+            my $end2 = FindMatchingEndCsv($begin2) - 1;
+            if ($end2 >= $begin2) {
+                &PrintCsv($line, $begin2, $end2);
+            }
+            else {
+                &Warn("empty or negative csv block: $begin2 $end2\n");
+            }
+            $i = $end2 + 1;     # point at %%ENDCSV
+            next;               # bump pointer and continue
+        }
 
-	if ($line =~ /^\s*%%BEGIN\b/) {
-	    my $begin2 = $i + 1;
-	    my $end2 = FindMatchingEnd($begin2) - 1;
-	    if ($end2 >= $begin2) {
-		&PrintExpansion($begin2, $end2);
-	    }
-	    else {
-		&Warn("empty or negative iteration block: $begin2 $end2\n");
-	    }
-	    $i = $end2 + 1; # point at %%END
-	    next; # bump pointer and continue
-	}
+        if ($line =~ /^\s*%%BEGIN\b/) {
+            my $begin2 = $i + 1;
+            my $end2 = FindMatchingEnd($begin2) - 1;
+            if ($end2 >= $begin2) {
+                &PrintExpansion($begin2, $end2);
+            }
+            else {
+                &Warn("empty or negative iteration block: $begin2 $end2\n");
+            }
+            $i = $end2 + 1;     # point at %%END
+            next;               # bump pointer and continue
+        }
 
-	&Echo($template[$i]);
+        if ($line =~ /^\s*%%CAT\b/) {
+            &Cat($template[$i]);
+            next;
+        }
+
+        &Echo($template[$i]);
     }
 }
 
