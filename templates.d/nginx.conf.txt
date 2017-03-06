@@ -337,7 +337,7 @@ http {
       header_filter_by_lua_block {
         local k, v
 
-        # rewrite cors/acao
+        -- rewrite cors/acao
         k = "Access-Control-Allow-Origin"
         v = ngx.header[k]
         if v ~= nil and v ~= "*" then
@@ -345,16 +345,16 @@ http {
         end
 
         %%IF %SUPPRESS_HEADER_CSP%
-        # csp suppressed, no rewrite needed
+        -- csp suppressed, no rewrite needed
         %%ELSE
-        # rewrite csp
+        -- rewrite csp
         k = "Content-Security-Policy"
         v = ngx.header[k]
         if v ~= nil then
           ngx.header[k] = dns2onion(v)
         end
 
-        # rewrite report-only version of csp
+        -- rewrite report-only version of csp
         k = "Content-Security-Policy-Report-Only"
         v = ngx.header[k]
         if v ~= nil then
