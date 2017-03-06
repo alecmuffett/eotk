@@ -221,7 +221,7 @@ RunLocallyOverProjects() {
 InvokeRemotely() {
     for host in $cloud_hosts ; do
         test "x$host" = "xlocalhost" && continue # skip self
-        echo :::: invoking $host $* ::::
+        echo :::: remote $host: $* ::::
         ssh "$host" "$self --remote $*"
     done
 }
@@ -390,7 +390,7 @@ case "$cmd" in
         ;;
 
     status) # project ..., or "-a"
-        $self ob-ps
+        $self ob-ps # because common
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
@@ -407,7 +407,9 @@ case "$cmd" in
     ## DIAGS
 
     ps)
+        $flag_remote || echo :::: eotk processes ::::
         ps auxww | egrep '\b(eotk|onionbalance|nginx)\b'
+        # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely ps
         ;;
 
@@ -565,6 +567,7 @@ case "$cmd" in
 
     ob-ps)
         test -d $ob_dir || exit 0
+        echo :::: onionbalance processes ::::
         pidfiles=`find $ob_dir -name "*.pid"`
         if [ "x$pidfiles" != "x" ] ; then
             ps -p `cat $pidfiles`
