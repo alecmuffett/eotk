@@ -108,7 +108,7 @@ http {
   %%END
 
   %%IF %FOREIGNMAP_CSV%
-  # foreignmap subs
+  # foreignmap subs: 1=onion,2=re,3=re2,4=dns,5=re,6=re2
   %%CSV %FOREIGNMAP_CSV%
   # for %4% -> %1%
   subs_filter
@@ -184,7 +184,7 @@ http {
   proxy_hide_header "Content-Security-Policy";
   proxy_hide_header "Content-Security-Policy-Report-Only";
   %%ELSE
-  # csp not suppressed
+  # csp not suppressed, will be rewritten instead, see below
   %%ENDIF
 
   %%IF %SUPPRESS_HEADER_HSTS%
@@ -273,7 +273,7 @@ http {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
-    # no location regular expression blocking
+    # no regular expression location blocking
     %%ENDIF
 
     # for traffic
@@ -292,11 +292,13 @@ http {
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
 
+      # rewrite inbound referer
       set_by_lua_block $referer2 {
         return onion2dns(ngx.var.http_referer)
       }
       proxy_set_header Referer $referer2;
 
+      # rewrite inbound origin
       set_by_lua_block $origin2 {
         return onion2dns(ngx.var.http_origin)
       }
@@ -328,16 +330,37 @@ http {
           return 403 "%BLOCK_ERR%";
       }
       %%ELSE
-      # no host regular expression blocking
+      # no regular expression host blocking
       %%ENDIF
 
-      # rewrite CORS / Access-Control-Allow-Origin
+      # header filtering
       header_filter_by_lua_block {
-        local acao = "Access-Control-Allow-Origin"
-        local h = ngx.header[acao]
-        if h ~= nil and h ~= "*" then
-          ngx.header[acao] = dns2onion(h)
+        local k, v
+
+        # rewrite cors/acao
+        k = "Access-Control-Allow-Origin"
+        v = ngx.header[k]
+        if v ~= nil and v ~= "*" then
+          ngx.header[k] = dns2onion(v)
         end
+
+        %%IF %SUPPRESS_HEADER_CSP%
+        # csp suppressed, no rewrite needed
+        %%ELSE
+        # rewrite csp
+        k = "Content-Security-Policy"
+        v = ngx.header[k]
+        if v ~= nil then
+          ngx.header[k] = dns2onion(v)
+        end
+
+        # rewrite report-only version of csp
+        k = "Content-Security-Policy-Report-Only"
+        v = ngx.header[k]
+        if v ~= nil then
+          ngx.header[k] = dns2onion(v)
+        end
+        %%ENDIF
       }
     }
   }

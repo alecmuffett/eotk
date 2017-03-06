@@ -355,10 +355,10 @@ sub DoProject {
 &SetEnv("softmap_tor_workers", 4);
 &SetEnv("softmap_nginx_workers", 5 * 4); # nginx_workers * softmap_tor_workers
 
-&SetEnv("suppress_header_csp", 1); # eventually header_csp_rewrite?
-&SetEnv("suppress_header_hpkp", 1);
-&SetEnv("suppress_header_hsts", 1);
-&SetEnv("suppress_methods_except_get", 0);
+&SetEnv("suppress_header_csp", 0); # 0 = try rewriting; 1 = elide completely
+&SetEnv("suppress_header_hpkp", 1); # 1 = elide completely
+&SetEnv("suppress_header_hsts", 1); # 1 = elide completely
+&SetEnv("suppress_methods_except_get", 0); # 1 = GET/HEAD Only
 
 &SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
 &SetEnv("block_host", "");
