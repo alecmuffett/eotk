@@ -57,7 +57,7 @@ Alice 22
 Bob 31
 Charlotte 14
 
-$ ./lib.d/expand-template.pl foo.template < foo.input
+$ ./lib.d/expand-template.pl foo.template <foo.input
 We learned that:
 - Alice (age 22) likes /bin/bash
 - Bob (age 31) likes /bin/bash
