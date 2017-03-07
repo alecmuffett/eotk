@@ -92,7 +92,7 @@ Also, we learned:
 ...which executes as:
 
 ```
-$ env EXTRA_CSV_ENV=charlotte,coffee,tea ./lib.d/expand-template.pl foo.template < /dev/null
+$ env EXTRA_CSV_ENV=charlotte,coffee,tea ./lib.d/expand-template.pl foo.template </dev/null
 Let's count from 1 to 5!
 * 1
 * 2
@@ -209,7 +209,10 @@ B
 COND
 ```
 
-This is, after all, essentially a macro-processor and not a programming language.
+This is, after all, essentially a macro-processor and not a
+programming language; this also reflects the importance of whitespace,
+that `%%IF %I% < 6` is not the same as `%%IF %I%<6`; the latter is a
+non-empty string which will always evaluate to `true`.
 
 ### Numeric Operators
 
