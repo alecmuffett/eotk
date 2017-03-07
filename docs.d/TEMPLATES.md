@@ -162,7 +162,40 @@ eval to true
 ```
 
 ...but woe betide you if you introduce extra spaces or unset variables
-into a comparison.
+into a comparison, because whitespace-splitting and parsing happens
+**after** variable expansion:
+
+```
+$ env A='' B='' COND='TEAM !contains ME' ./lib.d/expand-template.pl foo.template </dev/null
+eval to true
+```
+
+...and with debugging enabled, note the `if-expand` line:
+
+```
+$ env A='' B='' COND='TEAM !contains ME' ./lib.d/expand-template.pl --debug foo.template </dev/null
+PrintBlock: begin at 0, end at 4
+found %%IF at 0: %%IF %A% %COND% %B%
+found %%ELSE at 2: %%ELSE
+found %%ENDIF at 4: %%ENDIF
+if-expand: %%IF  TEAM !contains ME
+Evaluate TEAM !contains ME at ./lib.d/expand-template.pl line 16.
+Evaluate2 TEAM at ./lib.d/expand-template.pl line 16.
+Evaluate2 !contains at ./lib.d/expand-template.pl line 16.
+Evaluate2 ME at ./lib.d/expand-template.pl line 16.
+result: 1
+print true block
+PrintBlock: begin at 1, end at 1
+Echo1 eval to true
+Echo2 eval to true
+eval to true
+symbol dump:
+A
+B
+COND
+```
+
+This is, after all, essentially a macro-processor and not a programming language.
 
 ### Numeric Operators
 
@@ -205,7 +238,7 @@ disambiguate the string interpolation with quotes, thusly:
 %%IF "%FOO%" eq "%BAR%"
 ```
 
-- and please remember that the whole thing will explode messily (and
+...and please remember that the whole thing will explode messily (and
 the logic will possibly change) if %FOO% contains a whitespace
 character.
 
