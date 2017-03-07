@@ -399,17 +399,16 @@ sub PrintBlock {
 
 # get the template
 
+if ($#ARGV < 0) {
+    die "usage: expand-template.pl [--debug] templatefile < dataset\n"
+}
+
 if ($ARGV[0] eq '--debug') {
     $debug = 1;
     shift(@ARGV);
 }
 
-if ($#ARGV < 0) {
-    die "usage: expand-template.pl template.txt < dataset\n"
-}
-else {
-    $template = $ARGV[0];
-}
+$template = $ARGV[0];
 
 open(TEMPLATE, $template) or die "open: $template: $!\n";
 @template = <TEMPLATE>; # DO NOT CHOMP
