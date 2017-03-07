@@ -103,13 +103,12 @@ Also, we learned:
 * charlotte likes coffee, but not tea
 ```
 
-Variables are interpolated into a `%%RANGE` or `%%CSV` before
-executed, as you can see from `EXTRA_CSV_ENV`, above.
+Environment (and other) Variables are interpolated into a `%%RANGE` or
+`%%CSV` before being executed, as you can see from `EXTRA_CSV_ENV`,
+above.
 
 Attempts to interpolate a nonexistent (rather than empty) variable are
 a fatal error.
-
-## Template Syntax
 
 ## Control Statements
 
@@ -165,31 +164,42 @@ eval to true
 ...but woe betide you if you introduce extra spaces or unset variables
 into a comparison.
 
-### Comparison Operators
+### Numeric Operators
 
-* Numeric (eg: `%%IF %NUMDAEMONS% < 6`)
-  * ==
-  * !=
-  * >=
-  * <=
-  * >
-  * <
-* String (eg: `%%IF %ONION% eq facebookcorewwwi`)
-  * eq
-  * ne
-  * ge
-  * le
-  * gt
-  * lt
-  * contains
-  * !contains
-* Logic (simple `%%IF %BOOL1% and %BOOL2%` - no subexpressions, sorry)
-  * and
-  * or
-  * xor
+eg: `%%IF %NUMDAEMONS% < 6`
 
-If you are at risk of empty strings for string comparisons, I
-recommend disambiguating it with quotes, thusly:
+* ==
+* !=
+* >=
+* <=
+* >
+* <
+
+### String Operators
+
+eg: `%%IF %ONION% eq facebookcorewwwi`
+
+* eq
+* ne
+* ge
+* le
+* gt
+* lt
+* contains
+* !contains
+
+Logic Operators
+
+eg: `%%IF %BOOL1% and %BOOL2%` - no subexpressions, sorry
+
+* and
+* or
+* xor
+
+### Operator Notes
+
+If you are at risk of empty strings for string comparisons,
+disambiguate the string interpolation with quotes, thusly:
 
 ```
 %%IF "%FOO%" eq "%BAR%"
@@ -228,7 +238,7 @@ globals at the top, and if you have projects which need different
 settings then use different config files and different runs of `eotk
 configure`.
 
-# Variables Index
+# Variable Index
 
 Key:
 
