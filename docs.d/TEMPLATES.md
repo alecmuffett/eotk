@@ -17,6 +17,9 @@ The templater reads/uses variables from three places:
 * Space-separated columnar input from STDIN
 * Local "Range" or builtin variables (highest priority)
 
+Attempts to interpolate a nonexistent (rather than empty) variable
+*anywhere* are a fatal error.
+
 ### Environment
 
 A simple example of the first case:
@@ -107,8 +110,19 @@ Environment (and other) Variables are interpolated into a `%%RANGE` or
 `%%CSV` before being executed, as you can see from `EXTRA_CSV_ENV`,
 above.
 
-Attempts to interpolate a nonexistent (rather than empty) variable are
-a fatal error.
+In `%%RANGE` loops the first argument `I` becomes the interpolatable
+as `%I%`.
+
+In `%%CSV` loops, the arguments `alice,apples,dogs` are automatically
+split on commas to become numbered variables:
+
+* `%0%` = `alice,apples,dogs`
+* `%1%` = `alice`
+* `%2%` = `apples`
+* `%3%` = `dogs`
+
+...and this parse/expansion is iterated over all arguments to the
+`%CSV%` line.
 
 ## Control Statements
 
