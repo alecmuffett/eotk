@@ -1,5 +1,0 @@
-%%IF %A% %COND% %B%
-eval to true
-%%ELSE
-eval to false
-%%ENDIF
