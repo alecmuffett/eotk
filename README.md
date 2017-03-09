@@ -199,6 +199,11 @@ what has changed rather than break the command entirely.
 * [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
 * [Using OnionBalance](https://www.youtube.com/watch?v=HNJaMNVCb-U)
 
+[![Basic Introduction to EOTK](http://img.youtube.com/vi/ti_VkVmE3J4/0.jpg)](http://www.youtube.com/watch?v=ti_VkVmE3J4)
+
+[![Rough Edges: SSL Certificates & Strange Behaviour](http://img.youtube.com/vi/UieLTllLPlQ/0.jpg)](http://www.youtube.com/watch?v=UieLTllLPlQ)
+
+[![Using OnionBalance](http://img.youtube.com/vi/HNJaMNVCb-U/0.jpg)](http://www.youtube.com/watch?v=HNJaMNVCb-U)
 
 ## Experimenting
 
