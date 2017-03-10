@@ -56,7 +56,7 @@ while : ; do
             flag_local=true
             shift
             ;;
-        x--boot) # work in progress
+        x--boot) # `smart` --local, + override some PID checks
             flag_boot=true
             shift
             ;;
@@ -554,13 +554,19 @@ case "$cmd" in
 
     ob-start|obstart) # project ..., or "-a"
         if [ -f $ob_dir/ob.pid ] ; then
-            Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running, aborting.
-            exit 1
+            Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running.
+            if ! $flag_boot ; then
+                Warn Aborting...
+                exit 1
+            fi
         fi
 
         if [ -f $ob_dir/tor.pid ] ; then
-            Warn file $ob_dir/tor.pid already exists, OnionBalance-Tor may already be running, aborting.
-            exit 1
+            Warn file $ob_dir/tor.pid already exists, OnionBalance-Tor may already be running.
+            if ! $flag_boot ; then
+                Warn Aborting...
+                exit 1
+            fi
         fi
 
         $self ob-gather "$@" || exit 1

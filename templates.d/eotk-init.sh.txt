@@ -1,4 +1,5 @@
 #!/bin/sh
+# eotk (c) 2017 Alec Muffett
 
 ### BEGIN INIT INFO
 # Provides:          eotk
@@ -8,8 +9,6 @@
 # Default-Stop:      0 1 6
 # Description:       Enterprise Onion Toolkit
 ### END INIT INFO
-
-# eotk (c) 2017 Alec Muffett
 
 # The general thinking here is: you create the script by using:
 # eotk make-init-script
@@ -23,25 +22,32 @@ EOTK_HOME=%EOTK_HOME%
 EOTK_USER=%USER%
 EOTK_STARTUP_LOG=/tmp/eotk-startup.log
 
-# does EOTK exist?
+# If you want logging to appear elsewhere, redefine log_message()
 
-[ -d "$EOTK_HOME" ] || exit 0
+exec </dev/null >>$EOTK_STARTUP_LOG 2>&1
 
-cd $EOTK_HOME || exit 1
+# help with tracking
 
-# eotk wrapper
-
-run_eotk() {
-    # run only local starts; no `ssh` to other hosts
-    su $EOTK_USER -c "exec $EOTK_HOME/eotk --boot $*"
-    return $?
-}
+date
 
 # log_message: you might want to wire this into syslog, etc...
 
 log_message() {
     echo "$@" 1>&2
 }
+
+# eotk wrapper
+
+run_eotk() {
+    su $EOTK_USER -c "exec $EOTK_HOME/eotk --boot $*"
+    return $?
+}
+
+# does EOTK exist?
+
+[ -d "$EOTK_HOME" ] || exit 0
+
+cd $EOTK_HOME || exit 1
 
 # just the basics; if it exists, start/stop it.
 
@@ -50,7 +56,9 @@ case "$1" in
         log_message Starting EOTK
 	run_eotk start -a || exit 1
 	if [ -d $EOTK_HOME/onionbalance.d ] ; then
-            run_eotk ob-start -a || exit 1
+            log_message Backgrounding start for EOTK OnionBalance
+            # nb: stdin is already not a tty because `exec`, above
+            nohup sh -c "sleep 60 && run_eotk ob-start -a" &
         fi
         log_message Started EOTK
 	;;
