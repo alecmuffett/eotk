@@ -33,7 +33,7 @@ cd $EOTK_HOME || exit 1
 
 run_eotk() {
     # run only local starts; no `ssh` to other hosts
-    su $EOTK_USER -c "exec $EOTK_HOME/eotk --local $*"
+    su $EOTK_USER -c "exec $EOTK_HOME/eotk --boot $*"
     return $?
 }
 

@@ -45,6 +45,7 @@ export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 # argument stripping
 flag_remote=false
 flag_local=false
+flag_boot=false
 while : ; do
     case "x$1" in
         x--remote)
@@ -53,6 +54,10 @@ while : ; do
             ;;
         x--local)
             flag_local=true
+            shift
+            ;;
+        x--boot) # work in progress
+            flag_boot=true
             shift
             ;;
         x--debug)
@@ -78,6 +83,16 @@ CloudHosts() {
     # perversely, --local, exactly the same
     if $flag_local ; then
         echo "localhost"
+        return 0
+    fi
+
+    # if --boot, we want localhost IFF we would have it anyway...
+    if $flag_boot ; then
+        if [ -s $host_list ] ; then # does it contain localhost...?
+            egrep '^(localhost)\b' $host_list
+        else
+            echo "localhost"
+        fi
         return 0
     fi
 
