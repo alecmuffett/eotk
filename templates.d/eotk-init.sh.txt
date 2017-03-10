@@ -57,8 +57,7 @@ case "$1" in
 	run_eotk start -a || exit 1
 	if [ -d $EOTK_HOME/onionbalance.d ] ; then
             log_message Backgrounding start for EOTK OnionBalance
-            # nb: stdin is already not a tty because `exec`, above
-            nohup sh -c "sleep 60 && run_eotk ob-start -a" &
+            ( ( sleep 60 && run_eotk ob-start -a ) & ) & # old-skool nohup
         fi
         log_message Started EOTK
 	;;
