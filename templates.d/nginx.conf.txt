@@ -54,7 +54,7 @@ http {
   proxy_cache_use_stale timeout updating;
   proxy_cache_valid any %NGINX_CACHE_SECONDS%s; # "any" includes 404s, etc
 
-  # content-types not to cache
+  # content-types to not cache
   map $http_content_type $no_cache_content_type {
     %%CSV %NO_CACHE_CONTENT_TYPE%
     %1% 1;
@@ -65,6 +65,7 @@ http {
   # hosts not to cache
   map $http_host $no_cache_host {
     hostnames;
+
     %%CSV %NO_CACHE_HOST%
     %1% 1;
     %%ENDCSV
