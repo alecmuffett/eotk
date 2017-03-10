@@ -21,7 +21,7 @@
 EOTK_HOME=%EOTK_HOME%
 EOTK_USER=%USER%
 EOTK_STARTUP_LOG=/tmp/eotk-startup.log
-EOTK_OB_DELAY=60 # backgrouded pause
+EOTK_OB_DELAY=90 # backgrounded pause
 
 # If you want logging to appear elsewhere, redefine log_message()
 
@@ -58,6 +58,7 @@ case "$1" in
 	run_eotk start -a || exit 1
 	if [ -d $EOTK_HOME/onionbalance.d ] ; then
             log_message Backgrounding start for EOTK OnionBalance
+            # stdout should already be a file because of `exec` above
             ( ( sleep $EOTK_OB_DELAY && run_eotk ob-start -a ) & ) & # old-skool nohup
         fi
         log_message Started EOTK
