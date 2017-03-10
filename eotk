@@ -332,6 +332,7 @@ Configure() {
     done 2>$log
 
     Print done. logfile is $log
+    Print remember to "'eotk make-init-script'" and install it, if you want autoboot.
 }
 
 # argument 'parser' - ha!

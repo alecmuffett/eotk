@@ -1,6 +1,15 @@
 #!/bin/sh
 # eotk (c) 2017 Alec Muffett
 
+# Let's factor these out in case of manual editing, although moving
+# configured projects around the filesystem will be challenging;
+# easier to configure in-situ and as the intended user.
+
+EOTK_HOME=%EOTK_HOME%
+EOTK_USER=%USER%
+EOTK_STARTUP_LOG=/tmp/eotk-startup.log
+EOTK_OB_DELAY=90 # backgrounded pause
+
 ### BEGIN INIT INFO
 # Provides:          eotk
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -11,25 +20,20 @@
 ### END INIT INFO
 
 # The general thinking here is: you create the script by using:
-# eotk make-init-script
-# ...and then copy/symlink it into the relevant directories
 
-# let's factor these out in case of manual editing, although moving
-# configured projects around the filesystem will be challenging;
-# easier instead to configure in-situ and as the intended user.
+#   eotk make-init-script
 
-EOTK_HOME=%EOTK_HOME%
-EOTK_USER=%USER%
-EOTK_STARTUP_LOG=/tmp/eotk-startup.log
-EOTK_OB_DELAY=90 # backgrounded pause
+# ...and then copy/symlink it into the relevant system; e.g. for Linux
+# you will probably want something like: (as root)
+
+#   cp eotk-init.sh /etc/init.d
+#   update-rc.d eotk-init.sh defaults
 
 # If you want logging to appear elsewhere, redefine log_message()
 
 exec </dev/null >>$EOTK_STARTUP_LOG 2>&1
 
-# help with tracking
-
-date
+date # help with debugging
 
 # log_message: you might want to wire this into syslog, etc...
 
