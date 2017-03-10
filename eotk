@@ -46,18 +46,22 @@ export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 flag_remote=false
 flag_local=false
 flag_boot=false
+propagate_flags=""
 while : ; do
     case "x$1" in
         x--remote)
             flag_remote=true
+            propagate_flags="$propagate_flags $1"
             shift
             ;;
         x--local)
             flag_local=true
+            propagate_flags="$propagate_flags $1"
             shift
             ;;
         x--boot) # `smart` --local, + override some PID checks
             flag_boot=true
+            propagate_flags="$propagate_flags $1"
             shift
             ;;
         x--debug)
@@ -446,8 +450,8 @@ case "$cmd" in
         ;;
 
     shutdown)
-        $self ob-stop
-        $self stop -a
+        $self $propagate_flags ob-stop
+        $self $propagate_flags stop -a
         ;;
 
     # this used to be called 'push' but got renamed because oops.
@@ -592,7 +596,7 @@ case "$cmd" in
         rm -f $ob_dir/ob.pid
         ;;
 
-    ob-restart) # project ..., or "-a"
+    ob-restart) # project ..., or "-a" : TODO: should these propagate flags?
         $self ob-stop
         $self ob-start "$@"
         ;;
