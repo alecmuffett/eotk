@@ -17,7 +17,7 @@
   * optional 403/Forbidden blocks for accesses to certain Locations or Hosts, including as regexps
     * nb: all blocks/block-patterns are *global* and apply to all servers in a project
   * optional time-based caching of static content for `N` seconds, with selectable cache size (def: 16Mb)
-* new [How To Install](HOW-TO-INSTALL.md) guide
+* new [How To Install](docs.d/HOW-TO-INSTALL.md) guide
 * custom install process for Ubuntu, tested on Ubuntu Server 16.04.2-LTS
 * renaming / factor-out of Raspbian install code
 * fixes to onionbalance support
@@ -187,7 +187,7 @@ rendering these issues moot.
 
 ## Installation
 
-Please see [How To Install](HOW-TO-INSTALL.md) guide
+Please see [How To Install](docs.d/HOW-TO-INSTALL.md) guide
 
 ## Video Demonstrations
 
@@ -207,7 +207,7 @@ what has changed rather than break the command entirely.
 
 ## Experimenting
 
-After [installation](HOW-TO-INSTALL.md), if you want to experiment
+After [installation](docs.d/HOW-TO-INSTALL.md), if you want to experiment
 with some prefabricated projects, try this:
 
 * `./010-configure-demo.sh` # creates a working config file + tor & nginx config files
