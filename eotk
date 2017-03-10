@@ -34,6 +34,9 @@ ob_status_sock=$ob_dir/ob-status.sock
 ob_tor_conf=$ob_dir/tor.conf
 ob_tor_control_sock=$ob_dir/tor-control.sock
 
+# init script name
+init=eotk-rc.sh
+
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
@@ -610,6 +613,11 @@ case "$cmd" in
                 tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
             done
         )
+        ;;
+
+    make-init-script)
+        lib.d/expand-template.pl templates.d/init.sh.txt </dev/null >$init
+        chmod 755 $init
         ;;
 
     *)
