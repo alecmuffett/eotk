@@ -23,6 +23,9 @@ events {
 }
 
 http {
+  # nginx fails without large enough buckets (sigh)
+  map_hash_bucket_size 128;
+
   # dns for proxy (sigh)
   # we should do `ipv6=off` here, but compat issues, hence NGINX_RESOLVER_FLAGS
   resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s %NGINX_RESOLVER_FLAGS%;
