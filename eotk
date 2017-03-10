@@ -35,7 +35,7 @@ ob_tor_conf=$ob_dir/tor.conf
 ob_tor_control_sock=$ob_dir/tor-control.sock
 
 # init script name
-init=eotk-rc.sh
+init=eotk-init.sh
 
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
@@ -113,10 +113,18 @@ Warn() {
 
 # essentially the projects.d folder is a little database
 ListProjects() {
+    if [ x$1 = x--softmap-only ] ; then
+        softmap_only=true
+    else
+        softmap_only=false
+    fi
     (
         test -d $project_dir || exit 1
         cd $project_dir || exit 1
         for d in *.d/ ; do
+            if $softmap_only ; then
+                test -f $d/softmap.conf || continue
+            fi
             echo `basename $d .d`
         done
     )
@@ -464,7 +472,7 @@ case "$cmd" in
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
         elif [ "x$1" = "x-a" ] ; then # test for / expand the "-a" flag
-            projects=`ListProjects`
+            projects=`ListProjects --softmap-only`
         else # do what we are told
             projects="$*"
         fi
@@ -482,7 +490,7 @@ case "$cmd" in
         for p in $projects ; do
             n=`awk '$1=="'"$p"'"'<$mappings  | wc -l`
             if [ $n = 0 ] ; then
-                Warn no mappings available for project $p, does it exist / is it not a softmap project"?"
+                Warn no mappings yet for project $p: does it exist / is it started / is it not a softmap project "?"
                 rm $mappings
                 exit 1
             else
@@ -616,7 +624,7 @@ case "$cmd" in
         ;;
 
     make-init-script)
-        lib.d/expand-template.pl templates.d/init.sh.txt </dev/null >$init
+        lib.d/expand-template.pl templates.d/$init.txt </dev/null >$init
         chmod 755 $init
         ;;
 

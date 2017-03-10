@@ -274,6 +274,12 @@ sub DoProject {
             my $cmd = "$ENV{TEMPLATE_TOOL} $ENV{TOR_TEMPLATE} >$hs_dir/tor.conf";
             &Pipeify($cmd, @{$projects{$project}{ROWS}});
         }
+
+        # mark project as softmap; care with use of this information,
+        # because workers will treat softmap projects as-if simply
+        # "local" and pseudo-hardmap; use this information only for
+        # filtering onionbalance management.
+        &CopyFile("/dev/null", "$ENV{PROJECT_DIR}/softmap.conf");
     }
     else {
         # setup tor hs directories and keys
