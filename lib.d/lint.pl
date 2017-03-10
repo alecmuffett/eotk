@@ -28,11 +28,14 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
+     'BLOCK_ERR' => 1,
      'BLOCK_HOST' => 1,
      'BLOCK_HOST_RE' => 1,
      'BLOCK_LOCATION' => 1,
      'BLOCK_LOCATION_RE' => 1,
+     'FOREIGNMAP_CSV' => 1,
      'IS_SOFTMAP' => 1,
+     'NGINX_CACHE_MIN_USES' => 1,
      'NGINX_CACHE_SECONDS' => 1,
      'NGINX_CACHE_SIZE' => 1,
      'NGINX_HELLO_ONION' => 1,
@@ -43,6 +46,8 @@ my %known =
      'NGINX_TEMPLATE' => 1,
      'NGINX_TIMEOUT' => 1,
      'NGINX_WORKERS' => 1,
+     'NO_CACHE_CONTENT_TYPE' => 1,
+     'NO_CACHE_HOST' => 1,
      'SOFTMAP_NGINX_WORKERS' => 1,
      'SOFTMAP_TOR_WORKERS' => 1,
      'SUPPRESS_HEADER_CSP' => 1,

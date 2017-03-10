@@ -343,6 +343,7 @@ sub DoProject {
 
 # in-template settings
 
+&SetEnv("nginx_cache_min_uses", 2);
 &SetEnv("nginx_cache_size", "16m");
 &SetEnv("nginx_cache_seconds", 0);
 &SetEnv("nginx_hello_onion", 1);
@@ -371,6 +372,9 @@ sub DoProject {
 &SetEnv("block_host_re", "");
 &SetEnv("block_location", "");
 &SetEnv("block_location_re", "");
+
+&SetEnv("no_cache_content_type", "");
+&SetEnv("no_cache_host", "");
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);

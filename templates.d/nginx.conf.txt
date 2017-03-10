@@ -28,15 +28,16 @@ http {
   resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s %NGINX_RESOLVER_FLAGS%;
   resolver_timeout %NGINX_TIMEOUT%s;
 
-  # internal connection buffers; these are quite large, need space to
-  # swallow entire SSL headers because we're being a MITM...
+  # we walk a line between keeping it small and flooding resources...
   proxy_buffering on;
-  proxy_buffers 16 64k;
-  proxy_buffer_size 64k;
-  proxy_busy_buffers_size 512k;
-  proxy_max_temp_file_size 2048k;
+  proxy_buffer_size 64k; # for initial; impacts SSL header
+  proxy_buffers 16 64k; # for rest of response
+  proxy_busy_buffers_size 256k; # how much can be busy sending to client?
+
+  # in case we want to start spooling responses locally
+  proxy_temp_path /tmp/nginx-proxy-%PROJECT%;
+  proxy_max_temp_file_size 64m; # < default(1024m)
   proxy_temp_file_write_size 64k;
-  proxy_temp_path "/tmp";
 
   %%IF %NGINX_CACHE_SECONDS%
   # nginx caching static responses for %NGINX_CACHE_SECONDS% seconds
@@ -45,10 +46,31 @@ http {
   # https://nginx.org/en/docs/http/ngx_http_proxy_module.html
   proxy_cache_path /tmp/nginx-cache-%PROJECT% levels=1:2 keys_zone=%PROJECT%:%NGINX_CACHE_SIZE%;
   proxy_cache %PROJECT%;
+  proxy_cache_min_uses %NGINX_CACHE_MIN_USES%;
   proxy_cache_revalidate on;
   proxy_cache_use_stale timeout updating;
-  # "proxy_cache_valid any" includes things like 404s
-  proxy_cache_valid any %NGINX_CACHE_SECONDS%s;
+  proxy_cache_valid any %NGINX_CACHE_SECONDS%s; # "any" includes 404s, etc
+
+  # content-types not to cache
+  map $http_content_type $no_cache_content_type {
+    %%CSV %NO_CACHE_CONTENT_TYPE%
+    %1% 1;
+    %%ENDCSV
+    default 0;
+  }
+
+  # hosts not to cache
+  map $http_host $no_cache_host {
+    hostnames;
+    %%CSV %NO_CACHE_HOST%
+    %1% 1;
+    %%ENDCSV
+    default 0;
+  }
+
+  # so, should we skip caching this stuff for some reason?
+  proxy_no_cache $no_cache_content_type $no_cache_host;
+  proxy_cache_bypass $no_cache_content_type $no_cache_host;
   %%ELSE
   # nginx caching disabled
   %%ENDIF

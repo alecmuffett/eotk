@@ -524,7 +524,7 @@ case "$cmd" in
 
         Print building OnionBalance configurations...
         (
-            echo LOG_LEVEL: debug
+            echo LOG_LEVEL: info
             echo TOR_ADDRESS: $tor_address
             echo TOR_PORT: $tor_port
             echo REFRESH_INTERVAL: 600
