@@ -6,9 +6,8 @@
 # Required-Stop:     $local_fs $network $named $time $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Description:       Enterprist Onion Toolkit
+# Description:       Enterprise Onion Toolkit
 ### END INIT INFO
-
 
 # eotk (c) 2017 Alec Muffett
 
