@@ -150,8 +150,8 @@ http {
   # fix the cookies
   %%BEGIN
   proxy_cookie_domain
-  %DNS_DOMAIN%
-  %ONION_ADDRESS%
+  ~^(.*?)\\b%DNS_DOMAIN_RE2%$
+  $1%ONION_ADDRESS%
   ;
   %%END
 
