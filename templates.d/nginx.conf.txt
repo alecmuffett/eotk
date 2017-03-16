@@ -204,6 +204,20 @@ http {
       %%END
       return i
     end
+
+    -- a note for future maintainers; if we were being strictly orthogonal then
+    -- the replacement with ONION_ADDRESS in much of this Lua block would have to
+    -- be double-escaped for potential blackslashes, because double-quotes;
+    -- however this is not needed because DNS forbids backslash; the only code
+    -- where this becomes evident/necessary is here, with "_RE2":
+
+    dnsre_to_onionre = function (i)
+      local num, errs
+      %%BEGIN
+      i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RERE2%)\\b", "%ONION_ADDRESS_RE2%", "io")
+      %%END
+      return i
+    end
   }
 
   %%IF %SUPPRESS_HEADER_CSP%
@@ -408,7 +422,7 @@ http {
         if ngx.ctx.isjavascript == 1 then
           local chunk = ngx.arg[1]
           chunk = dns_to_onion(chunk)
-          -- TODO: then replace embedded regexps
+          chunk = dnsre_to_onionre(chunk)
           ngx.arg[1] = chunk
         end
       }
