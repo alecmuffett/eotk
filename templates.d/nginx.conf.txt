@@ -264,10 +264,15 @@ http {
 
   # filter the response body en-route back to the user
   body_filter_by_lua_block {
+    -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
+    -- instead we restrict such brute-force replacements to JS and JSON ...
     if ngx.ctx.isjavascript == 1 then
       local chunk = ngx.arg[1]
+      -- subs_filter picked up the "//"-anchored strings; now we sub the rest
       chunk = dns_to_onion(chunk)
+      -- and we sub the basic "foo\.com" regular-expressions, too
       chunk = dnsre_to_onionre(chunk)
+      -- more complex regular expressions are out of scope.
       ngx.arg[1] = chunk
     end
   }
