@@ -86,8 +86,8 @@ sub CopyFile {
     chmod(0600, $to) or die "chmod: $to: $!\n";
 }
 
-sub Dotify { # dotify a regexp
-    warn "Dotify @_\n";
+sub SlashDot { # dotify a regexp
+    warn "SlashDot @_\n";
     my $arg = shift;
     $arg =~ s!\.!\\.!g;
     return $arg;
@@ -184,11 +184,21 @@ sub DoMap {
     # create the row
     my %row = ();
     $row{DNS_DOMAIN} = $to;
-    $row{DNS_DOMAIN_RE} = &Dotify($to);
-    $row{DNS_DOMAIN_RE2} = &Dotify(&Dotify($to));
+    $to = &SlashDot($to); # slashify all dots
+    $row{DNS_DOMAIN_RE} = $to;
+    $to =~ s!\\!\\\\!g; # double all slashes
+    $row{DNS_DOMAIN_RE2} = $to;
+    $to =~ s!\\!\\\\!g; # double all slashes
+    $row{DNS_DOMAIN_RE4} = $to;
+
     $row{ONION_ADDRESS} = $onion;
-    $row{ONION_ADDRESS_RE} = &Dotify($onion);
-    $row{ONION_ADDRESS_RE2} = &Dotify(&Dotify($onion));
+    $onion = &SlashDot($onion); # slashify all dots
+    $row{ONION_ADDRESS_RE} = $onion;
+    $onion =~ s!\\!\\\\!g; # double all slashes
+    $row{ONION_ADDRESS_RE2} = $onion;
+    $onion =~ s!\\!\\\\!g; # double all slashes
+    $row{ONION_ADDRESS_RE4} = $onion;
+
     $row{KEYFILE} = $keyfile;
 
     warn Dumper(\%row);
@@ -438,7 +448,7 @@ warn Dumper(\%projects);
 # create a home
 &MakeDir($ENV{PROJECTS_HOME});
 
-# prep the foreigns
+# prep the foreigns; skip _RE4 until proven neede
 my @flist = ();
 foreach $domain (sort keys %foreign_by_domain) {
     my $x;
@@ -447,16 +457,16 @@ foreach $domain (sort keys %foreign_by_domain) {
 
     $x = $onion; # onion
     push(@elements, $x);
-    $x = &Dotify($x); # _RE
+    $x = &SlashDot($x); # _RE
     push(@elements, $x);
-    $x = &Dotify($x); # _RE2
+    $x = &SlashDot($x); # _RE2
     push(@elements, $x);
 
     $x = $domain; # domain
     push(@elements, $x);
-    $x = &Dotify($x); # _RE
+    $x = &SlashDot($x); # _RE
     push(@elements, $x);
-    $x = &Dotify($x); # _RE2
+    $x = &SlashDot($x); # _RE2
     push(@elements, $x);
 
     push(@flist, join(",", @elements));
