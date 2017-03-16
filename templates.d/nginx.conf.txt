@@ -169,8 +169,8 @@ http {
   ;
   %%END
 
-  # o2d_lookup -> if cannot remap, return input.  note: old versions
-  # of lua-plugin cannot cope with code like o2d_mappings[o[1]]
+  # o_to_d_lookup -> if cannot remap, return input.  note: old versions
+  # of lua-plugin cannot cope with code like o_to_d_mappings[o[1]]
   # because of `long bracket syntax`; the `[o[` freaks it out.
   # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
@@ -179,25 +179,25 @@ http {
       return
     end
 
-    o2d_mappings = {}
+    o_to_d_mappings = {}
     %%BEGIN
-    o2d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
+    o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
-    o2d_lookup = function (o)
+    o_to_d_lookup = function (o)
       local k = o[1] -- see note above re: array syntax
-      return ( o2d_mappings[k] or k )
+      return ( o_to_d_mappings[k] or k )
     end
 
-    onion2dns = function (i)
-      if i == nil then
-        return nil
+    onion_to_dns = function (i)
+      if i == nil or i == "" then
+        return i
       end
-      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o2d_lookup, "io")
+      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
     end
 
-    dns2onion = function (i)
+    dns_to_onion = function (i)
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
@@ -321,13 +321,13 @@ http {
 
       # rewrite inbound referer
       set_by_lua_block $referer2 {
-        return onion2dns(ngx.var.http_referer)
+        return onion_to_dns(ngx.var.http_referer)
       }
       proxy_set_header Referer $referer2;
 
       # rewrite inbound origin
       set_by_lua_block $origin2 {
-        return onion2dns(ngx.var.http_origin)
+        return onion_to_dns(ngx.var.http_origin)
       }
       proxy_set_header Origin $origin2;
 
@@ -368,7 +368,7 @@ http {
         k = "Access-Control-Allow-Origin"
         v = ngx.header[k]
         if v ~= nil and v ~= "*" then
-          ngx.header[k] = dns2onion(v)
+          ngx.header[k] = dns_to_onion(v)
         end
 
         %%IF %SUPPRESS_HEADER_CSP%
@@ -378,14 +378,14 @@ http {
         k = "Content-Security-Policy"
         v = ngx.header[k]
         if v ~= nil then
-          ngx.header[k] = dns2onion(v)
+          ngx.header[k] = dns_to_onion(v)
         end
 
         -- rewrite report-only version of csp
         k = "Content-Security-Policy-Report-Only"
         v = ngx.header[k]
         if v ~= nil then
-          ngx.header[k] = dns2onion(v)
+          ngx.header[k] = dns_to_onion(v)
         end
         %%ENDIF
       }
