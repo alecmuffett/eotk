@@ -197,12 +197,7 @@ http {
       return o
     end
 
-    d2o_mappings = {} -- this is for future use, if `megaregexps` become fruitful
-    %%BEGIN
-    d2o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
-    %%END
-
-    dns2onion = function (i) -- *not* using megaregexps yet, because line length
+    dns2onion = function (i)
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
