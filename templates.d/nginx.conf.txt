@@ -200,7 +200,7 @@ http {
     dns_to_onion = function (i)
       local num, errs
       %%BEGIN
-      i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RE2%)\\b", "%ONION_ADDRESS%", "io")
+      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
       %%END
       return i
     end
@@ -214,7 +214,7 @@ http {
     dnsre_to_onionre = function (i)
       local num, errs
       %%BEGIN
-      i, num, errs = ngx.re.gsub(i, "\\b(%DNS_DOMAIN_RERE2%)\\b", "%ONION_ADDRESS_RE2%", "io")
+      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RERE2%\\b", "%ONION_ADDRESS_RE2%", "io")
       %%END
       return i
     end
@@ -339,7 +339,7 @@ http {
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
     server_name
     %ONION_ADDRESS%
-    ~^(?<snsd>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
+    ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
     ;
 
     %%IF %NGINX_HELLO_ONION%
@@ -371,7 +371,7 @@ http {
 
     # for traffic
     location / {
-      proxy_pass "$scheme://${snsd}%DNS_DOMAIN%"; # note $scheme
+      proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%"; # note $scheme
       proxy_http_version 1.1;
 
       # a note on proxy_set_header, add_header, similar methods, etc;
@@ -379,7 +379,7 @@ http {
       # headers inherited from the parent contexts:
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
 
-      proxy_set_header Host "${snsd}%DNS_DOMAIN%";
+      proxy_set_header Host "${servernamesubdomain}%DNS_DOMAIN%";
       proxy_set_header Accept-Encoding "identity";
       proxy_set_header Connection $connection_upgrade; # SSL
       proxy_set_header Upgrade $http_upgrade; # SSL
