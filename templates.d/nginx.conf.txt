@@ -220,6 +220,63 @@ http {
     end
   }
 
+  # filter the response headers en-route back to the user
+  header_filter_by_lua_block {
+    local k, v
+    -- is this javascript/json? if so, extra processing
+    k = "Content-Type"
+    v = ngx.header[k]
+    if v == "application/javascript" or
+      v == "application/x-javascript" or
+      v == "text/javascript" or
+      v == "application/json" then
+      -- set a flag to pick up in body_filter_by_lua_block
+      ngx.ctx.isjavascript = 1
+      -- we will change content-length, therefore invalidate it
+      ngx.header.content_length = nil
+    end
+
+    -- rewrite cors/acao
+    k = "Access-Control-Allow-Origin"
+    v = ngx.header[k]
+    if v ~= nil and v ~= "*" then
+      ngx.header[k] = dns_to_onion(v)
+    end
+
+    %%IF %SUPPRESS_HEADER_CSP%
+    -- csp suppressed, no rewrite needed
+    %%ELSE
+    -- rewrite csp
+    k = "Content-Security-Policy"
+    v = ngx.header[k]
+    if v ~= nil then
+      ngx.header[k] = dns_to_onion(v)
+    end
+
+    -- rewrite csp (report-only)
+    k = "Content-Security-Policy-Report-Only"
+    v = ngx.header[k]
+    if v ~= nil then
+    ngx.header[k] = dns_to_onion(v)
+    end
+    %%ENDIF
+  }
+
+  # filter the response body en-route back to the user
+  body_filter_by_lua_block {
+    if ngx.ctx.isjavascript == 1 then
+      local chunk = ngx.arg[1]
+      chunk = dns_to_onion(chunk)
+      chunk = dnsre_to_onionre(chunk)
+      ngx.arg[1] = chunk
+    end
+  }
+
+
+
+
+
+
   %%IF %SUPPRESS_HEADER_CSP%
   # csp suppression
   proxy_hide_header "Content-Security-Policy";
@@ -334,15 +391,11 @@ http {
       proxy_ssl_server_name on; # SSL
 
       # rewrite request referer
-      set_by_lua_block $referer2 {
-        return onion_to_dns(ngx.var.http_referer)
-      }
+      set_by_lua_block $referer2 { return onion_to_dns(ngx.var.http_referer) }
       proxy_set_header Referer $referer2;
 
       # rewrite request origin
-      set_by_lua_block $origin2 {
-        return onion_to_dns(ngx.var.http_origin)
-      }
+      set_by_lua_block $origin2 { return onion_to_dns(ngx.var.http_origin) }
       proxy_set_header Origin $origin2;
 
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
@@ -373,59 +426,6 @@ http {
       %%ELSE
       # no regular expression host blocking
       %%ENDIF
-
-      # filter the response headers en-route back to the user
-      header_filter_by_lua_block {
-        local k, v
-
-        -- is this javascript/json? if so, extra processing
-        k = "Content-Type"
-        v = ngx.header[k]
-        if v == "application/javascript" or
-           v == "application/x-javascript" or
-           v == "text/javascript" or
-           v == "application/json" then
-           -- set a flag to pick up in body_filter_by_lua_block
-           ngx.ctx.isjavascript = 1
-           -- we will change content-length, therefore invalidate it
-           ngx.header.content_length = nil
-        end
-
-        -- rewrite cors/acao
-        k = "Access-Control-Allow-Origin"
-        v = ngx.header[k]
-        if v ~= nil and v ~= "*" then
-          ngx.header[k] = dns_to_onion(v)
-        end
-
-        %%IF %SUPPRESS_HEADER_CSP%
-        -- csp suppressed, no rewrite needed
-        %%ELSE
-        -- rewrite csp
-        k = "Content-Security-Policy"
-        v = ngx.header[k]
-        if v ~= nil then
-          ngx.header[k] = dns_to_onion(v)
-        end
-
-        -- rewrite report-only version of csp
-        k = "Content-Security-Policy-Report-Only"
-        v = ngx.header[k]
-        if v ~= nil then
-          ngx.header[k] = dns_to_onion(v)
-        end
-        %%ENDIF
-      }
-
-      # filter the response body en-route back to the user
-      body_filter_by_lua_block {
-        if ngx.ctx.isjavascript == 1 then
-          local chunk = ngx.arg[1]
-          chunk = dns_to_onion(chunk)
-          chunk = dnsre_to_onionre(chunk)
-          ngx.arg[1] = chunk
-        end
-      }
     }
   }
 
