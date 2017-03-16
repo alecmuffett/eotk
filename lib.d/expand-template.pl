@@ -44,7 +44,7 @@ sub Evaluate {
 
     if ($#args < 0) {
         &Warn("EvaluateUndef");
-        return undef;
+        return 0;
     }
 
     if ($#args == 0) {     # single word? return it, let Perl evaluate
