@@ -183,21 +183,27 @@ sub DoMap {
 
     # create the row
     my %row = ();
-    $row{DNS_DOMAIN} = $to;
-    $to = &SlashDot($to); # slashify all dots
-    $row{DNS_DOMAIN_RE} = $to;
-    $to =~ s!\\!\\\\!g; # double all slashes
-    $row{DNS_DOMAIN_RE2} = $to;
-    $to =~ s!\\!\\\\!g; # double all slashes
-    $row{DNS_DOMAIN_RE4} = $to;
+    my $x = $to;
+    $row{DNS_DOMAIN} = $x; # foo.com
+    $x = &SlashDot($x);
+    $row{DNS_DOMAIN_RE} = $x; # foo\.com - static
+    $x =~ s!\\!\\\\!g;
+    $row{DNS_DOMAIN_RE2} = $x; # foo\\.com -- double-escaped
+    $x = &SlashDot($x);
+    $row{DNS_DOMAIN_RERE} = $x; # foo\\\.com - re static
+    $x =~ s!\\!\\\\!g;
+    $row{DNS_DOMAIN_RERE2} = $x; # foo\\\\\\.com -- double-escaped
 
-    $row{ONION_ADDRESS} = $onion;
-    $onion = &SlashDot($onion); # slashify all dots
-    $row{ONION_ADDRESS_RE} = $onion;
-    $onion =~ s!\\!\\\\!g; # double all slashes
-    $row{ONION_ADDRESS_RE2} = $onion;
-    $onion =~ s!\\!\\\\!g; # double all slashes
-    $row{ONION_ADDRESS_RE4} = $onion;
+    $x = $onion;
+    $row{ONION_ADDRESS} = $x; # foo.onion
+    $x = &SlashDot($x);
+    $row{ONION_ADDRESS_RE} = $x; # foo\.onion
+    $x =~ s!\\!\\\\!g;
+    $row{ONION_ADDRESS_RE2} = $x; # foo\\.onion
+    $x = &SlashDot($x);
+    $row{ONION_ADDRESS_RERE} = $x; # foo\\\.onion
+    $x =~ s!\\!\\\\!g;
+    $row{ONION_ADDRESS_RERE2} = $x; # foo\\\\\\.onion
 
     $row{KEYFILE} = $keyfile;
 
@@ -448,7 +454,7 @@ warn Dumper(\%projects);
 # create a home
 &MakeDir($ENV{PROJECTS_HOME});
 
-# prep the foreigns; skip _RE4 until proven neede
+# prep the foreigns
 my @flist = ();
 foreach $domain (sort keys %foreign_by_domain) {
     my $x;
