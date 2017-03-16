@@ -1,9 +1,12 @@
 all:
 	echo nope:
 
-distclean dist-clean:
+clean:
+	rm -rf configure*.log *~ */*~ */*/*~
+
+distclean dist-clean: clean
 	./eotk shutdown
-	rm -rf projects.d onionbalance.d configure*.log *~ */*~ */*/*~
+	rm -rf projects.d onionbalance.d
 
 test-ob-tor:
 	@echo this should print: onion
