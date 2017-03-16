@@ -191,7 +191,7 @@ http {
 
     onion_to_dns = function (i)
       if i == nil or i == "" then
-        return i
+	return i
       end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
@@ -271,11 +271,6 @@ http {
       ngx.arg[1] = chunk
     end
   }
-
-
-
-
-
 
   %%IF %SUPPRESS_HEADER_CSP%
   # csp suppression
@@ -401,7 +396,7 @@ http {
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
       # suppress non-GET methods (e.g.: POST)
       limit_except GET {
-        deny all;
+	deny all;
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
@@ -410,8 +405,8 @@ http {
       %%IF %BLOCK_HOST%
       # block hosts matching this name
       if ( $host = %BLOCK_HOST% ) {
-        # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-        return 403 "%BLOCK_ERR%";
+	# https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+	return 403 "%BLOCK_ERR%";
       }
       %%ELSE
       # no named host blocking
@@ -420,8 +415,8 @@ http {
       %%IF %BLOCK_HOST_RE%
       # block hosts matching this regular expression
       if ( $host ~* %BLOCK_HOST_RE% ) {
-          # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-          return 403 "%BLOCK_ERR%";
+	  # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+	  return 403 "%BLOCK_ERR%";
       }
       %%ELSE
       # no regular expression host blocking
