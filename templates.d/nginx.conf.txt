@@ -319,13 +319,13 @@ http {
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
 
-      # rewrite inbound referer
+      # rewrite request referer
       set_by_lua_block $referer2 {
         return onion_to_dns(ngx.var.http_referer)
       }
       proxy_set_header Referer $referer2;
 
-      # rewrite inbound origin
+      # rewrite request origin
       set_by_lua_block $origin2 {
         return onion_to_dns(ngx.var.http_origin)
       }
@@ -360,9 +360,22 @@ http {
       # no regular expression host blocking
       %%ENDIF
 
-      # header filtering
+      # filter the response headers en-route back to the user
       header_filter_by_lua_block {
         local k, v
+
+        -- is this javascript/json? if so, extra processing
+        k = "Content-Type"
+        v = ngx.header[k]
+        if v == "application/javascript" or
+           v == "application/x-javascript" or
+           v == "text/javascript" or
+           v == "application/json" then
+           -- set a flag to pick up in body_filter_by_lua_block
+           ngx.ctx.isjavascript = 1
+           -- we will change content-length, therefore invalidate it
+           ngx.header.content_length = nil
+        end
 
         -- rewrite cors/acao
         k = "Access-Control-Allow-Origin"
@@ -388,6 +401,16 @@ http {
           ngx.header[k] = dns_to_onion(v)
         end
         %%ENDIF
+      }
+
+      # filter the response body en-route back to the user
+      body_filter_by_lua_block {
+        if ngx.ctx.isjavascript == 1 then
+          local chunk = ngx.arg[1]
+          chunk = dns_to_onion(chunk)
+          -- TODO: then replace embedded regexps
+          ngx.arg[1] = chunk
+        end
       }
     }
   }
