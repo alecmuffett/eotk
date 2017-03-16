@@ -11,6 +11,9 @@
 
 ## Changes
 
+**NEW:** draft setup and operations "runbook" at:
+https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
+
 ### v1.2
 * new features:
   * optional blocks to methods other than GET/HEAD
