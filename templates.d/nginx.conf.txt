@@ -24,7 +24,7 @@ events {
 
 http {
   # nginx fails without large enough buckets (sigh)
-  map_hash_bucket_size 128;
+  map_hash_bucket_size %NGINX_HASH_BUCKET_SIZE%;
 
   # dns for proxy (sigh)
   # we should do `ipv6=off` here, but compat issues, hence NGINX_RESOLVER_FLAGS
@@ -33,14 +33,20 @@ http {
 
   # we walk a line between keeping it small and flooding resources...
   proxy_buffering on;
-  proxy_buffer_size 64k; # for initial; impacts SSL header
-  proxy_buffers 16 64k; # for rest of response
-  proxy_busy_buffers_size 256k; # how much can be busy sending to client?
+
+  # for initial; impacts SSL header
+  proxy_buffer_size %NGINX_BLOCK_SIZE%;
+
+  # for rest of response
+  proxy_buffers %NGINX_BLOCK_COUNT% %NGINX_BLOCK_SIZE%;
+
+  # how much can be busy sending to client?
+  proxy_busy_buffers_size %NGINX_BLOCK_BUSY_SIZE%;
 
   # in case we want to start spooling responses locally
   proxy_temp_path /tmp/nginx-proxy-%PROJECT%;
-  proxy_max_temp_file_size 64m; # < default(1024m)
-  proxy_temp_file_write_size 64k;
+  proxy_max_temp_file_size %NGINX_TMPFILE_SIZE%;
+  proxy_temp_file_write_size %NGINX_BLOCK_SIZE%;
 
   %%IF %NGINX_CACHE_SECONDS%
   # nginx caching static responses for %NGINX_CACHE_SECONDS% seconds

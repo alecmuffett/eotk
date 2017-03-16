@@ -343,16 +343,21 @@ sub DoProject {
 
 # in-template settings
 
+&SetEnv("nginx_block_busy_size", "128k");
+&SetEnv("nginx_block_count", 16);
+&SetEnv("nginx_block_size", "64k");
 &SetEnv("nginx_cache_min_uses", 2);
-&SetEnv("nginx_cache_size", "16m");
-&SetEnv("nginx_cache_seconds", 0);
+&SetEnv("nginx_cache_seconds", 0); # 0 = off
+&SetEnv("nginx_cache_size", "256m");
+&SetEnv("nginx_hash_bucket_size", 128);
 &SetEnv("nginx_hello_onion", 1);
 &SetEnv("nginx_resolver", "8.8.8.8");
 &SetEnv("nginx_resolver_flags", "");
 &SetEnv("nginx_rlim", 1024);
-&SetEnv("nginx_timeout", 30);
-&SetEnv("nginx_workers", "auto");
 &SetEnv("nginx_syslog", "error"); # https://nginx.org/en/docs/ngx_core_module.html#error_log
+&SetEnv("nginx_timeout", 30);
+&SetEnv("nginx_tmpfile_size", "8m");
+&SetEnv("nginx_workers", "auto");
 
 &SetEnv("tor_intros_per_daemon", 3);
 &SetEnv("tor_single_onion", 1);
