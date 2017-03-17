@@ -213,14 +213,11 @@ what has changed rather than break the command entirely.
 After [installation](docs.d/HOW-TO-INSTALL.md), if you want to experiment
 with some prefabricated projects, try this:
 
-* `./010-configure-demo.sh` # creates a working config file + tor & nginx config files
-* `eotk start default`
-* Now you can...
-  * Connect to one of the onions cited on screen for the `default`
-    project
-  * Play SSL-Certificate-Acceptance-Whackamole
-  * Browse a little...
-* `eotk stop default`
+* `./010-configure-demo.sh`
+  * creates working config files, and tor & nginx config files
+* Follow the on-screen instructions to start your onions
+* Connect to your onions
+* Play exciting games of "SSL-Certificate-Acceptance-Whackamole"
 
 ## I want to create my own project!
 

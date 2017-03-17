@@ -3,20 +3,20 @@
 
 cd `dirname $0`
 
-INPUT=templates.d/demo.conf.txt
-TEMPLATE=demo.tconf
-OUTPUT=demo.conf
+for INPUT in demos.d/*.tconf ; do
+    CONF=`basename $INPUT .tconf`.conf
+    echo Configuring $INPUT as $CONF
+    echo ""
+    ./eotk configure $INPUT || exit 1
+    echo ""
+done
 
-cp $INPUT $TEMPLATE
+echo "------------------------------------------------------------------"
+echo "------------------------------------------------------------------"
+echo "------------------------------------------------------------------"
 
-./eotk configure $TEMPLATE || exit 1
-
-echo "----"
 echo ""
-
-echo Demo setup is complete.
-echo The template was $TEMPLATE
-echo The resulting configuration file is $OUTPUT
+echo Demo configuration is complete.
 echo ""
 
 echo The following per-project mappings are set up:
@@ -34,11 +34,11 @@ echo "  2)" eotk maps -a
 echo "  3)" eotk status -a
 echo ""
 
-echo Those projects which are listed as "'softmap'" will require
-echo the following additional steps AFTER being started:
+echo "Demo projects which are listed as 'softmap' (eg: 'wikipedia')"
+echo "require the following additional steps AFTER being started:"
 echo ""
-echo "  4)" eotk ob-start wiki "#" wiki is a softmap project
-echo "  5)" eotk ob-maps wiki "#" to see what soft onions point where
+echo "  4)" eotk ob-start wikipedia "#" wikipedia is a softmap project
+echo "  5)" eotk ob-maps wikipedia "#" to see the onion mappings
 echo "  6)" eotk ob-status "#" to see what onionbalance is doing
 echo ""
 

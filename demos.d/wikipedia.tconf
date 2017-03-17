@@ -1,0 +1,19 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+# this is a softmap project, because of the sheer size
+
+set project wikipedia
+softmap %NEW_SOFT_ONION% wikipedia.org m
+softmap %NEW_SOFT_ONION% wikimedia.org m
+softmap %NEW_SOFT_ONION% wikimediafoundation.org m
+softmap %NEW_SOFT_ONION% mediawiki.org m
+softmap %NEW_SOFT_ONION% wikibooks.org m
+softmap %NEW_SOFT_ONION% wikidata.org m
+softmap %NEW_SOFT_ONION% wikinews.org m
+softmap %NEW_SOFT_ONION% wikiquote.org m
+softmap %NEW_SOFT_ONION% wikisource.org m
+softmap %NEW_SOFT_ONION% wikiversity.org m
+softmap %NEW_SOFT_ONION% wikivoyage.org m
+softmap %NEW_SOFT_ONION% wiktionary.org m
+# more?

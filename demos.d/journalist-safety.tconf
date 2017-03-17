@@ -1,0 +1,6 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+set project journalist-safety
+hardmap %NEW_ONION% cpj.org
+hardmap %NEW_ONION% mediadefence.org

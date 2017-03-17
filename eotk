@@ -313,7 +313,9 @@ Configure() {
                 if [ -s $file2 ] ; then
                     Print info: $file: using existing $file2
                 else
-                    Print info: $file: populating $file2 with onions, please be patient...
+                    Print info: Processing $file
+                    Print info: Populating $file2 with onions
+                    Print info: Please be patient...
                     Populate $file >$file2
                 fi
                 file="$file2"
@@ -331,8 +333,7 @@ Configure() {
         fi
     done 2>$log
 
-    Print done. logfile is $log
-    Print remember to "'eotk make-init-script'" and install it, if you want autoboot.
+    Print done. logfile is $log.
 }
 
 # argument 'parser' - ha!

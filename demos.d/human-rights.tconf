@@ -1,0 +1,6 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+set project human-rights
+hardmap %NEW_ONION% aclu.org
+hardmap %NEW_ONION% liberty-human-rights.org.uk
