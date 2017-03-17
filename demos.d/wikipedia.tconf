@@ -1,8 +1,21 @@
 # -*- conf -*-
 # eotk (c) 2017 Alec Muffett
 
-# this is a softmap project, because of the sheer size
+# let's make this read-only:
+set suppress_methods_except_get 1
 
+# ...and then we can blithely cache stuff:
+set nginx_cache_seconds 60
+set nginx_cache_size 64m
+
+# ...and we'll set to cache upon 1st hit (default: 2nd)
+set nginx_cache_min_uses 1
+
+# you might want to investigate "no_cache_content_type" or
+# "no_cache_host" in the instances that you want limitations on
+# some kinds of caching...
+
+# the Wikimedia Foundation have lots of sites:
 set project wikipedia
 softmap %NEW_SOFT_ONION% wikipedia.org m
 softmap %NEW_SOFT_ONION% wikimedia.org m
