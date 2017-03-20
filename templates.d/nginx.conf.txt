@@ -174,6 +174,8 @@ http {
   # because of `long bracket syntax`; the `[o[` freaks it out.
   # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
+    -- helper functions
+
     slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, s)
       return
@@ -183,13 +185,15 @@ http {
       return string.sub(s, -string.len(x)) == x
     end
 
+    -- mapping onions to dns
+
     o_to_d_mappings = {}
     %%BEGIN
     o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
-    o_to_d_lookup = function (o)
-      local k = o[1] -- see note above re: array syntax
+    o_to_d_lookup = function (m)
+      local k = m[1] -- see note above re: array syntax
       return ( o_to_d_mappings[k] or k )
     end
 
@@ -199,6 +203,18 @@ http {
       end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
+    end
+
+    -- mapping dns to onions, for experimentation
+
+    d_to_o_mappings = {}
+    %%BEGIN
+    d_to_o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
+    %%END
+
+    d_to_o_lookup = function (m)
+      local k = m[1] -- see note above re: array syntax
+      return ( d_to_o_mappings[k] or k )
     end
 
     dns_to_onion = function (i)
@@ -244,8 +260,8 @@ http {
     -- further extra_processing_csv checks
     %%CSV %EXTRA_PROCESSING_CSV%
     if v == "%1%" then
-      local m, err = ngx.re.match(ngx.var.uri, "%2%")
-      if m ~= nil then
+    local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
+      if m then
         ngx.ctx.needs_extra_processing = 1
         ngx.header.content_length = nil
       end
@@ -258,7 +274,7 @@ http {
     -- rewrite cors/acao
     k = "Access-Control-Allow-Origin"
     v = ngx.header[k]
-    if v ~= nil and v ~= "*" then
+    if v and v ~= "*" then
       ngx.header[k] = dns_to_onion(v)
     end
 
@@ -268,15 +284,15 @@ http {
     -- rewrite csp
     k = "Content-Security-Policy"
     v = ngx.header[k]
-    if v ~= nil then
+    if v then
       ngx.header[k] = dns_to_onion(v)
     end
 
     -- rewrite csp (report-only)
     k = "Content-Security-Policy-Report-Only"
     v = ngx.header[k]
-    if v ~= nil then
-    ngx.header[k] = dns_to_onion(v)
+    if v then
+      ngx.header[k] = dns_to_onion(v)
     end
     %%ENDIF
   }
