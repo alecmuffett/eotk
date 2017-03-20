@@ -179,6 +179,10 @@ http {
       return
     end
 
+    has_suffix = function (s, x)
+      return string.sub(s, -string.len(x)) == x
+    end
+
     o_to_d_mappings = {}
     %%BEGIN
     o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
@@ -223,18 +227,33 @@ http {
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
     local k, v
-    -- is this javascript/json? if so, extra processing
+    -- is this javascript/json? if so, extra processing:
+    -- 1) set a processing flag to pick up in body_filter_by_lua_block
+    -- 2) invalidate content-length, because we will change it
     k = "Content-Type"
     v = ngx.header[k]
     if v == "application/javascript" or
+      v == "application/json" or
       v == "application/x-javascript" or
-      v == "text/javascript" or
-      v == "application/json" then
-      -- set a flag to pick up in body_filter_by_lua_block
-      ngx.ctx.isjavascript = 1
-      -- we will change content-length, therefore invalidate it
+      v == "text/css" or
+      v == "text/javascript" then
+      ngx.ctx.needs_extra_processing = 1
       ngx.header.content_length = nil
     end
+    %%IF %EXTRA_PROCESSING_CSV%
+    -- further extra_processing_csv checks
+    %%CSV %EXTRA_PROCESSING_CSV%
+    if v == "%1%" then
+      local m, err = ngx.re.match(ngx.var.uri, "%2%")
+      if m ~= nil then
+        ngx.ctx.needs_extra_processing = 1
+        ngx.header.content_length = nil
+      end
+    end
+    %%ENDCSV
+    %%ELSE
+    -- no extra_processing_csv checks
+    %%ENDIF
 
     -- rewrite cors/acao
     k = "Access-Control-Allow-Origin"
@@ -266,7 +285,7 @@ http {
   body_filter_by_lua_block {
     -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
     -- instead we restrict such brute-force replacements to JS and JSON ...
-    if ngx.ctx.isjavascript == 1 then
+    if ngx.ctx.needs_extra_processing == 1 then
       local chunk = ngx.arg[1]
       -- subs_filter picked up the "//"-anchored strings; now we sub the rest
       chunk = dns_to_onion(chunk)

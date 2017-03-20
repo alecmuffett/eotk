@@ -399,6 +399,8 @@ sub DoProject {
 &SetEnv("no_cache_content_type", "");
 &SetEnv("no_cache_host", "");
 
+&SetEnv("extra_processing_csv", "");
+
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
