@@ -71,7 +71,6 @@ http {
   # hosts not to cache
   map $http_host $no_cache_host {
     hostnames;
-
     %%CSV %NO_CACHE_HOST%
     %1% 1;
     %%ENDCSV
@@ -174,7 +173,7 @@ http {
   # because of `long bracket syntax`; the `[o[` freaks it out.
   # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
-    -- helper functions
+    -- helper functions for elsewhere
 
     slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, s)
@@ -242,10 +241,10 @@ http {
 
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
-    local k, v
     -- is this javascript/json? if so, extra processing:
     -- 1) set a processing flag to pick up in body_filter_by_lua_block
     -- 2) invalidate content-length, because we will change it
+    local k, v
     k = "Content-Type"
     v = ngx.header[k]
     if v == "application/javascript" or
@@ -257,7 +256,7 @@ http {
       ngx.header.content_length = nil
     end
     %%IF %EXTRA_PROCESSING_CSV%
-    -- further extra_processing_csv checks
+    -- run on `v` for further extra_processing_csv checks
     %%CSV %EXTRA_PROCESSING_CSV%
     if v == "%1%" then
     local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
