@@ -89,7 +89,8 @@ sub Evaluate {
         return !(index($a, $b) >= 0) if ($op eq "!contains");
     }
 
-    die "Evaluate: expression not parsed, sorry: @args\n";
+    warn "evaluate: expression not parsed, returning for verbatim eval as string: @args\n";
+    return "@args";
 }
 
 sub Echo {

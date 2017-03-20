@@ -175,7 +175,7 @@ http {
   # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
     slog = function (s) -- in case of manual debugging
-      ngx.log(ngx.ERR, "\n<<", s, ">>\n")
+      ngx.log(ngx.ERR, s)
       return
     end
 
@@ -275,6 +275,34 @@ http {
       -- more complex regular expressions are out of scope.
       ngx.arg[1] = chunk
     end
+
+    %%IF %DEBUG_TRAP%
+    -- debug traps
+    local i = ngx.arg[1]
+    local ct = ngx.header["Content-Type"]
+    local uri = ngx.var.uri
+    local iterator, err
+    %%CSV %DEBUG_TRAP%
+    iterator, err = ngx.re.gmatch(i, ".{0,32}(%1%).{0,32}")
+    if not iterator then
+      ngx.log(ngx.ERR, "gmatch error: ", err)
+    else
+      while true do
+        local m, err = iterator()
+        if err then
+          ngx.log(ngx.ERR, "iterator error: ", err)
+          break
+        end
+        if not m then
+          break
+        end
+        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+      end -- while true
+    end -- if iterator
+    %%ENDCSV
+    %%ELSE
+    -- no debug traps
+    %%ENDIF
   }
 
   %%IF %SUPPRESS_HEADER_CSP%
@@ -367,7 +395,7 @@ http {
 
     %%IF %BLOCK_LOCATION_RE%
     # block locations matching this regular expression
-    location ~* %BLOCK_LOCATION_RE% {
+    location ~* "%BLOCK_LOCATION_RE%" {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
@@ -409,7 +437,7 @@ http {
 
       %%IF %BLOCK_HOST%
       # block hosts matching this name
-      if ( $host = %BLOCK_HOST% ) {
+      if ( $host = "%BLOCK_HOST%" ) {
 	# https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
 	return 403 "%BLOCK_ERR%";
       }
@@ -419,7 +447,7 @@ http {
 
       %%IF %BLOCK_HOST_RE%
       # block hosts matching this regular expression
-      if ( $host ~* %BLOCK_HOST_RE% ) {
+      if ( $host ~* "%BLOCK_HOST_RE%" ) {
 	  # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
 	  return 403 "%BLOCK_ERR%";
       }

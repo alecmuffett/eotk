@@ -357,6 +357,8 @@ sub DoProject {
 &SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("template_tool", "$here/lib.d/expand-template.pl");
 
+&SetEnv("debug_trap", "");
+
 # in-template settings
 
 &SetEnv("nginx_block_busy_size", "128k");
