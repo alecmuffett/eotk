@@ -324,6 +324,8 @@ Defaults in (parentheses)
 * IS_SOFTMAP :boom: :no_entry:
 * SCRIPT_PAUSE (5 seconds)
 * SCRIPT_NAMES :no_entry:
+* DEBUG_TRAP
+* EXTRA_PROCESSING_CSV
 
 ### NGINX Configuration
 
@@ -360,9 +362,13 @@ Defaults in (parentheses)
 * DNS_DOMAIN
 * DNS_DOMAIN_RE (backslashed dots)
 * DNS_DOMAIN_RE2 (double-backslashed dots)
+* DNS_DOMAIN_RERE (backslashed dots)
+* DNS_DOMAIN_RERE2 (double-backslashed dots)
 * ONION_ADDRESS
 * ONION_ADDRESS_RE (backslashed dots)
 * ONION_ADDRESS_RE2 (double-backslashed dots)
+* ONION_ADDRESS_RERE (backslashed dots)
+* ONION_ADDRESS_RERE2 (double-backslashed dots)
 * KEYFILE :no_entry: (cited in config)
 
 ## Fake Variables

@@ -10,11 +10,15 @@ my %known =
      'DNS_DOMAIN' => 1, # site being mapped
      'DNS_DOMAIN_RE' => 1, # ...with dots escaped
      'DNS_DOMAIN_RE2' => 1, # ...with dots double-escaped
+     'DNS_DOMAIN_RERE' => 1, # ...with dots escaped
+     'DNS_DOMAIN_RERE2' => 1, # ...with dots double-escaped
 
      # onion destination addresses
      'ONION_ADDRESS' => 1, # onion being mapped-to
      'ONION_ADDRESS_RE' => 1, # with dots escaped
      'ONION_ADDRESS_RE2' => 1, # with dots double-escaped
+     'ONION_ADDRESS_RERE' => 1, # with dots escaped
+     'ONION_ADDRESS_RERE2' => 1, # with dots double-escaped
 
      # ssl cert prefix
      'CERT_PREFIX' => 1,
@@ -28,12 +32,13 @@ my %known =
      'PROJECTS_HOME' => 1, # where the projects live
 
      # in-template settings
-
      'BLOCK_ERR' => 1,
      'BLOCK_HOST' => 1,
      'BLOCK_HOST_RE' => 1,
      'BLOCK_LOCATION' => 1,
      'BLOCK_LOCATION_RE' => 1,
+     'DEBUG_TRAP' => 1,
+     'EXTRA_PROCESSING_CSV' => 1,
      'FOREIGNMAP_CSV' => 1,
      'IS_SOFTMAP' => 1,
      'NGINX_BLOCK_BUSY_SIZE' => 1,
