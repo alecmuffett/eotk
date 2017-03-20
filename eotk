@@ -256,46 +256,6 @@ InvokeRemotely() {
     done
 }
 
-# implement kludge to insert freshly-generated onions into a "*.tconf"
-# template-configuration, so people don't have to type so much...
-Populate() {
-    if [ -t 0 ] ; then # if stdin is a terminal, provide diags
-        dots=true
-    else
-        dots=false
-    fi
-
-    cat "$@" |
-        while read line ; do
-            case "$line" in
-                *%NEW_ONION%*) # legacy / shorter / more common
-                    onion=secrets.d/`$self genkey`
-                    echo "$line" | sed -e "s!%NEW_ONION%!$onion!"
-                    ;;
-                *%NEW_HARD_ONION%*) # same as NEW_ONION
-                    onion=secrets.d/`$self genkey`
-                    echo "$line" | sed -e "s!%NEW_HARD_ONION%!$onion!"
-                    ;;
-                *%NEW_SOFT_ONION%*)
-                    onion=`$self genkey`
-                    onion=`basename $onion .key`
-                    echo "$line" | sed -e "s!%NEW_SOFT_ONION%!$onion!"
-                    ;;
-                *)
-                    echo "$line"
-                    ;;
-            esac
-
-            if $dots ; then
-                echo ".\c" >/dev/tty
-            fi
-        done
-
-    if $dots ; then
-        echo "" >/dev/tty
-    fi
-}
-
 # get a config file and re/populate the projects directory with it
 Configure() {
     log=configure$$.log
@@ -316,7 +276,7 @@ Configure() {
                     Print info: Processing $file
                     Print info: Populating $file2 with onions
                     Print info: Please be patient...
-                    Populate $file >$file2
+                    expand-config.pl $file >$file2
                 fi
                 file="$file2"
                 ;;
