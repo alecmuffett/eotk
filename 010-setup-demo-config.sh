@@ -3,7 +3,7 @@
 
 cd `dirname $0`
 
-for INPUT in demos.d/*.tconf ; do
+for INPUT in demo.d/*.tconf ; do
     CONF=`basename $INPUT .tconf`.conf
     echo Configuring $INPUT as $CONF
     echo ""

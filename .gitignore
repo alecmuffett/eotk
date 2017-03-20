@@ -9,7 +9,7 @@
 
 *~
 
-!demos.d/*.tconf
+!demo.d/*.tconf
 
 opt.d/*
 !opt.d/build*.sh
