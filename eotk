@@ -37,6 +37,9 @@ ob_tor_control_sock=$ob_dir/tor-control.sock
 # init script name
 init=eotk-init.sh
 
+# log retention
+log_retain=8
+
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
 
@@ -128,6 +131,37 @@ Print() {
 # print a formatted message to stderr
 Warn() {
     Print "$@" 1>&2
+}
+
+# compress logfiles
+LogRotate() {
+    SUFFIX=.bz2
+    logfiles=`find projects.d -type f -name "*.log" -print`
+    for logfile in $logfiles ; do
+        hi=`expr $log_retain - 1`
+        dst=$logfile.$hi$SUFFIX
+        if [ -f $dst ] ; then
+            rm $dst || exit 1
+            Print purged $dst
+        fi
+        while [ $hi -gt 0 ] ; do
+            lo=`expr $hi - 1`
+            src=$logfile.$lo$SUFFIX
+            dst=$logfile.$hi$SUFFIX
+            if [ -f $src ] ; then
+                mv $src $dst || exit 1
+                Print bumped $dst
+            fi
+            hi=$lo
+        done
+        dst=$logfile.$hi
+        mv $logfile $dst || exit 1
+        Print created $dst
+        to_compress="$to_compress $dst"
+    done
+    $self --local nxreload -a
+    $self --local torreload -a
+    bzip2 -fv $to_compress
 }
 
 # essentially the projects.d folder is a little database
@@ -608,6 +642,11 @@ case "$cmd" in
                 tar cf - $dir | bzip2 > $dir-$ds.tar.bz2
             done
         )
+        ;;
+
+    logrotate)
+        $need_to_run_locally && LogRotate
+        InvokeRemotely logrotate
         ;;
 
     make-init-script)
