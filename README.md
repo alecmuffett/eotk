@@ -11,6 +11,10 @@
 
 ## Changes
 
+**NEW** maillist / googlegroup; subscription methods:
+* mailto:eotk-users+subscribe@googlegroups.com (via email)
+* https://groups.google.com/group/eotk-users/subscribe (via web)
+
 **NEW:** draft setup and operations "runbook" at:
 https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
 
