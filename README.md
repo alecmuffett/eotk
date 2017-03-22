@@ -9,11 +9,16 @@
 * Raspbian Jessie/Jessie-Lite, Latest Updates
 * Ubuntu 16.04+, Latest Updates
 
-## Changes
+## Maillist / Group
 
-**NEW** maillist / googlegroup; subscription methods:
+General discussion mailllist: deployment, tweaks and tuning:
+
 * mailto:eotk-users+subscribe@googlegroups.com (via email)
 * https://groups.google.com/group/eotk-users/subscribe (via web)
+
+nb: bugs are still best reported through `Issues`, above.
+
+## Changes
 
 **NEW:** draft setup and operations "runbook" at:
 https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
