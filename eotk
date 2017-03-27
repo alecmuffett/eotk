@@ -161,6 +161,7 @@ LogRotate() {
     done
     $self --local nxreload -a
     $self --local torreload -a
+    test -d $ob_dir && $self ob-restart
     bzip2 -fv $to_compress
 }
 
@@ -553,6 +554,11 @@ case "$cmd" in
         ;;
 
     ob-start|obstart) # project ..., or "-a"
+        if [ ! -d $ob_dir ] ; then
+            Warn directory $ob_dir does not exist, Aborting...
+            exit 1
+        fi
+
         if [ -f $ob_dir/ob.pid ] ; then
             Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running.
             if ! $flag_boot ; then
