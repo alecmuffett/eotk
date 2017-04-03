@@ -1,0 +1,108 @@
+# -*- conf -*-
+
+# ---- BLOCKING SITES BY NAME OR REGEXP ----
+
+# you can use either/both of the re/non-re forms of host-blocking and
+# location-blocking, however the variables are single-valued so be
+# careful of polluting multiple projects.  If your site needs
+# different blocking for different onions, consider splitting your
+# config into multiple files and using `foreignmap` to stitch the
+# hostname rewrites together.
+
+# set block_err "This action is not supported over Onion yet sorry."
+# set block_host <unset>
+# set block_host_re <unset>
+# set block_location <unset>
+# set block_location_re <unset>
+
+# ---- "EXTRA PROCESSING" ----
+
+# This is a list of "content-type,uri-regexp" patterns of content to
+# apply "extra processing" (ie: content hostname rewrites) too; if for
+# instance your CMS emits JSON as "application/octet-stream" in file
+# URIs ending with ".jblob" then you could try something like:
+#
+# set extra_processing_csv application/octet-stream,\\.jblob$
+
+# set extra_processing_csv <unset> ...
+
+# ---- NGINX TUNABLES ----
+
+# set nginx_block_busy_size 32k
+# set nginx_block_count 32
+# set nginx_block_size 16k
+# set nginx_hash_bucket_size 128
+# set nginx_resolver 8.8.8.8
+# set nginx_resolver_flags <unset>
+# set nginx_rlim 256
+# set nginx_syslog error
+# set nginx_template $here/templates.d/nginx.conf.txt
+# set nginx_timeout 15
+# set nginx_tmpfile_size 256m
+# set nginx_workers auto
+# set softmap_nginx_workers auto
+
+# ---- CREATE A HELLO_ONION PAGE ----
+
+# set nginx_hello_onion 1
+
+# ---- NGINX CACHING ----
+
+# Setting nginx_cache_seconds to a value greater than zero will enable
+# caching; after that the other variables will come into play.
+
+# set nginx_cache_seconds 0
+
+# set nginx_cache_min_uses 1
+# set nginx_cache_size 256m
+# set no_cache_content_type <unset>
+# set no_cache_host <unset>
+
+# ---- SSL CERTIFICATE DIRECTORY ----
+
+# Probably wisest not to mess with this value, but instead to drop
+# your relevant certificates into projects.d/PROJECTNAME.d/ssl.d and
+# check your file permissions very carefully, because (eg:) softmap
+# and rsync will need/replicate this data. Make sure you have safe
+# copies stored elsewhere.
+
+# set ssl_dir $ENV{PROJECT_DIR}/ssl.d
+
+# ---- HTTP/S security options ----
+
+# We delete HPKP and HSTS completely (TorBrowser does not support them
+# because anonymity issues) and CSP by default we attempt to rewrite,
+# but you can likewise disable.
+
+# set suppress_header_csp 0 # 0 = try rewriting; 1 = elide completely
+# set suppress_header_hpkp 1 # 1 = elide completely
+# set suppress_header_hsts 1 # 1 = elide completely
+# set suppress_methods_except_get 0 # 1 = GET/HEAD Only
+
+# ---- TOR TUNING ----
+
+# set tor_intros_per_daemon 3
+# set tor_single_onion 1
+# set tor_syslog notice
+# set tor_template $here/templates.d/tor.conf.txt
+# set softmap_tor_workers 2
+
+# ---- PROJECTS & MAPPINGS ----
+
+# foreignmaps are onion-to-site mappings that exist outside of this
+# particular configuration file, eg: for some other site.
+
+foreignmap facebookcorewwwi.onion facebook.com
+
+# hardmaps use tor daemon configs with onions hard-coded in them
+
+set project hardexample
+hardmap %NEW_HARD_ONION% foo.local
+hardmap %NEW_HARD_ONION% bar.local
+
+# softmaps use onionbalance software to loadbalance across workers
+
+set project softexample
+softmap %NEW_SOFT_ONION% example.com
+softmap %NEW_SOFT_ONION% example.org
+softmap %NEW_SOFT_ONION% example.net
