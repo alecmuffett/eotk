@@ -238,13 +238,33 @@ eg: `%%IF %ONION% eq facebookcorewwwi`
 * `contains`
 * `!contains`
 
-Logic Operators
+### Logic Operators
 
 eg: `%%IF %BOOL1% and %BOOL2%` - no subexpressions, sorry
 
 * `and`
 * `or`
 * `xor`
+
+Also, simple conditionals (*not* expressions) may use `!` or `not` to
+invert the sense of an if-statement, so this is valid
+
+```
+%%IF not %VALID%
+Where VALID is boolean-evaluatable like 0 or 1
+...
+%%ENDIF
+```
+
+...but this is *not valid*
+
+```
+%%IF ! %FOO% eq BAR
+*THIS WILL NOT WORK AS INTENDED*
+*YOU WANT: %FOO% ne BAR*
+...
+%%ENDIF
+```
 
 ### Operator Notes
 
