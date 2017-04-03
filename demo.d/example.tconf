@@ -70,6 +70,16 @@
 
 # ---- HTTP/S security options ----
 
+# THIS ONE IS IMPORTANT: `force_https` is enabled by default and
+# prevents EOTK from making cleartext HTTP requests over the internet,
+# instead it requests the user to retry the request as HTTPS; setting
+# this by default WILL BREAK SOME SITES however it's proper to have it
+# as default behaviour. If you experience "too many redirects" errors
+# when connecting over the onion, this may be the cause, and although
+# you can disable it, it would be better to fix your site to be HTTPS.
+
+# set force_https 1 # `on` by default
+
 # We delete HPKP and HSTS completely (TorBrowser does not support them
 # because anonymity issues) and CSP by default we attempt to rewrite,
 # but you can likewise disable.
