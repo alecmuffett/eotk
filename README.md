@@ -20,9 +20,9 @@ nb: bugs are still best reported through `Issues`, above.
 
 ## Changes
 
-**NEW:** **IMPORTANT** - the `FORCE_HTTPS` feature has been added and 
-made *default*; if your site is 100% HTTPS then you do not need to do 
-anything, however sites which mandate or require insecure `HTTP` may 
+**NEW:** **IMPORTANT** - the `FORCE_HTTPS` feature has been added and
+made *default*; if your site is 100% HTTPS then you do not need to do
+anything, however sites which mandate or require insecure `HTTP` may
 have to use `set force_https 0` in configurations from now on.
 
 **NEW:** draft setup and operations "runbook" at:
@@ -46,7 +46,7 @@ https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
 * have declared a stable alpha release
 * architecture images, at bottom of this page
 * all of CSP, HSTS and HPKP are suppressed by default; onion networking mitigates much of this
-* ["tunables"](TUNEABLES.md) documentation for template content
+* ["tunables"](TEMPLATES.md) documentation for template content
 * `troubleshooting` section near the bottom of this page
 * See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
 

@@ -288,90 +288,17 @@ globals at the top, and if you have projects which need different
 settings then use different config files and different runs of `eotk
 configure`.
 
-# Variable Index
+# Variables
 
-Key:
+## Template Variables
 
-* defaulted per project = :boom:
-* not settable / do not change = :no_entry:
-
-## Global Variables
-
-Defaults in (parentheses)
-
-### EOTK Configuration
-
-* PROJECTS_HOME (projects.d)
-* PROJECT :boom:
-* PROJECT_DIR (PROJECTS_HOME/projname.d) :boom:
-* LOG_DIR (PROJECT_DIR/log.d) :boom:
-* SSL_DIR (PROJECT_DIR/ssl.d) :boom:
-
-### Template Generation
-
-* TEMPLATE_TOOL (lib.d/expand-template.pl)
-* NGINX_TEMPLATE (templates.d/nginx.conf.txt)
-* TOR_TEMPLATE (templates.d/tor.conf.txt)
-
-### SSL Certificate Generation
-
-* SSL_TOOL (lib.d/make-selfsigned-wildcard-ssl-cert.sh)
-* CERT_COMMON_NAME (not set, use to override CERT_PREFIX)
-* CERT_PREFIX (first onion address cited in project)
-
-### EOTK Operation
-
-* IS_SOFTMAP :boom: :no_entry:
-* SCRIPT_PAUSE (5 seconds)
-* SCRIPT_NAMES :no_entry:
-* DEBUG_TRAP
-* EXTRA_PROCESSING_CSV
-
-### NGINX Configuration
-
-* BLOCK_HOST (none)
-* BLOCK_HOST_RE (none)
-* BLOCK_LOCATION (none)
-* BLOCK_LOCATION_RE (none)
-* NGINX_CACHE_SECONDS (0)
-* NGINX_CACHE_SIZE (16m)
-* NGINX_HELLO_ONION (on)
-* NGINX_RESOLVER (8.8.8.8)
-* NGINX_RESOLVER_FLAGS
-* NGINX_RLIM (1024)
-* NGINX_SYSLOG (error)
-* NGINX_TIMEOUT (30 seconds)
-* NGINX_WORKERS (auto)
-* SOFTMAP_NGINX_WORKERS (auto)
-* SUPPRESS_HEADER_CSP (on)
-* SUPPRESS_HEADER_HPKP (on)
-* SUPPRESS_HEADER_HSTS (on)
-* SUPPRESS_METHODS_EXCEPT_GET (off)
-
-### Tor Configuration
-
-* TOR_DIR :boom: :no_entry:
-* TOR_INTROS_PER_DAEMON (3)
-* TOR_SINGLE_ONION (on)
-* TOR_SYSLOG (notice)
-* TOR_WORKER_PREFIX ("hs")
-* SOFTMAP_TOR_WORKERS (2)
-
-## Begin/End Variables
-
-* DNS_DOMAIN
-* DNS_DOMAIN_RE (backslashed dots)
-* DNS_DOMAIN_RE2 (double-backslashed dots)
-* DNS_DOMAIN_RERE (backslashed dots)
-* DNS_DOMAIN_RERE2 (double-backslashed dots)
-* ONION_ADDRESS
-* ONION_ADDRESS_RE (backslashed dots)
-* ONION_ADDRESS_RE2 (double-backslashed dots)
-* ONION_ADDRESS_RERE (backslashed dots)
-* ONION_ADDRESS_RERE2 (double-backslashed dots)
-* KEYFILE :no_entry: (cited in config)
+A list of template variables - and their default values - is provided
+in [the example template configuration file](../demo.d/example.tconf)
 
 ## Fake Variables
+
+These are used in Template Configuration (`.tconf`) files, and do not
+represent real environment variables.
 
 * NEW_ONION / NEW_HARD_ONION
 * NEW_SOFT_ONION
