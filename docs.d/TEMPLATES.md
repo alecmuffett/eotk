@@ -218,33 +218,33 @@ non-empty string which will always evaluate to `true`.
 
 eg: `%%IF %NUMDAEMONS% < 6`
 
-* ==
-* !=
-* >=
-* <=
-* >
-* <
+* `==`
+* `!=`
+* `>=`
+* `<=`
+* `>`
+* `<`
 
 ### String Operators
 
 eg: `%%IF %ONION% eq facebookcorewwwi`
 
-* eq
-* ne
-* ge
-* le
-* gt
-* lt
-* contains
-* !contains
+* `eq`
+* `ne`
+* `ge`
+* `le`
+* `gt`
+* `lt`
+* `contains`
+* `!contains`
 
 Logic Operators
 
 eg: `%%IF %BOOL1% and %BOOL2%` - no subexpressions, sorry
 
-* and
-* or
-* xor
+* `and`
+* `or`
+* `xor`
 
 ### Operator Notes
 
