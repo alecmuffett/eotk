@@ -20,6 +20,11 @@ nb: bugs are still best reported through `Issues`, above.
 
 ## Changes
 
+**NEW:** **IMPORTANT** - the `FORCE_HTTPS` feature has been added and 
+made *default*; if your site is 100% HTTPS then you do not need to do 
+anything, however sites which mandate or require insecure `HTTP` may 
+have to use `set force_https 0` in configurations from now on.
+
 **NEW:** draft setup and operations "runbook" at:
 https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
 
