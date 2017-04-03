@@ -52,9 +52,11 @@ sub Evaluate {
         return $args[0];
     }
 
-    if ($#args == 1 and $args[0] eq "not") {
-        &Warn("Evaluate1 ! $args[0]");
-        return ! $args[0];
+    if ($#args == 1 and (
+            ($args[0] eq "not") or
+            ($args[0] eq "!"))) {
+        &Warn("Evaluate1-not $args[1]");
+        return not $args[1];
     }
 
     if ($#args == 2) {

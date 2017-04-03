@@ -388,22 +388,56 @@ http {
   }
 
   %%BEGIN
+  %%IF %FORCE_HTTPS%
+  # FORCE_HTTPS is in use; set up separate server for port 80 & force redirects
+  server {
+    %%IF %IS_SOFTMAP%
+    %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
+    %%ENDRANGE
+    %%ELSE
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    %%ENDIF
+
+    # subdomain regexp captures trailing dot, use carefully; does not need "~*"
+    # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
+    server_name
+    %ONION_ADDRESS%
+    ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
+    ;
+
+    # tell the client to try again as HTTPS without ever leaving the onion
+    # use 307 / temporary redirect because your URIs may change in future
+    # use $host (not $server) to copy-over subdomains, etc, transparently
+    return 307 https://$host$request_uri;
+  }
+  %%ELSE
+  # FORCE_HTTPS is not in use, cleartext data may traverse the internet
+  %%ENDIF
+
   # for %ONION_ADDRESS% -> %DNS_DOMAIN%
   server {
     %%IF %IS_SOFTMAP%
     %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
     # softmap onion %I%
+    %%IF not %FORCE_HTTPS%
+    # FORCE_HTTPS is not in use, cleartext data may traverse the internet
     listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
+    %%ENDIF
     listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-443.sock ssl;
     %%ENDRANGE
     %%ELSE
     # hardmap
     # unix sockets; use <ONION_ADDRESS>.d as a naming convention
+    %%IF not %FORCE_HTTPS%
+    # FORCE_HTTPS is not in use, cleartext data may traverse the internet
     listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    %%ENDIF
     listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock ssl;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
+    # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
     server_name
     %ONION_ADDRESS%
     ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$

@@ -646,13 +646,11 @@ EOF
 export var="a,b,c A,B,C"
 Test csv1 < /dev/null
 
-exit 0
-
 ##################################################################
 
-# see if this works
+# see if `cat` works
 
-Templace <<EOF
+Template <<EOF
 foo
 %%CAT /etc/passwd /etc/group
 bar
@@ -665,3 +663,57 @@ EOF
 ) | Expect
 
 Test file cat < /dev/null
+
+##################################################################
+
+# check not-evaluation
+
+Expect <<EOF
+foo
+bar
+baz
+EOF
+
+Template <<EOF
+foo
+%%IF ! 0
+bar
+%%ENDIF
+baz
+EOF
+
+Test exclamation-not < /dev/null
+
+Template <<EOF
+foo
+%%IF not 0
+bar
+%%ENDIF
+baz
+EOF
+
+Test word-not < /dev/null
+
+Template <<EOF
+foo
+%%IF ! 1
+eek
+%%ELSE
+bar
+%%ENDIF
+baz
+EOF
+
+Test invert-exclamation-not < /dev/null
+
+Template <<EOF
+foo
+%%IF not 1
+eek
+%%ELSE
+bar
+%%ENDIF
+baz
+EOF
+
+Test invert-word-not < /dev/null
