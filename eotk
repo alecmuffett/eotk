@@ -554,10 +554,7 @@ case "$cmd" in
         ;;
 
     ob-start|obstart) # project ..., or "-a"
-        if [ ! -d $ob_dir ] ; then
-            Warn directory $ob_dir does not exist, Aborting...
-            exit 1
-        fi
+        # do not test for ob_dir here, it is okay to not exist
 
         if [ -f $ob_dir/ob.pid ] ; then
             Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running.
