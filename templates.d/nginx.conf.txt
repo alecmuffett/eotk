@@ -419,7 +419,6 @@ http {
   server {
     %%IF %IS_SOFTMAP%
     %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
-    # softmap onion %I%
     %%IF not %FORCE_HTTPS%
     # FORCE_HTTPS is not in use, cleartext data may traverse the internet
     listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
