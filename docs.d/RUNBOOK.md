@@ -40,11 +40,12 @@ These steps need to be done in a specific order:
 * Change directory into the `eotk` directory
   * `cd eotk`
 * Create a `site.tconf` file in the `eotk` directory
-  * See attached file
+  * See the Wikipedia site config for an example that you can copy:
+    * https://github.com/alecmuffett/eotk/blob/master/demo.d/wikipedia.tconf
 * Do the following to create the onion keys and NGINX/Tor configuration files:
   * `eotk config site.tconf`
-  * **NOTE:** You may want to take a moment to review the content of the generated `site.conf` (note name) before progressing to the next step.
-  * **SUGGESTION:** you may want to delete or rename `site.tconf` at this point, to reduce confusion and/or risk of editing the wrong file in the future.
+  * **NOTE:** You may want to take a moment to review the content of the generated `site.conf` (note new name) before progressing to the next step.
+  * **SUGGESTION:** you may want to delete or rename `site.tconf` (note old name) at this point, to reduce confusion and/or risk of editing the wrong file in the future.
 * Do the following to tell Brenda about Wolfgang the Worker:
   * `echo wolfgang > eotk-workers.conf` 
   * ...or edit the file, one hostname per line
