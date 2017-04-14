@@ -480,15 +480,6 @@ http {
     # no regular expression host blocking
     %%ENDIF
 
-    %%IF %NGINX_HELLO_ONION%
-    # for test & to help SSL certificate acceptance
-    location ~* ^/hello[-_]onion/?$ {
-      return 200 "Hello, Onion User!";
-    }
-    %%ELSE
-    # no "hello-onion" endpoint
-    %%ENDIF
-
     %%IF %BLOCK_LOCATION%
     # block locations by name
     location %BLOCK_LOCATION% {
@@ -505,6 +496,15 @@ http {
     }
     %%ELSE
     # no regular expression location blocking
+    %%ENDIF
+
+    %%IF %NGINX_HELLO_ONION%
+    # for test & to help SSL certificate acceptance
+    location ~* ^/hello[-_]onion/?$ {
+      return 200 "Hello, Onion User!";
+    }
+    %%ELSE
+    # no "hello-onion" endpoint
     %%ENDIF
 
     # for traffic
