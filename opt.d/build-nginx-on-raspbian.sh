@@ -79,7 +79,8 @@ export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.0
 
 env \
     ./configure \
-    --with-ld-opt="-Wl,-rpath,$LUAJIT_LIB" \
+    --with-cc-opt="-fPIE -fstack-protector-strong -fexceptions -D_FORTIFY_SOURCE=2" \
+    --with-ld-opt="-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now -Wl,-rpath,$LUAJIT_LIB" \
     --prefix=$opt_dir \
     $OPTS \
     $MODADD || exit 1
