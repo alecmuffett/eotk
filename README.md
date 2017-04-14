@@ -21,7 +21,7 @@ NB: bugs are still best reported through `Issues`, above.
 ### In the News
 
 * Apr 2017 [This Company Will Create Your Own Tor Hidden Service](https://motherboard.vice.com/en_us/article/this-company-will-create-your-own-tor-hidden-service)
-  * Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
+* Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
 
 ## Changelog
 
