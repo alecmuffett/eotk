@@ -16,17 +16,23 @@ General discussion mailllist: deployment, tweaks and tuning:
 * mailto:eotk-users+subscribe@googlegroups.com (via email)
 * https://groups.google.com/group/eotk-users/subscribe (via web)
 
-nb: bugs are still best reported through `Issues`, above.
+NB: bugs are still best reported through `Issues`, above.
 
-## Changes
+### In the News
 
-**NEW:** **IMPORTANT** - the `FORCE_HTTPS` feature has been added and
-made *default*; if your site is 100% HTTPS then you do not need to do
-anything, however sites which mandate or require insecure `HTTP` may
-have to use `set force_https 0` in configurations from now on.
+* Apr 2017 [This Company Will Create Your Own Tor Hidden Service](https://motherboard.vice.com/en_us/article/this-company-will-create-your-own-tor-hidden-service)
+  * Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
 
-**NEW:** draft setup and operations "runbook" at:
-https://gist.github.com/alecmuffett/461d5762b48b4f19e3cd27a85dfbcf8d
+## Changelog
+
+### v1.3
+* new features
+  * "Runbook" has been [moved to the documentation directory](docs.d/RUNBOOK.md)
+  * tor2web has been blocked-by-default
+    * since the reason for EOTK is to provide Clearnet websites with an Onion presence, Tor2web is not necessary
+  * the `FORCE_HTTPS` feature has been added and made *default*
+    * if your site is 100% HTTPS then you do not need to do anything, 
+    * however sites which require insecure `HTTP` may have to use `set force_https 0` in configurations.
 
 ### v1.2
 * new features:
