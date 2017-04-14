@@ -25,6 +25,9 @@ NB: bugs are still best reported through `Issues`, above.
 
 ## Changelog
 
+### Work In Progress (HEAD, will become v1.4)
+* TBD
+
 ### v1.3
 * new features
   * "Runbook" has been [moved to the documentation directory](docs.d/RUNBOOK.md)
