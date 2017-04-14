@@ -1,5 +1,6 @@
 #!/bin/sh -x
 
+keyserver=keyserver.ubuntu.com
 ngxversion=1.10.3
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
@@ -35,7 +36,7 @@ ngxdir=`basename "$ngxfile" .tar.gz`
 
 test -f "$ngxfile" || curl -o "$ngxfile" "$ngxurl" || exit 1
 test -f $ngxsig || curl -o $ngxsig $ngxsigurl || exit 1
-gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $ngxsigningkey || exit 1
+gpg --keyserver hkp://$keyserver:80 --recv-keys $ngxsigningkey || exit 1
 gpg --verify $ngxsig || exit 1
 test -d "$ngxdir" || tar zxf "$ngxfile" || exit 1
 

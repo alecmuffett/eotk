@@ -1,5 +1,6 @@
 #!/bin/sh -x
 
+keyserver=keyserver.ubuntu.com
 torversion=0.2.9.9
 torsigningkey=6AFEE6D49E92B601
 
@@ -17,7 +18,7 @@ tordir=`basename $torurl .tar.gz`
 
 test -f $torfile || curl -o $torfile $torurl || exit 1
 test -f $torsig || curl -o $torsig $torsigurl || exit 1
-gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $torsigningkey || exit 1
+gpg --keyserver hkp://$keyserver:80 --recv-keys $torsigningkey || exit 1
 gpg --verify $torsig || exit 1
 test -d $tordir || tar zxf $torfile || exit 1
 
