@@ -408,7 +408,7 @@ http {
 
     %%IF %SUPPRESS_TOR2WEB%
     # suppress tor2web traffic; "let them use clearnet"
-    if ($http_x_tor2web) {
+    if ( $http_x_tor2web ) {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
@@ -453,11 +453,31 @@ http {
 
     %%IF %SUPPRESS_TOR2WEB%
     # suppress tor2web traffic; "let them use clearnet"
-    if ($http_x_tor2web) {
+    if ( $http_x_tor2web ) {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
     # tor2web not suppressed
+    %%ENDIF
+
+    %%IF %BLOCK_HOST%
+    # block hosts matching this name
+    if ( $host = "%BLOCK_HOST%" ) {
+      # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no named host blocking
+    %%ENDIF
+
+    %%IF %BLOCK_HOST_RE%
+    # block hosts matching this regular expression
+    if ( $host ~* "%BLOCK_HOST_RE%" ) {
+      # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no regular expression host blocking
     %%ENDIF
 
     %%IF %NGINX_HELLO_ONION%
@@ -518,26 +538,6 @@ http {
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
-      %%ENDIF
-
-      %%IF %BLOCK_HOST%
-      # block hosts matching this name
-      if ( $host = "%BLOCK_HOST%" ) {
-	# https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-	return 403 "%BLOCK_ERR%";
-      }
-      %%ELSE
-      # no named host blocking
-      %%ENDIF
-
-      %%IF %BLOCK_HOST_RE%
-      # block hosts matching this regular expression
-      if ( $host ~* "%BLOCK_HOST_RE%" ) {
-	  # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
-	  return 403 "%BLOCK_ERR%";
-      }
-      %%ELSE
-      # no regular expression host blocking
       %%ENDIF
     }
   }
