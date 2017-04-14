@@ -406,6 +406,15 @@ http {
     ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
     ;
 
+    %%IF %SUPPRESS_TOR2WEB%
+    # suppress tor2web traffic; "let them use clearnet"
+    if ($http_x_tor2web) {
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # tor2web not suppressed
+    %%ENDIF
+
     # tell the client to try again as HTTPS without ever leaving the onion
     # use 307 / temporary redirect because your URIs may change in future
     # use $host (not $server) to copy-over subdomains, etc, transparently
