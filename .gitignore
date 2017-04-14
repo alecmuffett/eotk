@@ -14,6 +14,7 @@
 opt.d/*
 !opt.d/build*.sh
 !opt.d/install*.sh
+!opt.d/Dockerfile
 
 mirrors.d/
 onionbalance.d/
