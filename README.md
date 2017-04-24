@@ -441,13 +441,17 @@ eotk start -a
 
 If you need a local DNS resolver, I recommend `dnsmasq`.
 
-### I can't connect, it's just hanging
+### I can't connect, it's just hanging!
 
 If your onion project has just started, it can take up to a few
 minutes to connect for the first time; also sometimes TorBrowser
 caches stale descriptors for older onions.  Try restarting TorBrowser
 (or use the `New Identity` menu item) and have a cup of tea.  If it
 persists, check the logfiles.
+
+### OnionBalance runs for a few days, and then just stops responding!
+
+Is the clock/time of day correct on all your machines?  Are you running NTP?  We are not sure but having an incorrect clock may be a contributory factor to this issue.
 
 ### Help I'm Stuck!
 
