@@ -110,6 +110,9 @@ EOF
 # eg:
 # facebook md5 6da9c97ee7e0495379babf0a9d2ab96e https://www.facebook.com/status.php
 
+# this is particularly useful for watching /hello-onion/ URLs, on
+# masters and workers, hardmap and softmap.
+
 rm -f $OUTFILE $ERRFILE
 
 # Speak onion checks completed.
