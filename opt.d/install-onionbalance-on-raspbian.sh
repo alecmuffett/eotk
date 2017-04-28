@@ -8,7 +8,7 @@ here=`pwd`
 sudo aptitude install -y socat python-pip python-dev || exit 1
 
 # install onionbalance
-sudo pip install onionbalance || exit 1
+sudo pip install --upgrade onionbalance || exit 1
 
 # check: this should print `/usr/local/bin/onionbalance`
 sudo which onionbalance
