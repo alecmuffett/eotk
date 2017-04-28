@@ -31,7 +31,7 @@ make install || exit 1
 
 cd $here || exit 1
 
-ln -s bin/tor || exit 1
+ln -sf bin/tor || exit 1
 
 rm -rf $torfile $torsig $tordir
 

@@ -92,7 +92,7 @@ make install || exit 1
 
 cd $opt_dir || exit 1
 
-ln -s sbin/nginx || exit 1
+ln -sf sbin/nginx || exit 1
 
 # cleanup
 
