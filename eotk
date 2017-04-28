@@ -121,6 +121,18 @@ for host in $cloud_hosts ; do
     test "x$host" = "xlocalhost" && need_to_run_locally=true
 done
 
+# delete dangerous stuff on boot
+OnBootCleanup() {
+    pidfiles=`find $EOTK_HOME -type f -name "*.pid"`
+    sockfiles=`find $EOTK_HOME -type s -name "*.sock"`
+    for file in $pidfiles $sockfiles ; do
+        if [ -e $file ] ; then # -e => "exists"
+            rm $file || exit 1
+        fi
+        Warn purged $file
+    done
+}
+
 ##################################################################
 
 # print a formatted message to stdout
@@ -372,6 +384,7 @@ case "$cmd" in
     ## ACTIONS
 
     start) # project ..., or "-a"
+        $flag_boot && OnBootCleanup
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
@@ -558,18 +571,14 @@ case "$cmd" in
 
         if [ -f $ob_dir/ob.pid ] ; then
             Warn file $ob_dir/ob.pid already exists, OnionBalance may already be running.
-            if ! $flag_boot ; then
-                Warn Aborting...
-                exit 1
-            fi
+            Warn Aborting...
+            exit 1
         fi
 
         if [ -f $ob_dir/tor.pid ] ; then
             Warn file $ob_dir/tor.pid already exists, OnionBalance-Tor may already be running.
-            if ! $flag_boot ; then
-                Warn Aborting...
-                exit 1
-            fi
+            Warn Aborting...
+            exit 1
         fi
 
         $self ob-gather "$@" || exit 1
