@@ -349,9 +349,13 @@ cmd="$1" # we may need the remaining args
 shift
 
 case "$cmd" in
-    version)
-        Print $version $EOTK_HOME `uname -a`
+    version|test)
         test -d .git && git show -s --oneline
+        tor --version || Warn cannot find tor executable
+        nginx -v || Warn cannot find nginx executable
+        onionbalance --version || Warn cannot find onionbalance executable
+        Print $version $EOTK_HOME `uname -a`
+        InvokeRemotely version
         ;;
 
     projects|proj)
@@ -374,11 +378,6 @@ case "$cmd" in
             cd $secrets_dir
             generate-onion-key.sh
         )
-        ;;
-
-    test)
-        $self version # recurse!
-        InvokeRemotely version
         ;;
 
     ## ACTIONS
@@ -581,6 +580,7 @@ case "$cmd" in
             exit 1
         fi
 
+        # ob-gather checks args
         $self ob-gather "$@" || exit 1
 
         Print starting OnionBalance-Tor
@@ -605,6 +605,11 @@ case "$cmd" in
         ;;
 
     ob-restart) # project ..., or "-a" : TODO: should these propagate flags?
+        # ob-stop takes no args, but ob-start requires them; try to be consistent, therefore:
+        if [ "x$1" = "x" ] ; then # test for no args
+            Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
+            exit 1
+        fi
         $self ob-stop
         $self ob-start "$@"
         ;;
