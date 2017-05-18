@@ -124,6 +124,12 @@ split on commas to become numbered variables:
 ...and this parse/expansion is iterated over all arguments to the
 `%CSV%` line.
 
+## Literal Percent Signs
+
+Similar to `printf()`, a double-percent-sign in substituted/printed
+text will be rendered as a single percent sign, i.e.: `Foo%%Bar` ->
+`Foo%Bar`
+
 ## Control Statements
 
 There are simple conditionals:
