@@ -17,7 +17,7 @@ sudo which onionbalance
 sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmod a+r
 sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x
 
-echo this should say: onionbalance 0.1.7 -- or higher
+echo this should say: onionbalance 0.1.8 -- or higher
 onionbalance --version
 
 exit 0
