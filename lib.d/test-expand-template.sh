@@ -60,12 +60,20 @@ Template <<EOF
 foo %FOO% foo
 bar %BAR% bar
 baz %BAZ% baz
+percent %% percent
+percent%% percent
+percent %%percent
+percent%%percent
 EOF
 
 Expect <<EOF
 foo 1 foo
 bar 2 bar
 baz wibble baz
+percent % percent
+percent% percent
+percent %percent
+percent%percent
 EOF
 
 export FOO=1

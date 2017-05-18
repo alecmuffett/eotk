@@ -18,7 +18,11 @@ sub Warn {
 
 sub Lookup {
     my $var = shift;
+
+    return '%' if ($var eq '');
+
     $used{$var} = 1;
+
     foreach $symref (@scopes) {
         if (defined(${$symref}{$var})) {
             return ${$symref}{$var};
@@ -99,7 +103,7 @@ sub Echo {
     &Warn("Echo1 @_");
     my $line = shift;
     if ($line =~ /%/) {
-        $line =~ s/%([\w+]+)%/&Lookup($1)/ge;
+        $line =~ s/%([\w+]*)%/&Lookup($1)/ge;
     }
     &Warn("Echo2 $line");
     print $line;
@@ -177,7 +181,7 @@ sub PrintRange {
     &Warn("range end: $end $template[$end]");
 
     # limits
-    $line =~ s/%([\w+]+)%/&Lookup($1)/ge;
+    $line =~ s/%([\w+]*)%/&Lookup($1)/ge;
     my ($crap, $var, $start, $finish, @rest) = split(" ", $line);
     &Warn("range: $var, $start, $finish\n");
 
@@ -207,7 +211,7 @@ sub PrintCsv {
     &Warn("csv end: $end $template[$end]");
 
     # limits
-    $line =~ s/%([\w+]+)%/&Lookup($1)/ge;
+    $line =~ s/%([\w+]*)%/&Lookup($1)/ge;
     my ($crap, @csvs) = split(" ", $line);
     &Warn("csv: @csvs\n");
 
@@ -273,7 +277,7 @@ sub PrintIf {         # having %%ELSE makes this a little more complex
     die "runaway search for %%ENDIF\n" if (!defined($fi_ptr));
 
     # expand all %VARIABLES%
-    $cond =~ s/%([\w+]+)%/&Lookup($1)/ge;
+    $cond =~ s/%([\w+]*)%/&Lookup($1)/ge;
     &Warn("if-expand: $cond");
 
     # evaluate the resulting string
