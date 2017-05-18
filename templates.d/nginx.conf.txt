@@ -130,23 +130,42 @@ http {
   # by default, lest "$1" bleed into the subsequent digits of an onion
   # address: $1234567abcdefghij.onion
 
+  # finally: some sites encode // with %-encoded "2F" in URIs...
+
   %%BEGIN
+  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored by // or \/\/
   subs_filter
   (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
   $1/$2%ONION_ADDRESS%
   gir
   ;
+
+  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored with hex-encoded slashes
+  subs_filter
+  %%2F%%2F(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  %%2F%%2F$1%ONION_ADDRESS%
+  gir
+  ;
+
   %%END
 
   %%IF %FOREIGNMAP_CSV%
   # foreignmap subs: 1=onion,2=re,3=re2,4=dns,5=re,6=re2
   %%CSV %FOREIGNMAP_CSV%
-  # for %4% -> %1%
+  # for %4% -> %1% anchored by // or \/\/
   subs_filter
   (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%6%\\b
   $1/$2%1%
   gir
   ;
+
+  # for %4% -> %1% anchored with hex-encoded slashes
+  subs_filter
+  %%2F%%2F(([-0-9a-z]+\\.)+)?%6%\\b
+  %%2F%%2F$1%1%
+  gir
+  ;
+
   %%ENDCSV
   %%ELSE
   # no foreignmap subs
@@ -299,8 +318,10 @@ http {
   # filter the response body en-route back to the user
   body_filter_by_lua_block {
     -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
-    -- instead we restrict such brute-force replacements to JS and JSON ...
+    -- instead we restrict such brute-force replacement to content that was
+    -- flagged in header_filter_by_lua_block
     if ngx.ctx.needs_extra_processing == 1 then
+      -- the flag was set; this content deserves brute-force search & replace
       local chunk = ngx.arg[1]
       -- subs_filter picked up the "//"-anchored strings; now we sub the rest
       chunk = dns_to_onion(chunk)
