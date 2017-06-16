@@ -112,7 +112,7 @@ http {
   %%CSV %PRESERVE_CSV%
   # saving regexp '%2%' as '%1%' for replacement with '%4%' (%3%)
   subs_filter
-  ([>\\s])(%2%)\\b
+  (%PRESERVE_PREAMBLE%)(%2%)\\b
   $1%PRESERVE_COOKIE%%1%%PRESERVE_COOKIE%
   g%3%r
   ;
