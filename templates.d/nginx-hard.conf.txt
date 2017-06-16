@@ -107,6 +107,20 @@ http {
   text/xml
   ;
 
+  %%IF %PRESERVE_CSV%
+  # preserve subs (save-phase): 1=description,2=re,3=i_or_empty,4=replacement
+  %%CSV %PRESERVE_CSV%
+  # saving regexp '%2%' as '%1%' for replacement with '%4%' (%3%)
+  subs_filter
+  ([>\\s])(%2%)\\b
+  $1%PRESERVE_COOKIE%%1%%PRESERVE_COOKIE%
+  g%3%r
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no preserve subs (save-phase)
+  %%ENDIF
+
   %%BEGIN
   # for %DNS_DOMAIN% -> %ONION_ADDRESS%
   subs_filter
@@ -130,6 +144,20 @@ http {
   %%ENDCSV
   %%ELSE
   # no foreignmap subs
+  %%ENDIF
+
+  %%IF %PRESERVE_CSV%
+  # preserve subs (restore-phase): 1=description,2=re,3=i_or_empty,4=replacement
+  %%CSV %PRESERVE_CSV%
+  # restoring '%1%' with '%4%'
+  subs_filter
+  %PRESERVE_COOKIE%%1%%PRESERVE_COOKIE%
+  %4%
+  g
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no preserve subs (restore-phase)
   %%ENDIF
 
   # fix the cookies
