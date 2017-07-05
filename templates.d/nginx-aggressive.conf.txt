@@ -1,0 +1,568 @@
+# -*- awk -*-
+# eotk (c) 2017 Alec Muffett
+
+# EMACS awk mode works quite well for nginx configs
+
+# logs and pids
+pid %PROJECT_DIR%/nginx.pid;
+error_log %LOG_DIR%/nginx-error.log %NGINX_SYSLOG%;
+
+# TODO: notes for custom 403 error-handling pages:
+# https://www.cyberciti.biz/faq/unix-linux-nginx-custom-error-403-page-configuration/
+# https://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
+
+# performance
+%%IF %IS_SOFTMAP%
+worker_processes %SOFTMAP_NGINX_WORKERS%; # softmap
+%%ELSE
+worker_processes %NGINX_WORKERS%; # hardmap
+%%ENDIF
+worker_rlimit_nofile %NGINX_RLIM%;
+events {
+  worker_connections %NGINX_RLIM%;
+}
+
+http {
+  # nginx fails without large enough buckets (sigh)
+  map_hash_bucket_size %NGINX_HASH_BUCKET_SIZE%;
+
+  # dns for proxy (sigh)
+  # we should do `ipv6=off` here, but compat issues, hence NGINX_RESOLVER_FLAGS
+  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s %NGINX_RESOLVER_FLAGS%;
+  resolver_timeout %NGINX_TIMEOUT%s;
+
+  # we walk a line between keeping it small and flooding resources...
+  proxy_buffering on;
+
+  # for initial; impacts SSL header
+  proxy_buffer_size %NGINX_BLOCK_SIZE%;
+
+  # for rest of response
+  proxy_buffers %NGINX_BLOCK_COUNT% %NGINX_BLOCK_SIZE%;
+
+  # how much can be busy sending to client?
+  proxy_busy_buffers_size %NGINX_BLOCK_BUSY_SIZE%;
+
+  # in case we want to start spooling responses locally
+  proxy_temp_path /tmp/nginx-proxy-%PROJECT%;
+  proxy_max_temp_file_size %NGINX_TMPFILE_SIZE%;
+  proxy_temp_file_write_size %NGINX_BLOCK_SIZE%;
+
+  %%IF %NGINX_CACHE_SECONDS%
+  # nginx caching static responses for %NGINX_CACHE_SECONDS% seconds
+  # - this is a lightweight cache to reduce "storms", hence the global
+  # approch of "cache everything for a small number of seconds"
+  # https://nginx.org/en/docs/http/ngx_http_proxy_module.html
+  proxy_cache_path /tmp/nginx-cache-%PROJECT% levels=1:2 keys_zone=%PROJECT%:%NGINX_CACHE_SIZE%;
+  proxy_cache %PROJECT%;
+  proxy_cache_min_uses %NGINX_CACHE_MIN_USES%;
+  proxy_cache_revalidate on;
+  proxy_cache_use_stale timeout updating;
+  proxy_cache_valid any %NGINX_CACHE_SECONDS%s; # "any" includes 404s, etc
+
+  # content-types to not cache
+  map $http_content_type $no_cache_content_type {
+    %%CSV %NO_CACHE_CONTENT_TYPE%
+    %1% 1;
+    %%ENDCSV
+    default 0;
+  }
+
+  # hosts not to cache
+  map $http_host $no_cache_host {
+    hostnames;
+    %%CSV %NO_CACHE_HOST%
+    %1% 1;
+    %%ENDCSV
+    default 0;
+  }
+
+  # so, should we skip caching this stuff for some reason?
+  proxy_no_cache $no_cache_content_type $no_cache_host;
+  proxy_cache_bypass $no_cache_content_type $no_cache_host;
+  %%ELSE
+  # nginx caching disabled
+  %%ENDIF
+
+  # logs
+  access_log %LOG_DIR%/nginx-access.log;
+
+  # global settings
+  server_tokens off;
+
+  # allow/deny (first wins)
+  allow "unix:";
+  deny all;
+
+  # rewrite these content types; text/html is implicit
+  subs_filter_types
+  application/javascript
+  application/json
+  application/x-javascript
+  text/css
+  text/javascript
+  text/xml
+  ;
+
+
+
+
+
+  # subs_filter - AGGRESSIVE MODE
+
+  %%BEGIN
+  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored by // or \/\/
+  subs_filter
+  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  $1/$2%ONION_ADDRESS%
+  gir
+  ;
+
+  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored with hex-encoded slashes
+  subs_filter
+  %%2F%%2F(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
+  %%2F%%2F$1%ONION_ADDRESS%
+  gir
+  ;
+
+  %%END
+
+  %%IF %FOREIGNMAP_CSV%
+  # foreignmap subs: 1=onion,2=re,3=re2,4=dns,5=re,6=re2
+  %%CSV %FOREIGNMAP_CSV%
+  # for %4% -> %1% anchored by // or \/\/
+  subs_filter
+  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%6%\\b
+  $1/$2%1%
+  gir
+  ;
+
+  # for %4% -> %1% anchored with hex-encoded slashes
+  subs_filter
+  %%2F%%2F(([-0-9a-z]+\\.)+)?%6%\\b
+  %%2F%%2F$1%1%
+  gir
+  ;
+
+  %%ENDCSV
+  %%ELSE
+  # no foreignmap subs
+  %%ENDIF
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # fix the cookies
+  %%BEGIN
+  proxy_cookie_domain
+  ~^(.*?)\\b%DNS_DOMAIN_RE2%$
+  $1%ONION_ADDRESS%
+  ;
+  %%END
+
+  # fix the header-redirects
+  %%BEGIN
+  proxy_redirect
+  ~*^(.*?)\\b%DNS_DOMAIN_RE2%\\b(.*)$
+  $1%ONION_ADDRESS%$2
+  ;
+  %%END
+
+  # o_to_d_lookup -> if cannot remap, return input.  note: old versions
+  # of lua-plugin cannot cope with code like o_to_d_mappings[o[1]]
+  # because of `long bracket syntax`; the `[o[` freaks it out.
+  # See: https://github.com/openresty/lua-nginx-module/issues/748
+  init_by_lua_block {
+    -- helper functions for elsewhere
+
+    slog = function (s) -- in case of manual debugging
+      ngx.log(ngx.ERR, s)
+      return
+    end
+
+    has_suffix = function (s, x)
+      return string.sub(s, -string.len(x)) == x
+    end
+
+    -- mapping onions to dns
+
+    o_to_d_mappings = {}
+    %%BEGIN
+    o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
+    %%END
+
+    o_to_d_lookup = function (m)
+      local k = m[1] -- see note above re: array syntax
+      return ( o_to_d_mappings[k] or k )
+    end
+
+    onion_to_dns = function (i)
+      if i == nil or i == "" then
+	return i
+      end
+      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
+      return o
+    end
+
+    -- mapping dns to onions, for experimentation
+
+    d_to_o_mappings = {}
+    %%BEGIN
+    d_to_o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
+    %%END
+
+    d_to_o_lookup = function (m)
+      local k = m[1] -- see note above re: array syntax
+      return ( d_to_o_mappings[k] or k )
+    end
+
+    dns_to_onion = function (i)
+      local num, errs
+      %%BEGIN
+      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
+      %%END
+      return i
+    end
+
+    -- a note for future maintainers; if we were being strictly orthogonal then
+    -- the replacement with ONION_ADDRESS in much of this Lua block would have to
+    -- be double-escaped for potential blackslashes, because double-quotes;
+    -- however this is not needed because DNS forbids backslash; the only code
+    -- where this becomes evident/necessary is here, with "_RE2":
+
+    dnsre_to_onionre = function (i)
+      local num, errs
+      %%BEGIN
+      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RERE2%\\b", "%ONION_ADDRESS_RE2%", "io")
+      %%END
+      return i
+    end
+  }
+
+  # filter the response headers en-route back to the user
+  header_filter_by_lua_block {
+    -- is this javascript/json? if so, extra processing:
+    -- 1) set a processing flag to pick up in body_filter_by_lua_block
+    -- 2) invalidate content-length, because we will change it
+    local k, v
+    k = "Content-Type"
+    v = ngx.header[k]
+    if v == "application/javascript" or
+      v == "application/json" or
+      v == "application/x-javascript" or
+      v == "text/css" or
+      v == "text/javascript" then
+      ngx.ctx.needs_extra_processing = 1
+      ngx.header.content_length = nil
+    end
+    %%IF %EXTRA_PROCESSING_CSV%
+    -- run on `v` for further extra_processing_csv checks
+    %%CSV %EXTRA_PROCESSING_CSV%
+    if v == "%1%" then
+    local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
+      if m then
+        ngx.ctx.needs_extra_processing = 1
+        ngx.header.content_length = nil
+      end
+    end
+    %%ENDCSV
+    %%ELSE
+    -- no extra_processing_csv checks
+    %%ENDIF
+
+    -- rewrite cors/acao
+    k = "Access-Control-Allow-Origin"
+    v = ngx.header[k]
+    if v and v ~= "*" then
+      ngx.header[k] = dns_to_onion(v)
+    end
+
+    %%IF %SUPPRESS_HEADER_CSP%
+    -- csp suppressed, no rewrite needed
+    %%ELSE
+    -- rewrite csp
+    k = "Content-Security-Policy"
+    v = ngx.header[k]
+    if v then
+      ngx.header[k] = dns_to_onion(v)
+    end
+
+    -- rewrite csp (report-only)
+    k = "Content-Security-Policy-Report-Only"
+    v = ngx.header[k]
+    if v then
+      ngx.header[k] = dns_to_onion(v)
+    end
+    %%ENDIF
+  }
+
+  # filter the response body en-route back to the user
+  body_filter_by_lua_block {
+    -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
+    -- instead we restrict such brute-force replacement to content that was
+    -- flagged in header_filter_by_lua_block
+    if ngx.ctx.needs_extra_processing == 1 then
+      -- the flag was set; this content deserves brute-force search & replace
+      local chunk = ngx.arg[1]
+      -- subs_filter picked up the "//"-anchored strings; now we sub the rest
+      chunk = dns_to_onion(chunk)
+      -- and we sub the basic "foo\.com" regular-expressions, too
+      chunk = dnsre_to_onionre(chunk)
+      -- more complex regular expressions are out of scope.
+      ngx.arg[1] = chunk
+    end
+
+    %%IF %DEBUG_TRAP%
+    -- debug traps
+    local i = ngx.arg[1]
+    local ct = ngx.header["Content-Type"]
+    local uri = ngx.var.uri
+    local iterator, err
+    %%CSV %DEBUG_TRAP%
+    iterator, err = ngx.re.gmatch(i, ".{0,32}(%1%).{0,32}")
+    if not iterator then
+      ngx.log(ngx.ERR, "gmatch error: ", err)
+    else
+      while true do
+        local m, err = iterator()
+        if err then
+          ngx.log(ngx.ERR, "iterator error: ", err)
+          break
+        end
+        if not m then
+          break
+        end
+        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+      end -- while true
+    end -- if iterator
+    %%ENDCSV
+    %%ELSE
+    -- no debug traps
+    %%ENDIF
+  }
+
+  %%IF %SUPPRESS_HEADER_CSP%
+  # csp suppression
+  proxy_hide_header "Content-Security-Policy";
+  proxy_hide_header "Content-Security-Policy-Report-Only";
+  %%ELSE
+  # csp not suppressed, will be rewritten instead, see below
+  %%ENDIF
+
+  %%IF %SUPPRESS_HEADER_HSTS%
+  # hsts suppression
+  proxy_hide_header "Strict-Transport-Security";
+  %%ELSE
+  # hsts not suppressed
+  %%ENDIF
+
+  %%IF %SUPPRESS_HEADER_HPKP%
+  # hpkp suppression
+  proxy_hide_header "Public-Key-Pins";
+  proxy_hide_header "Public-Key-Pins-Report-Only";
+  %%ELSE
+  # hpkp not suppressed
+  %%ENDIF
+
+  # global proxy settings
+  proxy_read_timeout %NGINX_TIMEOUT%;
+  proxy_connect_timeout %NGINX_TIMEOUT%;
+
+  # SSL config
+  ssl_certificate %SSL_DIR%/%CERT_PREFIX%.cert;
+  ssl_certificate_key %SSL_DIR%/%CERT_PREFIX%.pem;
+  ssl_buffer_size 4k;
+  #ssl_ciphers 'EECDH+CHACHA20:EECDH+AESGCM:EECDH+AES256'; ## LibreSSL, OpenSSL 1.1.0+
+  ssl_ciphers 'EECDH+AESGCM:EECDH+AES256'; ## OpenSSL 1.0.1% to 1.0.2%
+  ssl_ecdh_curve prime256v1;
+  #ssl_ecdh_curve secp384r1:prime256v1; ## NGINX nginx 1.11.0 and later
+  ssl_prefer_server_ciphers on;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 10m;
+
+  # websockets: on the basis of http_upgrade, set connection_upgrade:
+  # empty -> empty
+  # default -> "upgrade"
+  map $http_upgrade $connection_upgrade {
+    default "upgrade";
+    "" "";
+  }
+
+  %%BEGIN
+  %%IF %FORCE_HTTPS%
+  # FORCE_HTTPS is in use; set up separate server for port 80 & force redirects
+  server {
+    %%IF %IS_SOFTMAP%
+    %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
+    %%ENDRANGE
+    %%ELSE
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    %%ENDIF
+
+    # subdomain regexp captures trailing dot, use carefully; does not need "~*"
+    # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
+    server_name
+    %ONION_ADDRESS%
+    ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
+    ;
+
+    %%IF %SUPPRESS_TOR2WEB%
+    # suppress tor2web traffic; "let them use clearnet"
+    if ( $http_x_tor2web ) {
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # tor2web not suppressed
+    %%ENDIF
+
+    # tell the client to try again as HTTPS without ever leaving the onion
+    # use 307 / temporary redirect because your URIs may change in future
+    # use $host (not $server) to copy-over subdomains, etc, transparently
+    return 307 https://$host$request_uri;
+  }
+  %%ELSE
+  # FORCE_HTTPS is not in use, cleartext data may traverse the internet
+  %%ENDIF
+
+  # for %ONION_ADDRESS% -> %DNS_DOMAIN%
+  server {
+    %%IF %IS_SOFTMAP%
+    %%RANGE I 1 %SOFTMAP_TOR_WORKERS%
+    %%IF not %FORCE_HTTPS%
+    # FORCE_HTTPS is not in use, cleartext data may traverse the internet
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
+    %%ENDIF
+    listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-443.sock ssl;
+    %%ENDRANGE
+    %%ELSE
+    # hardmap
+    # unix sockets; use <ONION_ADDRESS>.d as a naming convention
+    %%IF not %FORCE_HTTPS%
+    # FORCE_HTTPS is not in use, cleartext data may traverse the internet
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    %%ENDIF
+    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock ssl;
+    %%ENDIF
+
+    # subdomain regexp captures trailing dot, use carefully; does not need "~*"
+    # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
+    server_name
+    %ONION_ADDRESS%
+    ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
+    ;
+
+    %%IF %SUPPRESS_TOR2WEB%
+    # suppress tor2web traffic; "let them use clearnet"
+    if ( $http_x_tor2web ) {
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # tor2web not suppressed
+    %%ENDIF
+
+    %%IF %BLOCK_HOST%
+    # block hosts matching this name
+    if ( $host = "%BLOCK_HOST%" ) {
+      # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no named host blocking
+    %%ENDIF
+
+    %%IF %BLOCK_HOST_RE%
+    # block hosts matching this regular expression
+    if ( $host ~* "%BLOCK_HOST_RE%" ) {
+      # https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no regular expression host blocking
+    %%ENDIF
+
+    %%IF %BLOCK_LOCATION%
+    # block locations by name
+    location %BLOCK_LOCATION% {
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no named location blocking
+    %%ENDIF
+
+    %%IF %BLOCK_LOCATION_RE%
+    # block locations matching this regular expression
+    location ~* "%BLOCK_LOCATION_RE%" {
+      return 403 "%BLOCK_ERR%";
+    }
+    %%ELSE
+    # no regular expression location blocking
+    %%ENDIF
+
+    %%IF %NGINX_HELLO_ONION%
+    # for test & to help SSL certificate acceptance
+    location ~* ^/hello[-_]onion/?$ {
+      return 200 "Hello, Onion User!";
+    }
+    %%ELSE
+    # no "hello-onion" endpoint
+    %%ENDIF
+
+    # for traffic
+    location / {
+      proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%"; # note $scheme
+      proxy_http_version 1.1;
+
+      # a note on proxy_set_header, add_header, similar methods, etc;
+      # if you override *any* header then you will lose the other
+      # headers inherited from the parent contexts:
+      # https://blog.g3rt.nl/nginx-add_header-pitfall.html
+
+      proxy_set_header Host "${servernamesubdomain}%DNS_DOMAIN%";
+      proxy_set_header Accept-Encoding "identity";
+      proxy_set_header Connection $connection_upgrade; # SSL
+      proxy_set_header Upgrade $http_upgrade; # SSL
+      proxy_ssl_server_name on; # SSL
+
+      # rewrite request referer
+      set_by_lua_block $referer2 { return onion_to_dns(ngx.var.http_referer) }
+      proxy_set_header Referer $referer2;
+
+      # rewrite request origin
+      set_by_lua_block $origin2 { return onion_to_dns(ngx.var.http_origin) }
+      proxy_set_header Origin $origin2;
+
+      %%IF %SUPPRESS_METHODS_EXCEPT_GET%
+      # suppress non-GET methods (e.g.: POST)
+      limit_except GET {
+	deny all;
+      }
+      %%ELSE
+      # non-GET methods (e.g.: POST) are not suppressed
+      %%ENDIF
+    }
+  }
+
+  %%END
+
+  # header purge
+  more_clear_headers "Age";
+  more_clear_headers "Server";
+  more_clear_headers "Via";
+  more_clear_headers "X-From-Nginx";
+  more_clear_headers "X-NA";
+  more_clear_headers "X-Powered-By";
+  more_clear_headers "X-Request-Id";
+  more_clear_headers "X-Runtime";
+  more_clear_headers "X-Varnish";
+}
