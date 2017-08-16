@@ -104,11 +104,11 @@ http {
   text/xml
   ;
 
-
-
-
-
   # subs_filter - AGGRESSIVE MODE
+
+  # TODO: some of this could be moved to a single pass regexp in lua,
+  # but there's a regexp-complexity vs memory-latency issue to address
+  # at that point...
 
   %%BEGIN
   # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored by // or \/\/
@@ -148,18 +148,6 @@ http {
   %%ELSE
   # no foreignmap subs
   %%ENDIF
-
-
-
-
-
-
-
-
-
-
-
-
 
   # fix the cookies
   %%BEGIN

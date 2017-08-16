@@ -360,13 +360,15 @@ sub DoProject {
 &SetEnv("force_https", 1);
 &SetEnv("debug_trap", "");
 
-# in-template settings
+# in-template settings; don't confuse the two modules
+# this: https://nginx.org/en/docs/http/ngx_http_proxy_module.html (used)
+# versus: https://nginx.org/en/docs/stream/ngx_stream_proxy_module.html (not used)
 
-&SetEnv("nginx_block_count", 32);
-&SetEnv("nginx_block_busy_size", "32k");
-&SetEnv("nginx_block_size", "16k");
+&SetEnv("nginx_block_count", 8);
+&SetEnv("nginx_block_busy_size", "16k");
+&SetEnv("nginx_block_size", "8k");
 &SetEnv("nginx_cache_min_uses", 1);
-&SetEnv("nginx_cache_seconds", 0); # 0 = off
+&SetEnv("nginx_cache_seconds", 60); # 0 = off
 &SetEnv("nginx_cache_size", "256m");
 &SetEnv("nginx_hash_bucket_size", 128);
 &SetEnv("nginx_hello_onion", 1);

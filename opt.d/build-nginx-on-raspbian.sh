@@ -1,10 +1,10 @@
 #!/bin/sh -x
 
 keyserver=keyserver.ubuntu.com
-ngxversion=1.10.3
+ngxversion=1.11.13
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
-LUAJITURL="http://luajit.org/download/LuaJIT-2.0.3.tar.gz"
+LUAJITURL="http://luajit.org/download/LuaJIT-2.0.5.tar.gz"
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
