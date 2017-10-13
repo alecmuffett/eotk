@@ -148,7 +148,9 @@ Warn() {
 # compress logfiles
 LogRotate() {
     SUFFIX=.bz2
-    logfiles=`find projects.d -type f -name "*.log" -print`
+    WHERE="$project_dir"
+    test -d $ob_dir && WHERE="$WHERE $ob_dir"
+    logfiles=`find $WHERE -type f -name "*.log" -print`
     for logfile in $logfiles ; do
         hi=`expr $log_retain - 1`
         dst=$logfile.$hi$SUFFIX
@@ -201,7 +203,7 @@ ListProjects() {
 
 SpotPush() {
     for filename in "$@" ; do
-        files=`find $EOTK_HOME/projects.d -type f -name "$filename" | sort`
+        files=`find $project_dir -type f -name "$filename" | sort`
         for host in $cloud_hosts ; do
             test "x$host" = "xlocalhost" && continue # skip self
             echo :::: push $host ::::
