@@ -148,8 +148,15 @@ Warn() {
 # compress logfiles
 LogRotate() {
     SUFFIX=.bz2
-    WHERE="$project_dir"
-    test -d $ob_dir && WHERE="$WHERE $ob_dir"
+    do_proj=$1 # true|false
+    do_ob=$2 # true|false
+    WHERE=""
+    $do_proj && WHERE="$WHERE $project_dir"
+    $do_ob && WHERE="$WHERE $ob_dir"
+    if [ "x$WHERE" = "x" ] ; then
+        Print error: LogRotate has no targets
+        exit 1
+    fi
     logfiles=`find $WHERE -type f -name "*.log" -print`
     for logfile in $logfiles ; do
         hi=`expr $log_retain - 1`
@@ -173,9 +180,13 @@ LogRotate() {
         Print created $dst
         to_compress="$to_compress $dst"
     done
-    $self --local nxreload -a
-    $self --local torreload -a
-    test -d $ob_dir && $self ob-restart
+    if $do_proj ; then
+        $self --local nxreload -a
+        $self --local torreload -a
+    fi
+    if $do_ob ; then
+        $self ob-restart -a
+    fi
     bzip2 -fv $to_compress
 }
 
@@ -664,8 +675,15 @@ case "$cmd" in
         ;;
 
     logrotate)
-        $need_to_run_locally && LogRotate
+        # compress and restart the remotes, first
         InvokeRemotely logrotate
+        # do we need to do onionbalance logs?
+        if [ -d $ob_dir ] ; then
+            need_to_do_ob_logs=true
+        else
+            need_to_do_ob_logs=false
+        fi
+        LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
     make-init-script)
