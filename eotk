@@ -548,13 +548,13 @@ case "$cmd" in
             echo LOG_LEVEL: info
             echo TOR_ADDRESS: $tor_address
             echo TOR_PORT: $tor_port
-            echo REFRESH_INTERVAL: 300 # non-default
-            echo PUBLISH_CHECK_INTERVAL: 500 # non-default
+            echo REFRESH_INTERVAL: 300 # non-default, expect fast cycling
+            echo PUBLISH_CHECK_INTERVAL: 150 # non-default, 0.5x REFRESH_INTERVAL
             echo INITIAL_DELAY: 90 # non-default
             echo STATUS_SOCKET_LOCATION: $ob_status_sock
-            echo DESCRIPTOR_VALIDITY_PERIOD: 86400
-            echo DESCRIPTOR_OVERLAP_PERIOD: 3600
-            echo DESCRIPTOR_UPLOAD_PERIOD: 3600
+            echo DESCRIPTOR_VALIDITY_PERIOD: 86400 # 1 day
+            echo DESCRIPTOR_OVERLAP_PERIOD: 3600 # 1 hour
+            echo DESCRIPTOR_UPLOAD_PERIOD: 1200 # non-default, 3x per hour
             do-obconfig.pl <$mappings
         ) > $ob_conf
 
