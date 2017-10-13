@@ -41,7 +41,7 @@ init=eotk-init.sh
 log_retain=8
 
 # set path
-export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$PATH
+export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$EOTK_HOME:$PATH
 
 ##################################################################
 
