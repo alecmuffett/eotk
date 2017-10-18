@@ -538,6 +538,7 @@ http {
       # headers inherited from the parent contexts:
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
 
+      proxy_set_header X-From-Onion %X_FROM_ONION_VALUE%
       proxy_set_header Host "${servernamesubdomain}%DNS_DOMAIN%";
       proxy_set_header Accept-Encoding "identity";
       proxy_set_header Connection $connection_upgrade; # SSL

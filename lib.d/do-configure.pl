@@ -359,6 +359,7 @@ sub DoProject {
 
 &SetEnv("force_https", 1);
 &SetEnv("debug_trap", "");
+&SetEnv("x_from_onion_value", "1");
 
 # in-template settings; don't confuse the two modules
 # this: https://nginx.org/en/docs/http/ngx_http_proxy_module.html (used)

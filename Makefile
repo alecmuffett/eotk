@@ -1,6 +1,9 @@
 all:
 	echo nope:
 
+lint:
+	./lib.d/lint.pl templates.d/* | sort -k 2
+
 clean:
 	rm -rf configure*.log *~ */*~ */*/*~
 

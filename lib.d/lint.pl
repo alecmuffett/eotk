@@ -3,8 +3,16 @@
 
 my %known =
     (
+     '' => 1, # an empty escape character
+     'X_FROM_ONION_VALUE' => 1,
+
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
+
+     # hard-mode preservation
+     'PRESERVE_COOKIE' => 1,
+     'PRESERVE_CSV' => 1,
+     'PRESERVE_PREAMBLE' => 1,
 
      # dns source domains
      'DNS_DOMAIN' => 1, # site being mapped
@@ -84,7 +92,7 @@ my %known =
 
 my %syms = ();
 
-while (<>) { s/%(\w+)%/$syms{$1}++, '-'/ge; }
+while (<>) { s/%(\w*)%/$syms{$1}++, '-'/ge; }
 
 foreach $var (sort keys %syms) {
     print "$syms{$var} $var";
