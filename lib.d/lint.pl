@@ -9,6 +9,9 @@ my %known =
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
 
+     # hardcoded endpoints for proofs
+     'HARDCODED_ENDPOINT_CSV' => 1,
+
      # hard-mode preservation
      'PRESERVE_COOKIE' => 1,
      'PRESERVE_CSV' => 1,

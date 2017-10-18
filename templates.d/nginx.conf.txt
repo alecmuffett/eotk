@@ -528,6 +528,18 @@ http {
     # no "hello-onion" endpoint
     %%ENDIF
 
+    %%IF %HARDCODED_ENDPOINT_CSV%
+    # hardcoded_endpoints: 1=path_re,2=response
+    %%CSV %HARDCODED_ENDPOINT_CSV%
+    location ~* %1% {
+      return 200 %2%;
+    }
+
+    %%ENDCSV
+    %%ELSE
+    # no hardcoded_endpoints
+    %%ENDIF
+
     # for traffic
     location / {
       proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%"; # note $scheme
