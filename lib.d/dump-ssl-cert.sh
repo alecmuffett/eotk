@@ -10,7 +10,7 @@ else
 fi
 
 for certfile in "$@" ; do
-    $OPENSSL x509 -in $certfile -noout -text
+    $OPENSSL x509 -in $certfile -noout -text || exit 1
 done
 
 exit 0
