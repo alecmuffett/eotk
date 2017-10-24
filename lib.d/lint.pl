@@ -12,6 +12,9 @@ my %known =
      # hardcoded endpoints for proofs
      'HARDCODED_ENDPOINT_CSV' => 1,
 
+     # host redirects
+     'HOST_REDIRECT_CSV' => 1,
+
      # hard-mode preservation
      'PRESERVE_COOKIE' => 1,
      'PRESERVE_CSV' => 1,

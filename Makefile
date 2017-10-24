@@ -4,6 +4,9 @@ all:
 lint:
 	./lib.d/lint.pl templates.d/* | sort -k 2
 
+test: lint
+	( cd lib.d ; ./test-expand-template.sh )
+
 clean:
 	rm -rf configure*.log *~ */*~ */*/*~
 

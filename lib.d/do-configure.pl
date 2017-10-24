@@ -412,6 +412,8 @@ sub DoProject {
 
 &SetEnv("hardcoded_endpoint_csv", "");
 
+&SetEnv("host_redirect_csv", "");
+
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 

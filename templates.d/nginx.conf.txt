@@ -519,6 +519,18 @@ http {
     # no regular expression location blocking
     %%ENDIF
 
+    %%IF %HOST_REDIRECT_CSV%
+    # host_redirects: 1=host_re,2=scheme://host.dom,3=code
+    %%CSV %HOST_REDIRECT_CSV%
+    if ( $host ~* "%1%" ) {
+      return %3% %2%$request_uri;
+    }
+
+    %%ENDCSV
+    %%ELSE
+    # no host_redirects
+    %%ENDIF
+
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
     location ~* ^/hello[-_]onion/?$ {
