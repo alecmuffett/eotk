@@ -565,7 +565,7 @@ http {
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-        return 500 "Error"; # let's be vague
+        return 500 "Error 500"; # let's be vague
       }
       %%ELSE
       # no cookie lock checks
