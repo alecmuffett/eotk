@@ -15,6 +15,9 @@ my %known =
      # host redirects
      'HOST_REDIRECT_CSV' => 1,
 
+     # basic access control
+     'COOKIE_LOCK' => 1,
+
      # hard-mode preservation
      'PRESERVE_COOKIE' => 1,
      'PRESERVE_CSV' => 1,
