@@ -427,6 +427,16 @@ http {
     ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
     ;
 
+    %%IF %COOKIE_LOCK%
+    # if we are visiting the magic path, issue a cookie immediately
+    location "%COOKIE_LOCK%" {
+      add_header Set-Cookie "eotk_lock=%COOKIE_LOCK%;Domain=.%ONION_ADDRESS%;Path=/;Max-Age=604800";
+      return 200 "OK";
+    }
+    %%ELSE
+    # no cookie_lock cookie setting
+    %%ENDIF
+
     %%IF %SUPPRESS_TOR2WEB%
     # suppress tor2web traffic; "let them use clearnet"
     if ( $http_x_tor2web ) {
