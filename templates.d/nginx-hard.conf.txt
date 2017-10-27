@@ -46,6 +46,10 @@ http {
   # how much can be busy sending to client?
   proxy_busy_buffers_size %NGINX_BLOCK_BUSY_SIZE%;
 
+  # where to stash oversize requests?
+  client_body_temp_path /tmp/nginx-body-%PROJECT%;
+  client_max_body_size 4m;
+
   # in case we want to start spooling responses locally
   proxy_temp_path /tmp/nginx-proxy-%PROJECT%;
   proxy_max_temp_file_size %NGINX_TMPFILE_SIZE%;
@@ -291,15 +295,15 @@ http {
       ngx.log(ngx.ERR, "gmatch error: ", err)
     else
       while true do
-        local m, err = iterator()
-        if err then
-          ngx.log(ngx.ERR, "iterator error: ", err)
-          break
-        end
-        if not m then
-          break
-        end
-        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+	local m, err = iterator()
+	if err then
+	  ngx.log(ngx.ERR, "iterator error: ", err)
+	  break
+	end
+	if not m then
+	  break
+	end
+	slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
@@ -523,7 +527,7 @@ http {
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-        return 500 "Error 500"; # let's be vague
+	return 500 "Error 500"; # let's be vague
       }
       %%ELSE
       # no cookie lock checks
