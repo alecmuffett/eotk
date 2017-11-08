@@ -22,6 +22,12 @@ sub SetEnv {
     my ($var, $val, $why) = @_;
     die "bad varname: $var\n" if ($var !~ /^[A-Za-z_]\w+/);
     $var =~ tr/a-z/A-Z/;
+
+    if ($why eq 'config-file') {
+        print "warning: $var is not an existing EOTK or environment variable; possible typo?\n"
+            if !exists($ENV{$var});
+    }
+
     $ENV{$var} = $val;
     warn (($why ? "($why) " : "") . "set $var to $val\n");
 }
@@ -450,7 +456,7 @@ foreach (@config) {
     if ($cmd eq "set") {
         my $var = shift(@args);
         my $val = "@args";
-        &SetEnv($var, $val);
+        &SetEnv($var, $val, 'config-file');
     }
     elsif ($cmd eq "hardmap") {
         &DoMap($cmd, @args);
