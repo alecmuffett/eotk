@@ -12,9 +12,6 @@ my %known =
      # hardcoded endpoints for proofs
      'HARDCODED_ENDPOINT_CSV' => 1,
 
-     # host redirects
-     'HOST_REDIRECT_CSV' => 1,
-
      # basic access control
      'COOKIE_LOCK' => 1,
 
@@ -77,6 +74,8 @@ my %known =
      'NGINX_WORKERS' => 1,
      'NO_CACHE_CONTENT_TYPE' => 1,
      'NO_CACHE_HOST' => 1,
+     'REDIRECT_HOST_CSV' => 1,
+     'REDIRECT_LOCATION_CSV' => 1,
      'SOFTMAP_NGINX_WORKERS' => 1,
      'SOFTMAP_TOR_WORKERS' => 1,
      'SUPPRESS_HEADER_CSP' => 1,
