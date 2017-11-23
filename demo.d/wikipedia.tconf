@@ -44,7 +44,7 @@ set block_location_re ^/login/
 # set hardcoded_endpoint_csv ^/proof/foo/?$,"FOOPROOF" ^/proof/bar/?$,"BARPROOF"
 
 # demo: magic cookie-issuing URL to restrict access until ready to launch
-# set cookie_lock /vice-open-sesame
+# set cookie_lock /open-sesame
 
 # index of other onion sites ("what happens in onion, should stay in onion")
 foreignmap facebookcorewwwi facebook.com
