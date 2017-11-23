@@ -9,6 +9,9 @@ my %known =
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
 
+     # expect to de-onionify onions in request paths
+     'PATHS_CONTAIN_ONIONS' => 1,
+
      # hardcoded endpoints for proofs
      'HARDCODED_ENDPOINT_CSV' => 1,
 

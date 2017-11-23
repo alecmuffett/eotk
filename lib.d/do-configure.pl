@@ -417,6 +417,7 @@ sub DoProject {
 &SetEnv("preserve_cookie", "~-=~=-~");
 
 &SetEnv("hardcoded_endpoint_csv", "");
+&SetEnv("paths_contain_onions", 0);
 
 &SetEnv("redirect_host_csv", "");
 &SetEnv("redirect_location_csv", "");

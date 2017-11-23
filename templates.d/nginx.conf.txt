@@ -586,6 +586,25 @@ http {
     # no hardcoded_endpoints
     %%ENDIF
 
+    %%IF %PATHS_CONTAIN_ONIONS%
+    # paths may contain onion addresses for rewriting
+    location ~* "\\.onion" {
+      set_by_lua_block $loc2 {
+        local old_loc = ngx.var.uri
+        local new_loc = onion_to_dns(old_loc)
+        if new_loc == old_loc then -- nothing changed
+          return "-"
+        end
+        return new_loc
+      }
+      if ( $loc2 != "-" ) { # avoid infinite loops
+        rewrite ^(.*)$ $loc2 last;
+      }
+    }
+    %%ELSE
+    # paths are assumed not to contain onion addresses
+    %%ENDIF
+
     # for traffic
     location / {
       %%IF %COOKIE_LOCK%
