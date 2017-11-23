@@ -1,32 +1,69 @@
 # -*- conf -*-
 # eotk (c) 2017 Alec Muffett
 
-# let's make this read-only:
+# use brute-force "search and replace" strategy
+set nginx_template templates.d/nginx-hard.conf.txt
+
+# CSVs of canonical domains (eg: email addresses) to preserve
+set preserve_csv tld-wp,wikipedia\\.org,i,wikipedia.org tld-wm,wikimedia\\.org,i,wikimedia.org
+
+# FIX THIS TO USE A LOCAL RESOLVER, BECAUSE PERFORMANCE
+set nginx_resolver 8.8.8.8 8.8.4.4
+
+# cache persistence & size; sized for RaspberryPi (256m)
+set nginx_cache_seconds 60
+set nginx_cache_size 256m
+set nginx_tmpfile_size 64m
+
+# ARE YOU CONFIDENT IN THE COMPLETENESS OF YOUR 100% HTTPS SOLUTION?
+# let's assume not, for the moment; else you will see a lot of 307 redirects
+set force_https 0
+
+# proof-of-concept: let's make this read-only:
 set suppress_methods_except_get 1
 
-# ...and then we can blithely cache stuff:
-set nginx_cache_seconds 60
-set nginx_cache_size 64m
+# proof-of-concept: block logins by blocking access to login.*
+set block_host_re ^login\\.
 
-# ...and we'll set to cache upon 1st hit (default: 2nd)
-set nginx_cache_min_uses 1
+# proof-of-concept: block logins by blocking access to login.*
+set block_location_re ^/login/
 
-# you might want to investigate "no_cache_content_type" or
-# "no_cache_host" in the instances that you want limitations on
+# blocking access to query parameter lists is more complex, but given
+# this is a read-only proof of concept with POST blocked, ignore that
+# for the moment. Wikipedia block edits from Tor anyway, so...
+
+# nb: you might want to investigate "no_cache_content_type" or
+# "no_cache_host" in the instances that you want limitations upon
 # some kinds of caching...
 
-# the Wikimedia Foundation have lots of sites:
+# demo: CSV list to implement ownership proof URIs for SSL issuance
+# set hardcoded_endpoint_csv ^/proof/foo/?$,"FOOPROOF" ^/proof/bar/?$,"BARPROOF"
+
+# demo: magic cookie-issuing URL to restrict access until ready to launch
+# set cookie_lock /vice-open-sesame
+
+# index of other onion sites ("what happens in onion, should stay in onion")
+foreignmap facebookcorewwwi facebook.com
+foreignmap nytimes3xbfgragh nytimes.com
+
+# the Wikimedia Foundation have lots of sites
+# most of which have an `m` subdomain
 set project wikipedia
-softmap %NEW_SOFT_ONION% wikipedia.org m
-softmap %NEW_SOFT_ONION% wikimedia.org m
-softmap %NEW_SOFT_ONION% wikimediafoundation.org m
-softmap %NEW_SOFT_ONION% mediawiki.org m
+
+softmap %NEW_SOFT_ONION% mediawiki.org
+softmap %NEW_SOFT_ONION% wikidata.org
+softmap %NEW_SOFT_ONION% wikimedia.org
+softmap %NEW_SOFT_ONION% wikimediafoundation.org
+
 softmap %NEW_SOFT_ONION% wikibooks.org m
-softmap %NEW_SOFT_ONION% wikidata.org m
 softmap %NEW_SOFT_ONION% wikinews.org m
+softmap %NEW_SOFT_ONION% wikipedia.org m
 softmap %NEW_SOFT_ONION% wikiquote.org m
 softmap %NEW_SOFT_ONION% wikisource.org m
 softmap %NEW_SOFT_ONION% wikiversity.org m
 softmap %NEW_SOFT_ONION% wikivoyage.org m
 softmap %NEW_SOFT_ONION% wiktionary.org m
+
 # more?
+
+# nb: by subdomain we mean FOO in en.FOO.wikipedia.org, etc.
