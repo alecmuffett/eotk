@@ -590,22 +590,22 @@ http {
     # paths may contain onion addresses for rewriting
     location ~* "\\.onion" {
       set_by_lua_block $loc2 {
-        local old_loc = ngx.var.uri
-        local new_loc = onion_to_dns(old_loc)
-        if new_loc == old_loc then -- nothing changed
-          return "-"
-        end
-        return new_loc
+	local old_loc = ngx.var.uri
+	local new_loc = onion_to_dns(old_loc)
+	if new_loc == old_loc then -- nothing changed
+	  return "-"
+	end
+	return new_loc
       }
       if ( $loc2 != "-" ) { # avoid infinite loops
-        rewrite ^(.*)$ $loc2 last;
+	rewrite ^(.*)$ $loc2 last;
       }
     }
     %%ELSE
     # paths are assumed not to contain onion addresses
     %%ENDIF
 
-    %%IF USER_AGENT_BLACKLIST_RE
+    %%IF %USER_AGENT_BLACKLIST_RE%
     # check user_agent_blacklist_re
     if ( $http_user_agent ~* "%USER_AGENT_BLACKLIST_RE%" ) {
       return 500; # let's be vague
@@ -614,7 +614,7 @@ http {
     # no user_agent_blacklist_re
     %%ENDIF
 
-    %%IF USER_AGENT_WHITELIST_RE
+    %%IF %USER_AGENT_WHITELIST_RE%
     # check user_agent_whitelist_re
     set $ua_is_bad 1;
     if ( $http_user_agent ~* "%USER_AGENT_WHITELIST_RE%" ) {
@@ -626,7 +626,7 @@ http {
 
     # for traffic
     location / {
-      %%IF USER_AGENT_WHITELIST_RE
+      %%IF %USER_AGENT_WHITELIST_RE%
       # check success of user_agent_whitelist_re
       if ( $ua_is_bad ) {
 	return 500; # let's be vague
