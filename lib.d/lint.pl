@@ -9,7 +9,11 @@ my %known =
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
 
-     # user-agent stuff
+     # location filtering
+     'LOCATION_BLACKLIST_RE' => 1,
+     'LOCATION_WHITELIST_RE' => 1,
+
+     # user-agent filtering
      'USER_AGENT_BLACKLIST_RE' => 1,
      'USER_AGENT_WHITELIST_RE' => 1,
 

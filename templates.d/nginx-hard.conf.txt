@@ -238,7 +238,7 @@ http {
 
     -- a note for future maintainers; if we were being strictly orthogonal then
     -- the replacement with ONION_ADDRESS in much of this Lua block would have to
-    -- be double-escaped for potential blackslashes, because double-quotes;
+    -- be double-escaped for potential backslashes, because double-quotes;
     -- however this is not needed because DNS forbids backslash; the only code
     -- where this becomes evident/necessary is here, with "_RE2":
 
@@ -572,6 +572,25 @@ http {
     # no user_agent_whitelist_re
     %%ENDIF
 
+    %%IF %LOCATION_BLACKLIST_RE%
+    # check location_blacklist_re
+    location ~* "%LOCATION_BLACKLIST_RE%" {
+      return 500; # let's be vague
+    }
+    %%ELSE
+    # no location_blacklist_re
+    %%ENDIF
+
+    %%IF %LOCATION_WHITELIST_RE%
+    # check location_whitelist_re
+    set $location_is_bad 1;
+    location ~* "%LOCATION_WHITELIST_RE%" {
+      set $location_is_bad 0;
+    }
+    %%ELSE
+    # no location_whitelist_re
+    %%ENDIF
+
     # for traffic
     location / {
       %%IF %USER_AGENT_WHITELIST_RE%
@@ -581,6 +600,15 @@ http {
       }
       %%ELSE
       # no check for success of user_agent_whitelist_re
+      %%ENDIF
+
+      %%IF %LOCATION_WHITELIST_RE%
+      # check success of location_whitelist_re
+      if ( $location_is_bad ) {
+	return 500; # let's be vague
+      }
+      %%ELSE
+      # no check for success of location_whitelist_re
       %%ENDIF
 
       %%IF %COOKIE_LOCK%
