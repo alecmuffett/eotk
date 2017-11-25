@@ -144,7 +144,6 @@ http {
   %1%
   gir
   ;
-
   %%ENDCSV
   %%ELSE
   # no foreignmap subs
@@ -495,7 +494,6 @@ http {
     if ( $host ~* "%1%" ) {
       return %3% %2%$request_uri;
     }
-
     %%ENDCSV
     %%ELSE
     # no redirect_hosts
@@ -507,7 +505,6 @@ http {
     location ~* "%1%" {
       return %3% %2%$request_uri;
     }
-
     %%ENDCSV
     %%ELSE
     # no redirect_locations
@@ -528,7 +525,6 @@ http {
     location ~* %1% {
       return 200 %2%;
     }
-
     %%ENDCSV
     %%ELSE
     # no hardcoded_endpoints

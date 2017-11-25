@@ -162,14 +162,12 @@ http {
   $1/$2%1%
   gir
   ;
-
   # for %4% -> %1% anchored with hex-encoded slashes
   subs_filter
   %%2F%%2F(([-0-9a-z]+\\.)+)?%6%\\b
   %%2F%%2F$1%1%
   gir
   ;
-
   %%ENDCSV
   %%ELSE
   # no foreignmap subs
@@ -547,7 +545,6 @@ http {
     if ( $host ~* "%1%" ) {
       return %3% %2%$request_uri;
     }
-
     %%ENDCSV
     %%ELSE
     # no redirect_hosts
@@ -559,7 +556,6 @@ http {
     location ~* "%1%" {
       return %3% %2%$request_uri;
     }
-
     %%ENDCSV
     %%ELSE
     # no redirect_locations
@@ -580,7 +576,6 @@ http {
     location ~* %1% {
       return 200 %2%;
     }
-
     %%ENDCSV
     %%ELSE
     # no hardcoded_endpoints
