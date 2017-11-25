@@ -454,39 +454,39 @@ http {
     %%ENDIF
 
     %%IF %BLOCK_HOST%
-    # block hosts matching this name
+    # politely block hosts matching this name
     if ( $host = "%BLOCK_HOST%" ) {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
-    # no named host blocking
+    # no polite named host blocking
     %%ENDIF
 
     %%IF %BLOCK_HOST_RE%
-    # block hosts matching this regular expression
+    # politely block hosts matching this regular expression
     if ( $host ~* "%BLOCK_HOST_RE%" ) {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
-    # no regular expression host blocking
+    # no polite regular expression host blocking
     %%ENDIF
 
     %%IF %BLOCK_LOCATION%
-    # block locations by name
+    # politely block locations by name
     location %BLOCK_LOCATION% {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
-    # no named location blocking
+    # no polite named location blocking
     %%ENDIF
 
     %%IF %BLOCK_LOCATION_RE%
-    # block locations matching this regular expression
+    # politely block locations matching this regular expression
     location ~* "%BLOCK_LOCATION_RE%" {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
-    # no regular expression location blocking
+    # no polite regular expression location blocking
     %%ENDIF
 
     %%IF %REDIRECT_HOST_CSV%
