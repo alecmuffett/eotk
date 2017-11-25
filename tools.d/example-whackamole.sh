@@ -18,8 +18,8 @@
 # Wikipedia demo-examples given: top 9 sites by article count + "www"
 
 # put onion addresses here, amend as necessary:
-WWW=lxfknmgagsrgnixu # eg: onion for alec's wikipedia demo
-CDN=x3ocspocys7227zx # eg: onion for alec's wikimedia demo
+WWW=qgssno7jk2xcr2sj # eg: onion for alec's wikipedia demo
+CDN=dryq3lhewlotggod # eg: onion for alec's wikimedia demo
 
 # hack through list of sites on onions...
 while read onion sites ; do
