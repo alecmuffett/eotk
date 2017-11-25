@@ -411,7 +411,7 @@ case "$cmd" in
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload) # project ..., or "-a"
+    nxreload|nx-reload|ob-nxreload) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
@@ -483,17 +483,17 @@ case "$cmd" in
         DestructivePush
         ;;
 
-    ob-nxpush)
+    ob-nxpush|nxpush)
         # gently push only the nginx configs to the workers
         SpotPush nginx.conf
         ;;
 
-    ob-torpush)
+    ob-torpush|torpush)
         # gently push only the tor configs to the workers
         SpotPush tor.conf
         ;;
 
-    ob-spotpush)
+    ob-spotpush|spotpush)
         # gently push only the tor configs to the workers
         SpotPush "$@"
         ;;
