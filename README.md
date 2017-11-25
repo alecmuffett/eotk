@@ -20,6 +20,10 @@ NB: bugs are still best reported through `Issues`, above.
 
 ### In the News
 
+* Nov 2017 [Un service Wikipedia pour le Dark Web a été lancé par un ingénieur en sécurité](https://www.developpez.com/actu/175523/Un-service-Wikipedia-pour-le-Dark-Web-a-ete-lance-par-un-ingenieur-en-securite-afin-de-contourner-la-censure-dans-certains-pays/)
+* Nov 2017 [Δημιουργήθηκε σκοτεινή έκδοση της Βικιπαίδειας για ανθρώπους σε λογοκριμένα καθεστώτα](https://texnologia.net/dhmiourgithike-skoteinh-ekdosh-ths-wikipedia-gia-anthropous-se-logokrimena-kathestota/2017/11)
+* Nov 2017 [A security expert built an unofficial Wikipedia for the dark web](https://www.engadget.com/2017/11/25/a-security-expert-built-an-unofficial-wikipedia-for-the-dark-web/)
+* Nov 2017 [There’s Now a Dark Web Version of Wikipedia](https://motherboard.vice.com/en_us/article/7x4g4b/theres-now-a-dark-web-version-of-wikipedia-tor-alec-muffett)
 * Oct 2017 [The New York Times is Now Available as a Tor Onion Service](https://open.nytimes.com/https-open-nytimes-com-the-new-york-times-as-a-tor-onion-service-e0d0b67b7482)
 * Apr 2017 [This Company Will Create Your Own Tor Hidden Service](https://motherboard.vice.com/en_us/article/this-company-will-create-your-own-tor-hidden-service)
 * Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
