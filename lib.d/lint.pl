@@ -9,6 +9,10 @@ my %known =
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
 
+     # user-agent stuff
+     'USER_AGENT_BLACKLIST_RE' => 1,
+     'USER_AGENT_WHITELIST_RE' => 1,
+
      # expect to de-onionify onions in request paths
      'PATHS_CONTAIN_ONIONS' => 1,
 

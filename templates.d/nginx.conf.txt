@@ -605,12 +605,40 @@ http {
     # paths are assumed not to contain onion addresses
     %%ENDIF
 
+    %%IF USER_AGENT_BLACKLIST_RE
+    # check user_agent_blacklist_re
+    if ( $http_user_agent ~* "%USER_AGENT_BLACKLIST_RE%" ) {
+      return 500; # let's be vague
+    }
+    %%ELSE
+    # no user_agent_blacklist_re
+    %%ENDIF
+
+    %%IF USER_AGENT_WHITELIST_RE
+    # check user_agent_whitelist_re
+    set $ua_is_bad 1;
+    if ( $http_user_agent ~* "%USER_AGENT_WHITELIST_RE%" ) {
+      set $ua_is_bad 0;
+    }
+    %%ELSE
+    # no user_agent_whitelist_re
+    %%ENDIF
+
     # for traffic
     location / {
+      %%IF USER_AGENT_WHITELIST_RE
+      # check success of user_agent_whitelist_re
+      if ( $ua_is_bad ) {
+	return 500; # let's be vague
+      }
+      %%ELSE
+      # no check for success of user_agent_whitelist_re
+      %%ENDIF
+
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-	return 500 "Error 500"; # let's be vague
+	return 500; # let's be vague
       }
       %%ELSE
       # no cookie lock checks

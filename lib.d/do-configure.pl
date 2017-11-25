@@ -407,6 +407,9 @@ sub DoProject {
 &SetEnv("block_location", "");
 &SetEnv("block_location_re", "");
 
+&SetEnv("user_agent_whitelist_re", "");
+&SetEnv("user_agent_blacklist_re", "");
+
 &SetEnv("no_cache_content_type", "");
 &SetEnv("no_cache_host", "");
 
