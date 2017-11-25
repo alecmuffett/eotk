@@ -505,39 +505,44 @@ http {
 
     %%IF %BLOCK_HOST%
     # politely block hosts matching this name
-    if ( $host = "%BLOCK_HOST%" ) {
+    %%CSV %BLOCK_HOST%
+    if ( $host = "%0%" ) {
       return 403 "%BLOCK_ERR%";
     }
+    %%ENDCSV
     %%ELSE
     # no polite named host blocking
     %%ENDIF
 
     %%IF %BLOCK_HOST_RE%
     # politely block hosts matching this regular expression
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    if ( $host ~* "%BLOCK_HOST_RE%" ) {
+    %%CSV %BLOCK_HOST_RE%
+    if ( $host ~* "%0%" ) {
       return 403 "%BLOCK_ERR%";
     }
+    %%ENDCSV
     %%ELSE
     # no polite regular expression host blocking
     %%ENDIF
 
     %%IF %BLOCK_LOCATION%
     # politely block locations by name
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    location %BLOCK_LOCATION% {
+    %%CSV %BLOCK_LOCATION%
+    location %0% {
       return 403 "%BLOCK_ERR%";
     }
+    %%ENDCSV
     %%ELSE
     # no polite named location blocking
     %%ENDIF
 
     %%IF %BLOCK_LOCATION_RE%
     # politely block locations matching this regular expression
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    location ~* "%BLOCK_LOCATION_RE%" {
+    %%CSV %BLOCK_LOCATION_RE%
+    location ~* "%0%" {
       return 403 "%BLOCK_ERR%";
     }
+    %%ENDCSV
     %%ELSE
     # no polite regular expression location blocking
     %%ENDIF
@@ -605,10 +610,11 @@ http {
 
     %%IF %USER_AGENT_BLACKLIST_RE%
     # check user_agent_blacklist_re
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    if ( $http_user_agent ~* "%USER_AGENT_BLACKLIST_RE%" ) {
+    %%CSV %USER_AGENT_BLACKLIST_RE%
+    if ( $http_user_agent ~* "%0%" ) {
       return 500; # let's be vague
     }
+    %%ENDCSV
     %%ELSE
     # no user_agent_blacklist_re
     %%ENDIF
@@ -616,20 +622,22 @@ http {
     %%IF %USER_AGENT_WHITELIST_RE%
     # check user_agent_whitelist_re
     set $ua_is_bad 1;
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    if ( $http_user_agent ~* "%USER_AGENT_WHITELIST_RE%" ) {
+    %%CSV %USER_AGENT_WHITELIST_RE%
+    if ( $http_user_agent ~* "%0%" ) {
       set $ua_is_bad 0;
     }
+    %%ENDCSV
     %%ELSE
     # no user_agent_whitelist_re
     %%ENDIF
 
     %%IF %LOCATION_BLACKLIST_RE%
     # check location_blacklist_re
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    location ~* "%LOCATION_BLACKLIST_RE%" {
+    %%CSV %LOCATION_BLACKLIST_RE%
+    location ~* "%0%" {
       return 500; # let's be vague
     }
+    %%ENDCSV
     %%ELSE
     # no location_blacklist_re
     %%ENDIF
@@ -637,10 +645,11 @@ http {
     %%IF %LOCATION_WHITELIST_RE%
     # check location_whitelist_re
     set $location_is_bad 1;
-    # TODO: CSV-ITERATE OVER SEVERAL VALUES
-    location ~* "%LOCATION_WHITELIST_RE%" {
+    %%CSV %LOCATION_WHITELIST_RE%
+    location ~* "%0%" {
       set $location_is_bad 0;
     }
+    %%ENDCSV
     %%ELSE
     # no location_whitelist_re
     %%ENDIF
