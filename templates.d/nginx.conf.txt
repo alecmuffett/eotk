@@ -219,7 +219,7 @@ http {
 
     onion_to_dns = function (i)
       if i == nil or i == "" then
-	return i
+        return i
       end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
@@ -282,8 +282,8 @@ http {
     if v == "%1%" then
     local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
       if m then
-	ngx.ctx.needs_extra_processing = 1
-	ngx.header.content_length = nil
+        ngx.ctx.needs_extra_processing = 1
+        ngx.header.content_length = nil
       end
     end
     %%ENDCSV
@@ -345,15 +345,15 @@ http {
       ngx.log(ngx.ERR, "gmatch error: ", err)
     else
       while true do
-	local m, err = iterator()
-	if err then
-	  ngx.log(ngx.ERR, "iterator error: ", err)
-	  break
-	end
-	if not m then
-	  break
-	end
-	slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+        local m, err = iterator()
+        if err then
+          ngx.log(ngx.ERR, "iterator error: ", err)
+          break
+        end
+        if not m then
+          break
+        end
+        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
@@ -590,22 +590,11 @@ http {
     %%ENDIF
 
     %%IF %PATHS_CONTAIN_ONIONS%
-    # paths may contain onion addresses for rewriting
-    location ~* "\\.onion" {
-      set_by_lua_block $loc2 {
-	local old_loc = ngx.var.uri
-	local new_loc = onion_to_dns(old_loc)
-	if new_loc == old_loc then -- nothing changed
-	  return "-"
-	end
-	return new_loc
-      }
-      if ( $loc2 != "-" ) { # avoid infinite loops
-	rewrite ^(.*)$ $loc2 last;
-      }
-    }
+    # NOTE: PATHS_CONTAIN_ONIONS IS SET BUT SHOULD NOT APPLY TO THIS
+    # CONFIGURATION; IF YOU FIND CIRCUMSTANCE WHERE ONIONIFICATION OF
+    # PATHS IS AN ISSUE FOR THIS CONFIGURATION, PLEASE LOG A BUG.
     %%ELSE
-    # paths are assumed not to contain onion addresses
+    # paths are assumed not to contain onionified hostnames
     %%ENDIF
 
     %%IF %USER_AGENT_BLACKLIST_RE%
@@ -659,7 +648,7 @@ http {
       %%IF %USER_AGENT_WHITELIST_RE%
       # check success of user_agent_whitelist_re
       if ( $ua_is_bad ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no check for success of user_agent_whitelist_re
@@ -668,7 +657,7 @@ http {
       %%IF %LOCATION_WHITELIST_RE%
       # check success of location_whitelist_re
       if ( $location_is_bad ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no check for success of location_whitelist_re
@@ -677,7 +666,7 @@ http {
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no cookie lock checks
@@ -709,7 +698,7 @@ http {
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
       # suppress non-GET methods (e.g.: POST)
       limit_except GET {
-	deny all;
+        deny all;
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed

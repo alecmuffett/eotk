@@ -209,7 +209,7 @@ http {
 
     onion_to_dns = function (i)
       if i == nil or i == "" then
-	return i
+        return i
       end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
@@ -294,15 +294,15 @@ http {
       ngx.log(ngx.ERR, "gmatch error: ", err)
     else
       while true do
-	local m, err = iterator()
-	if err then
-	  ngx.log(ngx.ERR, "iterator error: ", err)
-	  break
-	end
-	if not m then
-	  break
-	end
-	slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+        local m, err = iterator()
+        if err then
+          ngx.log(ngx.ERR, "iterator error: ", err)
+          break
+        end
+        if not m then
+          break
+        end
+        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
@@ -539,22 +539,40 @@ http {
     %%ENDIF
 
     %%IF %PATHS_CONTAIN_ONIONS%
-    # paths may contain onion addresses for rewriting
-    location ~* "\\.onion" {
-      set_by_lua_block $loc2 {
-	local old_loc = ngx.var.uri
-	local new_loc = onion_to_dns(old_loc)
-	if new_loc == old_loc then -- nothing changed
-	  return "-"
-	end
-	return new_loc
-      }
-      if ( $loc2 != "-" ) { # avoid infinite loops
-	rewrite ^(.*)$ $loc2 last;
+    # URI paths may contain onionified hostnames which need rewriting
+    # before passing upwards to the origin; this is a consequence of
+    # "hard-mode" brute-force rewriting, and needs gentle unpicking:
+    set $deonionified_uri '';
+    # There is an irreducible problem: what if the URI origin path
+    # *literally* includes the name of one of our onions? Well, it
+    # will be re-written to the corresponding DNS domain name. This is
+    # a small price to pay for the benefits of "hard-mode" rewrites on
+    # complex websites, but we can reduce the pain a tiny bit by
+    # making the in-path comparisons case-sensitive to lowercase, and
+    # document the issue with that workaround
+    if ( $uri ~ "\\.onion" ) { # cheapest, static, case-sensitive test, here...
+      set_by_lua_block $deonionified_uri {
+        local old_uri = ngx.var.uri
+        -- more expensive case-sensitive test, here...
+        local m, err = ngx.re.match(old_uri, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        if not m then
+          return "" -- nothing to attempt to rewrite, quick return
+        end
+        -- attempt rewrites (function is case-insensitive, hence...)
+        local new_uri = onion_to_dns(old_uri)
+        if new_uri == old_uri then -- nothing changed, quick return
+          return ""
+        end
+        return new_uri
       }
     }
+    if ( $deonionified_uri ) {
+      set $new_uri $deonionified_uri; # swap
+      set $deonionified_uri ''; # prevent revisiting
+      rewrite ^ $new_uri last;
+    }
     %%ELSE
-    # paths are assumed not to contain onion addresses
+    # paths are assumed not to contain onionified hostnames
     %%ENDIF
 
     %%IF %USER_AGENT_BLACKLIST_RE%
@@ -608,7 +626,7 @@ http {
       %%IF %USER_AGENT_WHITELIST_RE%
       # check success of user_agent_whitelist_re
       if ( $ua_is_bad ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no check for success of user_agent_whitelist_re
@@ -617,7 +635,7 @@ http {
       %%IF %LOCATION_WHITELIST_RE%
       # check success of location_whitelist_re
       if ( $location_is_bad ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no check for success of location_whitelist_re
@@ -626,7 +644,7 @@ http {
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-	return 500; # let's be vague
+        return 500; # let's be vague
       }
       %%ELSE
       # no cookie lock checks
@@ -658,7 +676,7 @@ http {
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
       # suppress non-GET methods (e.g.: POST)
       limit_except GET {
-	deny all;
+        deny all;
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
