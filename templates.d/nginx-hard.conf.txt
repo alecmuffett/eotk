@@ -579,7 +579,7 @@ http {
     # check user_agent_blacklist_re
     %%CSV %USER_AGENT_BLACKLIST_RE%
     if ( $http_user_agent ~* "%0%" ) {
-      return 500; # let's be vague
+      %NGINX_ACTION_ABORT%;
     }
     %%ENDCSV
     %%ELSE
@@ -602,7 +602,7 @@ http {
     # check location_blacklist_re
     %%CSV %LOCATION_BLACKLIST_RE%
     location ~* "%0%" {
-      return 500; # let's be vague
+      %NGINX_ACTION_ABORT%;
     }
     %%ENDCSV
     %%ELSE
@@ -626,7 +626,7 @@ http {
       %%IF %USER_AGENT_WHITELIST_RE%
       # check success of user_agent_whitelist_re
       if ( $ua_is_bad ) {
-        return 500; # let's be vague
+        %NGINX_ACTION_ABORT%;
       }
       %%ELSE
       # no check for success of user_agent_whitelist_re
@@ -635,7 +635,7 @@ http {
       %%IF %LOCATION_WHITELIST_RE%
       # check success of location_whitelist_re
       if ( $location_is_bad ) {
-        return 500; # let's be vague
+        %NGINX_ACTION_ABORT%;
       }
       %%ELSE
       # no check for success of location_whitelist_re
@@ -644,7 +644,7 @@ http {
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-        return 500; # let's be vague
+        %NGINX_ACTION_ABORT%;
       }
       %%ELSE
       # no cookie lock checks
