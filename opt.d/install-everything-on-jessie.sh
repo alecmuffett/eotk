@@ -5,6 +5,12 @@ deb http://deb.torproject.org/torproject.org jessie main
 deb-src http://deb.torproject.org/torproject.org jessie main
 EOF
 
+cat <<EOF | sudo dd of=/etc/apt/sources.list.d/jessie-backports-eotk.list
+deb http://ftp.debian.org/debian jessie-backports main
+EOF
+
+apt-get update
+
 gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 || exit 1
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add - || exit 1
 
