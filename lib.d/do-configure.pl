@@ -407,6 +407,11 @@ sub DoProject {
 &SetEnv("block_location", "");
 &SetEnv("block_location_re", "");
 
+&SetEnv("nginx_action_abort", "return 500");
+
+&SetEnv("referer_whitelist_re", "");
+&SetEnv("referer_blacklist_re", "");
+
 &SetEnv("user_agent_whitelist_re", "");
 &SetEnv("user_agent_blacklist_re", "");
 
