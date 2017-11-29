@@ -8,7 +8,7 @@ here=`dirname $0`
 cd $here || exit 1
 here=`pwd`
 
-sudo aptitude install -y libevent-dev zlib1g-dev libssl-dev || exit 1
+sudo aptitude install -y libevent-dev zlib1g-dev libssl-dev dirmngr || exit 1
 
 torurl=https://dist.torproject.org/tor-$torversion.tar.gz
 torsigurl=https://dist.torproject.org/tor-$torversion.tar.gz.asc
