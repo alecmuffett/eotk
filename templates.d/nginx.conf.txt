@@ -119,7 +119,7 @@ http {
   ;
 
   #==================================================================
-  %%IF %%HARD_MODE
+  %%IF %HARD_MODE%
   # ---- BEGIN HARD MODE CODE ----
   %%IF %PRESERVE_CSV%
   # preserve subs (save-phase): 1=description,2=re,3=i_or_empty,4=replacement
