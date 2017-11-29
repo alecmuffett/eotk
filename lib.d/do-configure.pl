@@ -422,6 +422,9 @@ sub DoProject {
 &SetEnv("location_whitelist_re", "");
 &SetEnv("location_blacklist_re", "");
 
+&SetEnv("host_whitelist_re", "");
+&SetEnv("host_blacklist_re", "");
+
 &SetEnv("no_cache_content_type", "");
 &SetEnv("no_cache_host", "");
 
