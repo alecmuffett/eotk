@@ -3,6 +3,16 @@
 
 # EMACS awk mode works quite well for nginx configs
 
+# ---- BEGIN HARD/CLASSIC SWITCH ----
+%%IF %HARD_MODE%
+# *HARD* configuration
+# swap domain names for onions via brute-force, with whitelisted repairs...
+%%ELSE
+# *CLASSIC* configuration
+# swap domain names for onions via targeted regular expressions...
+%%ENDIF
+# ---- END HARD/CLASSIC SWITCH ----
+
 # logs and pids
 pid %PROJECT_DIR%/nginx.pid;
 error_log %LOG_DIR%/nginx-error.log %NGINX_SYSLOG%;
@@ -108,6 +118,65 @@ http {
   text/xml
   ;
 
+  #==================================================================
+  %%IF %%HARD_MODE
+  # ---- BEGIN HARD MODE CODE ----
+  %%IF %PRESERVE_CSV%
+  # preserve subs (save-phase): 1=description,2=re,3=i_or_empty,4=replacement
+  %%CSV %PRESERVE_CSV%
+  # saving regexp '%2%' as '%1%' for replacement with '%4%' (%3%)
+  subs_filter
+  (%PRESERVE_PREAMBLE%)(%2%)\\b
+  $1%PRESERVE_COOKIE%%1%%PRESERVE_COOKIE%
+  g%3%r
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no preserve subs (save-phase)
+  %%ENDIF
+
+  %%BEGIN
+  # for %DNS_DOMAIN% -> %ONION_ADDRESS%
+  subs_filter
+  \\b%DNS_DOMAIN_RE2%\\b
+  %ONION_ADDRESS%
+  gir
+  ;
+  %%END
+
+  %%IF %FOREIGNMAP_CSV%
+  # foreignmap subs: 1=onion,2=re,3=re2,4=dns,5=re,6=re2
+  %%CSV %FOREIGNMAP_CSV%
+  # for %4% -> %1%
+  subs_filter
+  \\b%6%\\b
+  %1%
+  gir
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no foreignmap subs
+  %%ENDIF
+
+  %%IF %PRESERVE_CSV%
+  # preserve subs (restore-phase): 1=description,2=re,3=i_or_empty,4=replacement
+  %%CSV %PRESERVE_CSV%
+  # restoring '%1%' with '%4%'
+  subs_filter
+  %PRESERVE_COOKIE%%1%%PRESERVE_COOKIE%
+  %4%
+  g
+  ;
+  %%ENDCSV
+  %%ELSE
+  # no preserve subs (restore-phase)
+  %%ENDIF
+  # ---- END HARD MODE CODE ----
+  #------------------------------------------------------------------
+  %%ELSE
+  #------------------------------------------------------------------
+  # ---- BEGIN CLASSIC MODE CODE ----
+
   # subs_filter: these patterns bear some explanation; the goal is to
   # work regular expressions really hard in order to minimise the
   # number of expressions which are used in the basic config, so the
@@ -143,14 +212,12 @@ http {
   $1/$2%ONION_ADDRESS%
   gir
   ;
-
   # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored with hex-encoded slashes
   subs_filter
   %%2F%%2F(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
   %%2F%%2F$1%ONION_ADDRESS%
   gir
   ;
-
   %%END
 
   %%IF %FOREIGNMAP_CSV%
@@ -172,6 +239,9 @@ http {
   %%ELSE
   # no foreignmap subs
   %%ENDIF
+  # ---- END CLASSIC MODE CODE ----
+  %%ENDIF
+  #==================================================================
 
   # fix the cookies
   %%BEGIN
@@ -262,10 +332,13 @@ http {
 
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
+    local k, v
+    #==================================================================
+    %%IF ! %%HARD_MODE%%
+    # ---- BEGIN CLASSIC MODE CODE ----
     -- is this javascript/json? if so, extra processing:
     -- 1) set a processing flag to pick up in body_filter_by_lua_block
     -- 2) invalidate content-length, because we will change it
-    local k, v
     k = "Content-Type"
     v = ngx.header[k]
     if v == "application/javascript" or
@@ -290,6 +363,9 @@ http {
     %%ELSE
     -- no extra_processing_csv checks
     %%ENDIF
+    # ---- END CLASSIC MODE CODE ----
+    %%ENDIF
+    #==================================================================
 
     -- rewrite cors/acao
     k = "Access-Control-Allow-Origin"
@@ -319,6 +395,9 @@ http {
 
   # filter the response body en-route back to the user
   body_filter_by_lua_block {
+    #==================================================================
+    %%IF ! %HARD_MODE%
+    # ---- BEGIN CLASSIC MODE CODE ----
     -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
     -- instead we restrict such brute-force replacement to content that was
     -- flagged in header_filter_by_lua_block
@@ -332,6 +411,9 @@ http {
       -- more complex regular expressions are out of scope.
       ngx.arg[1] = chunk
     end
+    # ---- END CLASSIC MODE CODE ----
+    %%ENDIF
+    #==================================================================
 
     %%IF %DEBUG_TRAP%
     -- debug traps
@@ -590,9 +672,51 @@ http {
     %%ENDIF
 
     %%IF %PATHS_CONTAIN_ONIONS%
+    #==================================================================
+    %%IF %HARD_MODE%
+    # ---- BEGIN HARD MODE CODE ----
+    # URI paths may contain onionified hostnames which need rewriting
+    # before passing upwards to the origin; this is a consequence of
+    # "hard-mode" brute-force rewriting, and needs gentle unpicking:
+    set $deonionified_uri '';
+    # There is an irreducible problem: what if the URI origin path
+    # *literally* includes the name of one of our onions? Well, it
+    # will be re-written to the corresponding DNS domain name. This is
+    # a small price to pay for the benefits of "hard-mode" rewrites on
+    # complex websites, but we can reduce the pain a tiny bit by
+    # making the in-path comparisons case-sensitive to lowercase, and
+    # document the issue with that workaround
+    if ( $uri ~ "\\.onion" ) { # cheapest, static, case-sensitive test, here...
+      set_by_lua_block $deonionified_uri {
+        local old_uri = ngx.var.uri
+        -- more expensive case-sensitive test, here...
+        local m, err = ngx.re.match(old_uri, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        if not m then
+          return "" -- nothing to attempt to rewrite, quick return
+        end
+        -- attempt rewrites (function is case-insensitive, hence...)
+        local new_uri = onion_to_dns(old_uri)
+        if new_uri == old_uri then -- nothing changed, quick return
+          return ""
+        end
+        return new_uri
+      }
+    }
+    if ( $deonionified_uri ) {
+      set $new_uri $deonionified_uri; # swap
+      set $deonionified_uri ''; # prevent revisiting
+      rewrite ^ $new_uri last;
+    }
+    # ---- END HARD MODE CODE ----
+    #------------------------------------------------------------------
+    %ELSE
+    # ---- BEGIN CLASSIC MODE CODE ----
     # NOTE: PATHS_CONTAIN_ONIONS IS SET BUT SHOULD NOT APPLY TO THIS
     # CONFIGURATION; IF YOU FIND CIRCUMSTANCE WHERE ONIONIFICATION OF
     # PATHS IS AN ISSUE FOR THIS CONFIGURATION, PLEASE LOG A BUG.
+    # ---- END CLASSIC MODE CODE ----
+    %ENDIF
+    #==================================================================
     %%ELSE
     # paths are assumed not to contain onionified hostnames
     %%ENDIF
