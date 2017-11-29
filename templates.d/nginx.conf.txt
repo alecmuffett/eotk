@@ -334,7 +334,7 @@ http {
   header_filter_by_lua_block {
     local k, v
     #==================================================================
-    %%IF ! %%HARD_MODE%%
+    %%IF ! %HARD_MODE%
     # ---- BEGIN CLASSIC MODE CODE ----
     -- is this javascript/json? if so, extra processing:
     -- 1) set a processing flag to pick up in body_filter_by_lua_block
