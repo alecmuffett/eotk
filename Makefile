@@ -2,6 +2,9 @@ all:
 	echo nope:
 
 lint:
+	echo checking for directive typos:
+	egrep -i '[ \t]%[_a-z]+(\s+)?$$' templates.d/nginx.*
+	echo checking for lint:
 	./lib.d/lint.pl templates.d/* | sort -k 2
 
 test: lint

@@ -3,7 +3,7 @@
 
 use Data::Dumper;
 
-my $debug = 0;
+my $debug = 1;
 my %used = (); # debug tracking for used variable names
 my @scopes = (); # lookaside contexts for local variables
 my @dataset = (); # the input rules

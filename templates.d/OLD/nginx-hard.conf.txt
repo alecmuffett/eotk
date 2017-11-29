@@ -3,15 +3,8 @@
 
 # EMACS awk mode works quite well for nginx configs
 
-# ---- BEGIN HARD/CLASSIC SWITCH ----
-%%IF %HARD_MODE%
-# *HARD* configuration
-# swap domain names for onions via brute-force, with whitelisted repairs...
-%%ELSE
-# *CLASSIC* configuration
-# swap domain names for onions via targeted regular expressions...
-%%ENDIF
-# ---- END HARD/CLASSIC SWITCH ----
+# **HARD** configuration
+# aggressively swap domain names for onions, with whitelisted exceptions...
 
 # logs and pids
 pid %PROJECT_DIR%/nginx.pid;
@@ -118,9 +111,6 @@ http {
   text/xml
   ;
 
-  #==================================================================
-  %%IF %%HARD_MODE
-  # ---- BEGIN HARD MODE CODE ----
   %%IF %PRESERVE_CSV%
   # preserve subs (save-phase): 1=description,2=re,3=i_or_empty,4=replacement
   %%CSV %PRESERVE_CSV%
@@ -142,6 +132,7 @@ http {
   %ONION_ADDRESS%
   gir
   ;
+
   %%END
 
   %%IF %FOREIGNMAP_CSV%
@@ -171,77 +162,6 @@ http {
   %%ELSE
   # no preserve subs (restore-phase)
   %%ENDIF
-  # ---- END HARD MODE CODE ----
-  #------------------------------------------------------------------
-  %%ELSE
-  #------------------------------------------------------------------
-  # ---- BEGIN CLASSIC MODE CODE ----
-
-  # subs_filter: these patterns bear some explanation; the goal is to
-  # work regular expressions really hard in order to minimise the
-  # number of expressions which are used in the basic config, so the
-  # basic pattern is to capture zero/more "sub." in "//sub.foo.com"
-  # and interpolate that into "//sub.xxxxxxxx.onion"; so far?
-
-  # but it turns out that some JSON libraries like to "escape" the
-  # forward slashes in JSON content, leading to input like (literal)
-  # "http:\/\/sub.foo.com\/foo.html" - so you need to add the
-  # backslashes, but then you need to escape the backslashes, except
-  # they need double-escaping in the regexp because of string
-  # interpolation; hence 4x backslash -> 1x matched character
-
-  # likewise we use the "_RE2" form of the re-escaped domain name in
-  # order to coerce the regexp to match literal dots, not wildcards.
-
-  # there seems to be some sort of shortcut at play here; the trailing
-  # "\\b" also seems to work as "\b" however that would apparently
-  # break the double-escaping that is necessary/works everywhere else
-  # in subs_filter.
-
-  # also, regrettably, named capture groups appear not to work, we're
-  # fortunate that there appear not to be more than 9 capture groups
-  # by default, lest "$1" bleed into the subsequent digits of an onion
-  # address: $1234567abcdefghij.onion
-
-  # finally: some sites encode // with %-encoded "2F" in URIs...
-
-  %%BEGIN
-  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored by // or \/\/
-  subs_filter
-  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  $1/$2%ONION_ADDRESS%
-  gir
-  ;
-  # for %DNS_DOMAIN% -> %ONION_ADDRESS% anchored with hex-encoded slashes
-  subs_filter
-  %%2F%%2F(([-0-9a-z]+\\.)+)?%DNS_DOMAIN_RE2%\\b
-  %%2F%%2F$1%ONION_ADDRESS%
-  gir
-  ;
-  %%END
-
-  %%IF %FOREIGNMAP_CSV%
-  # foreignmap subs: 1=onion,2=re,3=re2,4=dns,5=re,6=re2
-  %%CSV %FOREIGNMAP_CSV%
-  # for %4% -> %1% anchored by // or \/\/
-  subs_filter
-  (/|\\\\/\\\\)/(([-0-9a-z]+\\.)+)?%6%\\b
-  $1/$2%1%
-  gir
-  ;
-  # for %4% -> %1% anchored with hex-encoded slashes
-  subs_filter
-  %%2F%%2F(([-0-9a-z]+\\.)+)?%6%\\b
-  %%2F%%2F$1%1%
-  gir
-  ;
-  %%ENDCSV
-  %%ELSE
-  # no foreignmap subs
-  %%ENDIF
-  # ---- END CLASSIC MODE CODE ----
-  %%ENDIF
-  #==================================================================
 
   # fix the cookies
   %%BEGIN
@@ -333,39 +253,6 @@ http {
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
     local k, v
-    #==================================================================
-    %%IF ! %%HARD_MODE%%
-    # ---- BEGIN CLASSIC MODE CODE ----
-    -- is this javascript/json? if so, extra processing:
-    -- 1) set a processing flag to pick up in body_filter_by_lua_block
-    -- 2) invalidate content-length, because we will change it
-    k = "Content-Type"
-    v = ngx.header[k]
-    if v == "application/javascript" or
-      v == "application/json" or
-      v == "application/x-javascript" or
-      v == "text/css" or
-      v == "text/javascript" then
-      ngx.ctx.needs_extra_processing = 1
-      ngx.header.content_length = nil
-    end
-    %%IF %EXTRA_PROCESSING_CSV%
-    -- run on `v` for further extra_processing_csv checks
-    %%CSV %EXTRA_PROCESSING_CSV%
-    if v == "%1%" then
-    local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
-      if m then
-        ngx.ctx.needs_extra_processing = 1
-        ngx.header.content_length = nil
-      end
-    end
-    %%ENDCSV
-    %%ELSE
-    -- no extra_processing_csv checks
-    %%ENDIF
-    # ---- END CLASSIC MODE CODE ----
-    %%ENDIF
-    #==================================================================
 
     -- rewrite cors/acao
     k = "Access-Control-Allow-Origin"
@@ -395,26 +282,6 @@ http {
 
   # filter the response body en-route back to the user
   body_filter_by_lua_block {
-    #==================================================================
-    %%IF ! %HARD_MODE%
-    # ---- BEGIN CLASSIC MODE CODE ----
-    -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
-    -- instead we restrict such brute-force replacement to content that was
-    -- flagged in header_filter_by_lua_block
-    if ngx.ctx.needs_extra_processing == 1 then
-      -- the flag was set; this content deserves brute-force search & replace
-      local chunk = ngx.arg[1]
-      -- subs_filter picked up the "//"-anchored strings; now we sub the rest
-      chunk = dns_to_onion(chunk)
-      -- and we sub the basic "foo\.com" regular-expressions, too
-      chunk = dnsre_to_onionre(chunk)
-      -- more complex regular expressions are out of scope.
-      ngx.arg[1] = chunk
-    end
-    # ---- END CLASSIC MODE CODE ----
-    %%ENDIF
-    #==================================================================
-
     %%IF %DEBUG_TRAP%
     -- debug traps
     local i = ngx.arg[1]
@@ -672,9 +539,6 @@ http {
     %%ENDIF
 
     %%IF %PATHS_CONTAIN_ONIONS%
-    #==================================================================
-    %%IF %HARD_MODE%
-    # ---- BEGIN HARD MODE CODE ----
     # URI paths may contain onionified hostnames which need rewriting
     # before passing upwards to the origin; this is a consequence of
     # "hard-mode" brute-force rewriting, and needs gentle unpicking:
@@ -707,16 +571,6 @@ http {
       set $deonionified_uri ''; # prevent revisiting
       rewrite ^ $new_uri last;
     }
-    # ---- END HARD MODE CODE ----
-    #------------------------------------------------------------------
-    %ELSE
-    # ---- BEGIN CLASSIC MODE CODE ----
-    # NOTE: PATHS_CONTAIN_ONIONS IS SET BUT SHOULD NOT APPLY TO THIS
-    # CONFIGURATION; IF YOU FIND CIRCUMSTANCE WHERE ONIONIFICATION OF
-    # PATHS IS AN ISSUE FOR THIS CONFIGURATION, PLEASE LOG A BUG.
-    # ---- END CLASSIC MODE CODE ----
-    %ENDIF
-    #==================================================================
     %%ELSE
     # paths are assumed not to contain onionified hostnames
     %%ENDIF

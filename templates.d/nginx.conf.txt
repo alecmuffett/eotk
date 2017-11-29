@@ -709,13 +709,13 @@ http {
     }
     # ---- END HARD MODE CODE ----
     #------------------------------------------------------------------
-    %ELSE
+    %%ELSE
     # ---- BEGIN CLASSIC MODE CODE ----
     # NOTE: PATHS_CONTAIN_ONIONS IS SET BUT SHOULD NOT APPLY TO THIS
     # CONFIGURATION; IF YOU FIND CIRCUMSTANCE WHERE ONIONIFICATION OF
     # PATHS IS AN ISSUE FOR THIS CONFIGURATION, PLEASE LOG A BUG.
     # ---- END CLASSIC MODE CODE ----
-    %ENDIF
+    %%ENDIF
     #==================================================================
     %%ELSE
     # paths are assumed not to contain onionified hostnames

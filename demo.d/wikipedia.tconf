@@ -2,7 +2,7 @@
 # eotk (c) 2017 Alec Muffett
 
 # use brute-force "search and replace" strategy
-set nginx_template templates.d/nginx-hard.conf.txt
+set hard_mode 1
 
 # CSVs of canonical domains (eg: email addresses) to preserve
 set preserve_csv tld-wp,wikipedia\\.org,i,wikipedia.org tld-wm,wikimedia\\.org,i,wikimedia.org

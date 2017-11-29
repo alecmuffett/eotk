@@ -433,6 +433,7 @@ sub DoProject {
 &SetEnv("redirect_host_csv", "");
 &SetEnv("redirect_location_csv", "");
 &SetEnv("cookie_lock", "");
+&SetEnv("hard_mode", 0);
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
