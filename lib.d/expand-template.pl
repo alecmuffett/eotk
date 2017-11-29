@@ -171,7 +171,7 @@ sub PrintExpansion {
 
     # nuke the scope
     shift(@scopes);
-    &Warn("scope $#scopes popped\n");
+    &Warn("scope popped, now at $#scopes\n");
 }
 
 sub PrintRange {
@@ -201,7 +201,7 @@ sub PrintRange {
 
     # nuke the scope
     shift(@scopes);
-    &Warn("scope $#scopes popped\n");
+    &Warn("scope popped, now at $#scopes\n");
 }
 
 sub PrintCsv {
@@ -236,7 +236,7 @@ sub PrintCsv {
 
         # nuke the scope
         shift(@scopes);
-        &Warn("scope $#scopes popped\n");
+        &Warn("scope popped, now at $#scopes\n");
     }
 }
 
