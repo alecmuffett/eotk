@@ -725,10 +725,8 @@ http {
 
     %%IF %USER_AGENT_BLACKLIST_RE%
     # check user_agent_blacklist_re
-    %%CSV %USER_AGENT_BLACKLIST_RE%
-    if ( $http_user_agent ~* "%0%" ) {
-      %NGINX_ACTION_ABORT%;
-    }
+    %%CSV USER_AGENT_BLACKLIST_RE
+    if ( $http_user_agent ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
     # no user_agent_blacklist_re
@@ -736,10 +734,8 @@ http {
 
     %%IF %LOCATION_BLACKLIST_RE%
     # check location_blacklist_re
-    %%CSV %LOCATION_BLACKLIST_RE%
-    location ~* "%0%" {
-      %NGINX_ACTION_ABORT%;
-    }
+    %%CSV LOCATION_BLACKLIST_RE
+    location ~* "%0%" { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
     # no location_blacklist_re
@@ -747,13 +743,20 @@ http {
 
     %%IF %REFERER_BLACKLIST_RE%
     # check referer_blacklist_re
-    %%CSV %REFERER_BLACKLIST_RE%
-    if ( $http_referer ~* "%0%" ) {
-      %NGINX_ACTION_ABORT%;
-    }
+    %%CSV REFERER_BLACKLIST_RE
+    if ( $http_referer ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
     # no referer_blacklist_re
+    %%ENDIF
+
+    %%IF %HOST_BLACKLIST_RE%
+    # check host_blacklist_re
+    %%CSV HOST_BLACKLIST_RE
+    if ( $http_host ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
+    %%ENDCSV
+    %%ELSE
+    # no host_blacklist_re
     %%ENDIF
 
     # whitelists
@@ -762,9 +765,7 @@ http {
     # check user_agent_whitelist_re
     set $non_whitelist_user_agent 1;
     %%CSV %USER_AGENT_WHITELIST_RE%
-    if ( $http_user_agent ~* "%0%" ) {
-      set $non_whitelist_user_agent 0;
-    }
+    if ( $http_user_agent ~* "%0%" ) { set $non_whitelist_user_agent 0; }
     %%ENDCSV
     %%ELSE
     # no user_agent_whitelist_re
@@ -774,9 +775,7 @@ http {
     # check location_whitelist_re
     set $non_whitelist_location 1;
     %%CSV %LOCATION_WHITELIST_RE%
-    location ~* "%0%" {
-      set $non_whitelist_location 0;
-    }
+    location ~* "%0%" { set $non_whitelist_location 0; }
     %%ENDCSV
     %%ELSE
     # no location_whitelist_re
@@ -786,48 +785,55 @@ http {
     # check referer_whitelist_re
     set $non_whitelist_referer 1;
     %%CSV %REFERER_WHITELIST_RE%
-    if ( $http_referer ~* "%0%" ) {
-      set $non_whitelist_referer 0;
-    }
+    if ( $http_referer ~* "%0%" ) { set $non_whitelist_referer 0; }
     %%ENDCSV
     %%ELSE
     # no referer_whitelist_re
+    %%ENDIF
+
+    %%IF %HOST_WHITELIST_RE%
+    # check host_whitelist_re
+    set $non_whitelist_host 1;
+    %%CSV %HOST_WHITELIST_RE%
+    if ( $http_host ~* "%0%" ) { set $non_whitelist_host 0; }
+    %%ENDCSV
+    %%ELSE
+    # no host_whitelist_re
     %%ENDIF
 
     # for traffic
     location / {
       %%IF %USER_AGENT_WHITELIST_RE%
       # check success of user_agent_whitelist_re
-      if ( $non_whitelist_user_agent ) {
-        %NGINX_ACTION_ABORT%;
-      }
+      if ( $non_whitelist_user_agent ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no check for success of user_agent_whitelist_re
       %%ENDIF
 
       %%IF %LOCATION_WHITELIST_RE%
       # check success of location_whitelist_re
-      if ( $non_whitelist_location ) {
-        %NGINX_ACTION_ABORT%;
-      }
+      if ( $non_whitelist_location ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no check for success of location_whitelist_re
       %%ENDIF
 
       %%IF %REFERER_WHITELIST_RE%
       # check success of referer_whitelist_re
-      if ( $non_whitelist_referer ) {
-        %NGINX_ACTION_ABORT%;
-      }
+      if ( $non_whitelist_referer ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no check for success of referer_whitelist_re
       %%ENDIF
 
+      %%IF %HOST_WHITELIST_RE%
+      # check success of host_whitelist_re
+      if ( $non_whitelist_host ) { %NGINX_ACTION_ABORT%; }
+      %%ELSE
+      # no check for success of host_whitelist_re
+      %%ENDIF
+
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
-      if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) {
-        %NGINX_ACTION_ABORT%;
-      }
+      if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no cookie lock checks
       %%ENDIF
