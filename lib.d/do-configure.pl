@@ -23,6 +23,10 @@ sub SetEnv {
     die "bad varname: $var\n" if ($var !~ /^[A-Za-z_]\w+/);
     $var =~ tr/a-z/A-Z/;
 
+    if (!defined($why)) {
+        $why = ''; # stop warnings about uninitialised strings
+    }
+
     if ($why eq 'config-file') {
         print "warning: $var is not an existing EOTK or environment variable; possible typo?\n"
             if !exists($ENV{$var});
