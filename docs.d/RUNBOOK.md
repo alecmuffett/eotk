@@ -201,15 +201,16 @@ Yes, assuming that there is enough disk space on Brenda, you might want to pull 
 
 # Q&A
 
-* What if I only have one machine?
+* What if I want `localhost` as part of the pool of workers?
   * see the "Softmap 3" diagram at https://github.com/alecmuffett/eotk/blob/master/docs.d/softmap-3.png
-  * this can work; do `echo localhost > eotk-workers.conf`
+  * this works; do `echo localhost >> eotk-workers.conf`
+    * if localhost/Brenda is the *only* machine, you don't really need a `eotk-workers.conf` file
   * the string `localhost` is treated specially by eotk, does not require ssh access
   * alternative: read the other documentation, use `hardmap`, skip the need for OnionBalance
-* Why install NGINX on brenda, too?
-  1. Orthogonality: it means all machines are the same
+* Why install NGINX (and everything else) on brenda, too?
+  1. Orthogonality: it means all machines are the same, easy of reuse/debugging
   2. Architecture: you may want to use Brenda for testing/development via `hardmap` deployments
-  3. Testing: you can use `eotk [--local] syntax` to sanity-check NGINX config files before pushing
+  3. Testing: you can use `eotk [--local] syntax -a` to sanity-check NGINX config files before pushing
 * How many workers can I have?
   * in the default EOTK config, you may sensibly install up to 30 workers (Wolfgang, William, Walter, Westley...)
   * this is because Tor descriptor space will max-out at 60 daemons, and EOTK launches 2x daemons per worker
