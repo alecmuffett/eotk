@@ -9,9 +9,9 @@ my %known =
      'SSL_TOOL' => 1,
      'TEMPLATE_TOOL' => 1,
 
-     # location filtering
-     'LOCATION_BLACKLIST_RE' => 1,
-     'LOCATION_WHITELIST_RE' => 1,
+     # path (location, uri, ...) filtering
+     'PATH_BLACKLIST_RE' => 1,
+     'PATH_WHITELIST_RE' => 1,
 
      # user-agent filtering
      'USER_AGENT_BLACKLIST_RE' => 1,

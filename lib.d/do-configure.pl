@@ -419,8 +419,8 @@ sub DoProject {
 &SetEnv("user_agent_whitelist_re", "");
 &SetEnv("user_agent_blacklist_re", "");
 
-&SetEnv("location_whitelist_re", "");
-&SetEnv("location_blacklist_re", "");
+&SetEnv("path_whitelist_re", "");
+&SetEnv("path_blacklist_re", "");
 
 &SetEnv("host_whitelist_re", "");
 &SetEnv("host_blacklist_re", "");

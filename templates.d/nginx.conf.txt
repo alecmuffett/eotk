@@ -732,15 +732,6 @@ http {
     # no user_agent_blacklist_re
     %%ENDIF
 
-    %%IF %LOCATION_BLACKLIST_RE%
-    # check location_blacklist_re
-    %%CSV LOCATION_BLACKLIST_RE
-    location ~* "%0%" { %NGINX_ACTION_ABORT%; }
-    %%ENDCSV
-    %%ELSE
-    # no location_blacklist_re
-    %%ENDIF
-
     %%IF %REFERER_BLACKLIST_RE%
     # check referer_blacklist_re
     %%CSV REFERER_BLACKLIST_RE
@@ -759,6 +750,15 @@ http {
     # no host_blacklist_re
     %%ENDIF
 
+    %%IF %PATH_BLACKLIST_RE%
+    # check path_blacklist_re
+    %%CSV PATH_BLACKLIST_RE
+    if ( $uri ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
+    %%ENDCSV
+    %%ELSE
+    # no path_blacklist_re
+    %%ENDIF
+
     # whitelists
 
     %%IF %USER_AGENT_WHITELIST_RE%
@@ -769,16 +769,6 @@ http {
     %%ENDCSV
     %%ELSE
     # no user_agent_whitelist_re
-    %%ENDIF
-
-    %%IF %LOCATION_WHITELIST_RE%
-    # check location_whitelist_re
-    set $non_whitelist_location 1;
-    %%CSV %LOCATION_WHITELIST_RE%
-    location ~* "%0%" { set $non_whitelist_location 0; }
-    %%ENDCSV
-    %%ELSE
-    # no location_whitelist_re
     %%ENDIF
 
     %%IF %REFERER_WHITELIST_RE%
@@ -801,6 +791,16 @@ http {
     # no host_whitelist_re
     %%ENDIF
 
+    %%IF %PATH_WHITELIST_RE%
+    # check path_whitelist_re
+    set $non_whitelist_path 1;
+    %%CSV %PATH_WHITELIST_RE%
+    if ( $uri ~* "%0%" ) { set $non_whitelist_path 0; }
+    %%ENDCSV
+    %%ELSE
+    # no path_whitelist_re
+    %%ENDIF
+
     # for traffic
     location / {
       %%IF %USER_AGENT_WHITELIST_RE%
@@ -808,13 +808,6 @@ http {
       if ( $non_whitelist_user_agent ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no check for success of user_agent_whitelist_re
-      %%ENDIF
-
-      %%IF %LOCATION_WHITELIST_RE%
-      # check success of location_whitelist_re
-      if ( $non_whitelist_location ) { %NGINX_ACTION_ABORT%; }
-      %%ELSE
-      # no check for success of location_whitelist_re
       %%ENDIF
 
       %%IF %REFERER_WHITELIST_RE%
@@ -829,6 +822,13 @@ http {
       if ( $non_whitelist_host ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no check for success of host_whitelist_re
+      %%ENDIF
+
+      %%IF %PATH_WHITELIST_RE%
+      # check success of path_whitelist_re
+      if ( $non_whitelist_path ) { %NGINX_ACTION_ABORT%; }
+      %%ELSE
+      # no check for success of path_whitelist_re
       %%ENDIF
 
       %%IF %COOKIE_LOCK%

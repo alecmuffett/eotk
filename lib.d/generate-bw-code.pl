@@ -65,12 +65,11 @@ foreach $x (@tail) {
 }
 
 
+# NB: AVOID `location` DIRECTIVE IN THE CONDITIONALS, BECAUSE IT
+# TRIGGERS A HANDLER...
 __END__;
 
 user_agent if ( $http_user_agent ~* "%0%" )
-
-location location ~* "%0%"
-
 referer if ( $http_referer ~* "%0%" )
-
 host if ( $http_host ~* "%0%" )
+path if ( $uri ~* "%0%" )
