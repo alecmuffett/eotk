@@ -333,9 +333,9 @@ http {
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
     local k, v
-    #==================================================================
+    -- ==================================================================
     %%IF ! %HARD_MODE%
-    # ---- BEGIN CLASSIC MODE CODE ----
+    -- ---- BEGIN CLASSIC MODE CODE ----
     -- is this javascript/json? if so, extra processing:
     -- 1) set a processing flag to pick up in body_filter_by_lua_block
     -- 2) invalidate content-length, because we will change it
@@ -363,9 +363,9 @@ http {
     %%ELSE
     -- no extra_processing_csv checks
     %%ENDIF
-    # ---- END CLASSIC MODE CODE ----
+    -- ---- END CLASSIC MODE CODE ----
     %%ENDIF
-    #==================================================================
+    -- ==================================================================
 
     -- rewrite cors/acao
     k = "Access-Control-Allow-Origin"
@@ -395,9 +395,9 @@ http {
 
   # filter the response body en-route back to the user
   body_filter_by_lua_block {
-    #==================================================================
+    -- ==================================================================
     %%IF ! %HARD_MODE%
-    # ---- BEGIN CLASSIC MODE CODE ----
+    -- ---- BEGIN CLASSIC MODE CODE ----
     -- rather than blindly replacing "foo.com" with "foo.onion" everywhere,
     -- instead we restrict such brute-force replacement to content that was
     -- flagged in header_filter_by_lua_block
@@ -411,9 +411,9 @@ http {
       -- more complex regular expressions are out of scope.
       ngx.arg[1] = chunk
     end
-    # ---- END CLASSIC MODE CODE ----
+    -- ---- END CLASSIC MODE CODE ----
     %%ENDIF
-    #==================================================================
+    -- ==================================================================
 
     %%IF %DEBUG_TRAP%
     -- debug traps
