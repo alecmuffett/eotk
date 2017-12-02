@@ -454,6 +454,18 @@ sub DoProject {
 &SetEnv("cookie_lock", "");
 &SetEnv("hard_mode", 0);
 
+&SetEnv("foreignmap_csv", "");
+&SetEnv("host_blacklist", "");
+&SetEnv("host_whitelist", "");
+&SetEnv("param_blacklist", "");
+&SetEnv("param_whitelist", "");
+&SetEnv("path_blacklist", "");
+&SetEnv("path_whitelist", "");
+&SetEnv("referer_blacklist", "");
+&SetEnv("referer_whitelist", "");
+&SetEnv("user_agent_blacklist", "");
+&SetEnv("user_agent_whitelist", "");
+
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
