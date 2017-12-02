@@ -449,6 +449,7 @@ do {
             push(@new_template, $line);
             next;
         }
+        &Warn("processing include: $line\n");
         $include_flag++;
         $include_count++;
         my @include_body = &Slurp($line);

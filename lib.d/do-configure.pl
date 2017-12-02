@@ -406,10 +406,15 @@ sub DoProject {
 &SetEnv("suppress_tor2web", 1); # 1 = block access by tor2web sites
 
 &SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
+
 &SetEnv("block_host", "");
 &SetEnv("block_host_re", "");
+
 &SetEnv("block_location", "");
 &SetEnv("block_location_re", "");
+
+&SetEnv("block_path", "");
+&SetEnv("block_path_re", "");
 
 &SetEnv("nginx_action_abort", "return 500");
 
