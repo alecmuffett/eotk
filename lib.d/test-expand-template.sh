@@ -725,3 +725,26 @@ baz
 EOF
 
 Test invert-word-not < /dev/null
+
+##################################################################
+
+# see if `include` works
+
+included="/tmp/tmplincl$$"
+cat >$included <<EOF
+%%INCLUDE /etc/passwd /etc/group
+EOF
+
+Template <<EOF
+foo
+%%INCLUDE $included
+bar
+EOF
+
+(
+    echo foo
+    cat /etc/passwd /etc/group
+    echo bar
+) | Expect
+
+Test file include < /dev/null

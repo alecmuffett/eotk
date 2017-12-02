@@ -329,6 +329,20 @@ sub Cat { # THIS IS NOT THE SAME AS "#include" / CONTENTS NOT PROCESSED
     }
 }
 
+sub Slurp {
+    &Warn("Slurp: @_\n");
+    my $flist = shift;
+    my ($junk, @filenames) = split(" ", $flist);
+    my @lines = ();
+    foreach my $file (@filenames) {
+        &Warn("Slurping: $file\n");
+        open(FILE, $file) || die "Slurp: $file: $!\n";
+        push(@lines, <FILE>);
+        close(FILE);
+    }
+    return @lines;
+}
+
 sub PrintBlock {
     my ($begin, $end) = @_;     # inclusive
 
@@ -420,6 +434,28 @@ $template = $ARGV[0];
 open(TEMPLATE, $template) or die "open: $template: $!\n";
 @template = <TEMPLATE>; # DO NOT CHOMP
 close(TEMPLATE);
+
+# expand the template
+my $include_flag;
+my $include_count = 0;
+do {
+    if ($include_count > 50) {
+        die "$0: too many includes. infinite loop?\n";
+    }
+    $include_flag = 0;
+    my @new_template = ();
+    foreach my $line (@template) {
+        if ($line !~ /^\s*%%INCLUDE\b/) {
+            push(@new_template, $line);
+            next;
+        }
+        $include_flag++;
+        $include_count++;
+        my @include_body = &Slurp($line);
+        push(@new_template, @include_body);
+    }
+    @template = @new_template; # swap
+} while ($include_flag > 0);
 
 # ------------------------------------------------------------------
 
