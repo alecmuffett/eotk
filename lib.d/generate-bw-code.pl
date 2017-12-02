@@ -11,6 +11,59 @@ $indent = "  ";
 @white = ();
 @tail = ();
 
+
+sub blackwhite {
+    my ($operator, $lc_what, $a, $b) = @_;
+    my $uc_what = uc($lc_what);
+    my $condition = "if ( $a $operator $b )";
+
+    if ($operator eq "~*") {
+        $uc_bl = "${uc_what}_BLACKLIST_RE";
+        $uc_wl = "${uc_what}_WHITELIST_RE";
+    }
+    elsif ($operator eq "=") {
+        $uc_bl = "${uc_what}_BLACKLIST";
+        $uc_wl = "${uc_what}_WHITELIST";
+    }
+    else {
+        die "bad blackwhite operator";
+    }
+
+    $lc_bl = lc($uc_bl);
+    $lc_wl = lc($uc_wl);
+    $flag = "\$non_whitelist_${lc_what}";
+
+    push(@black, "%%IF %$uc_bl%\n");
+    push(@black, "# check $lc_bl $warning\n");
+    push(@black, "%%CSV %$uc_bl%\n");
+    push(@black, "$condition { %NGINX_ACTION_ABORT%; }\n");
+    push(@black, "%%ENDCSV\n");
+    push(@black, "%%ELSE\n");
+    push(@black, "# no $lc_bl $warning\n");
+    push(@black, "%%ENDIF\n");
+    push(@black, "\n");
+
+    push(@white, "%%IF %$uc_wl%\n");
+    push(@white, "# check $lc_wl $warning\n");
+    push(@white, "set $flag 1;\n");
+    push(@white, "%%CSV %$uc_wl%\n");
+    push(@white, "$condition { set $flag 0; }\n");
+    push(@white, "%%ENDCSV\n");
+    push(@white, "%%ELSE\n");
+    push(@white, "# no $lc_wl $warning\n");
+    push(@white, "%%ENDIF\n");
+    push(@white, "\n");
+
+    push(@tail, "%%IF %$uc_wl%\n");
+    push(@tail, "# check success of $lc_wl $warning\n");
+    push(@tail, "if ( $flag ) { %NGINX_ACTION_ABORT%; }\n");
+    push(@tail, "%%ELSE\n");
+    push(@tail, "# no check for success of $lc_wl $warning\n");
+    push(@tail, "%%ENDIF\n");
+    push(@tail, "\n");
+}
+
+
 while (<DATA>) {
     next if /^#/;
     next if /^\s*$/;
@@ -18,45 +71,13 @@ while (<DATA>) {
     chomp;
     s/\s+/ /g;
     ($how, $lc_what, $condition) = split(/\s+/, $_, 3);
-    $uc_what = uc($lc_what);
 
     if ($how eq "bwlist") {
-        $uc_bl = "${uc_what}_BLACKLIST_RE";
-        $uc_wl = "${uc_what}_WHITELIST_RE";
-        $lc_bl = lc($uc_bl);
-        $lc_wl = lc($uc_wl);
-        $flag = "\$non_whitelist_${lc_what}";
-
-        push(@black, "%%IF %$uc_bl%\n");
-        push(@black, "# check $lc_bl $warning\n");
-        push(@black, "%%CSV %$uc_bl%\n");
-        push(@black, "$condition { %NGINX_ACTION_ABORT%; }\n");
-        push(@black, "%%ENDCSV\n");
-        push(@black, "%%ELSE\n");
-        push(@black, "# no $lc_bl $warning\n");
-        push(@black, "%%ENDIF\n");
-        push(@black, "\n");
-
-        push(@white, "%%IF %$uc_wl%\n");
-        push(@white, "# check $lc_wl $warning\n");
-        push(@white, "set $flag 1;\n");
-        push(@white, "%%CSV %$uc_wl%\n");
-        push(@white, "$condition { set $flag 0; }\n");
-        push(@white, "%%ENDCSV\n");
-        push(@white, "%%ELSE\n");
-        push(@white, "# no $lc_wl $warning\n");
-        push(@white, "%%ENDIF\n");
-        push(@white, "\n");
-
-        push(@tail, "%%IF %$uc_wl%\n");
-        push(@tail, "# check success of $lc_wl $warning\n");
-        push(@tail, "if ( $flag ) { %NGINX_ACTION_ABORT%; }\n");
-        push(@tail, "%%ELSE\n");
-        push(@tail, "# no check for success of $lc_wl $warning\n");
-        push(@tail, "%%ENDIF\n");
-        push(@tail, "\n");
+        #&blackwhite("=", $lc_what, split(" ", $condition));
+        &blackwhite("~*", $lc_what, split(" ", $condition));
     }
     elsif ($how eq "block") {
+        my $uc_what = uc($lc_what);
         push(@polite, "%%IF %$uc_what%\n");
         push(@polite, "# polite block for $lc_what $warning\n");
         push(@polite, "%%CSV %$uc_what%\n");
@@ -68,6 +89,7 @@ while (<DATA>) {
         push(@polite, "\n");
     }
     elsif ($how eq "redirect") {
+        my $uc_what = uc($lc_what);
         push(@redirect, "%%IF %$uc_what%\n");
         push(@redirect, "# redirect $lc_what: 1=regexp,2=dest,3=code $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
@@ -151,8 +173,8 @@ redirect redirect_location_csv location ~* "%1%"
 
 # blacklists and whitelists: issue a 500
 # nb: second argument gets interpolated into variablenames
-bwlist user_agent if ( $http_user_agent ~* "%0%" )
-bwlist referer if ( $http_referer ~* "%0%" )
-bwlist host if ( $http_host ~* "%0%" )
-bwlist path if ( $uri ~* "%0%" )
-bwlist param if ( $arg_%1% ~* "%2%" )
+bwlist user_agent $http_user_agent "%0%"
+bwlist referer $http_referer "%0%"
+bwlist host $http_host "%0%"
+bwlist path $uri "%0%"
+bwlist param $arg_%1% "%2%"
