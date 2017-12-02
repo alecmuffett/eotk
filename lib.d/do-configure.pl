@@ -356,27 +356,17 @@ sub DoProject {
 
 ##################################################################
 
-# where stuff lives
-
-&SetEnv("projects_home", "$here/projects.d");
-&SetEnv("project", "default");
-
-&SetEnv("nginx_template", "$here/templates.d/nginx.conf.txt");
-&SetEnv("tor_template", "$here/templates.d/tor.conf.txt");
-
-&SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
-&SetEnv("template_tool", "$here/lib.d/expand-template.pl");
-
-&SetEnv("force_https", 1);
-&SetEnv("debug_trap", "");
-&SetEnv("x_from_onion_value", "1");
-
 # in-template settings; don't confuse the two modules
 # this: https://nginx.org/en/docs/http/ngx_http_proxy_module.html (used)
 # versus: https://nginx.org/en/docs/stream/ngx_stream_proxy_module.html (not used)
 
-&SetEnv("nginx_block_count", 8);
+# default-set values
+&SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
+&SetEnv("force_https", 1);
+&SetEnv("hard_mode", 0);
+&SetEnv("nginx_action_abort", "return 500");
 &SetEnv("nginx_block_busy_size", "16k");
+&SetEnv("nginx_block_count", 8);
 &SetEnv("nginx_block_size", "8k");
 &SetEnv("nginx_cache_min_uses", 1);
 &SetEnv("nginx_cache_seconds", 60); # 0 = off
@@ -384,87 +374,74 @@ sub DoProject {
 &SetEnv("nginx_hash_bucket_size", 128);
 &SetEnv("nginx_hello_onion", 1);
 &SetEnv("nginx_resolver", "8.8.8.8");
-&SetEnv("nginx_resolver_flags", "");
 &SetEnv("nginx_rlim", 256);
 &SetEnv("nginx_syslog", "error"); # https://nginx.org/en/docs/ngx_core_module.html#error_log
+&SetEnv("nginx_template", "$here/templates.d/nginx.conf.txt");
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
-
-&SetEnv("tor_intros_per_daemon", 3);
-&SetEnv("tor_single_onion", 1);
-&SetEnv("tor_worker_prefix", "hs");
-&SetEnv("tor_syslog", "notice"); # https://www.torproject.org/docs/tor-manual.html.en
-
-&SetEnv("softmap_tor_workers", 2); # MUST BE NUMERIC > 1
+&SetEnv("paths_contain_onions", 0);
+&SetEnv("preserve_cookie", "~-=~=-~");
+&SetEnv("preserve_preamble", "[>@\\\\s]");
+&SetEnv("project", "default");
+&SetEnv("projects_home", "$here/projects.d");
 &SetEnv("softmap_nginx_workers", "auto"); # nginx_workers * softmap_tor_workers
-
+&SetEnv("softmap_tor_workers", 2); # MUST BE NUMERIC > 1
+&SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("suppress_header_csp", 0); # 0 = try rewriting; 1 = elide completely
 &SetEnv("suppress_header_hpkp", 1); # 1 = elide completely
 &SetEnv("suppress_header_hsts", 1); # 1 = elide completely
 &SetEnv("suppress_methods_except_get", 0); # 1 = GET/HEAD Only
 &SetEnv("suppress_tor2web", 1); # 1 = block access by tor2web sites
+&SetEnv("template_tool", "$here/lib.d/expand-template.pl");
+&SetEnv("tor_intros_per_daemon", 3);
+&SetEnv("tor_single_onion", 1);
+&SetEnv("tor_syslog", "notice"); # https://www.torproject.org/docs/tor-manual.html.en
+&SetEnv("tor_template", "$here/templates.d/tor.conf.txt");
+&SetEnv("tor_worker_prefix", "hs");
+&SetEnv("x_from_onion_value", "1");
 
-&SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
-
+# default-empty variables
 &SetEnv("block_host", "");
 &SetEnv("block_host_re", "");
-
 &SetEnv("block_location", "");
 &SetEnv("block_location_re", "");
-
-&SetEnv("block_path", "");
-&SetEnv("block_path_re", "");
-
-&SetEnv("nginx_action_abort", "return 500");
-
-&SetEnv("referer_whitelist_re", "");
-&SetEnv("referer_blacklist_re", "");
-
-&SetEnv("user_agent_whitelist_re", "");
-&SetEnv("user_agent_blacklist_re", "");
-
-&SetEnv("path_whitelist_re", "");
-&SetEnv("path_blacklist_re", "");
-
-&SetEnv("host_whitelist_re", "");
-&SetEnv("host_blacklist_re", "");
-
 &SetEnv("block_param", "");
 &SetEnv("block_param_re", "");
-&SetEnv("param_whitelist_re", "");
-&SetEnv("param_blacklist_re", "");
-
+&SetEnv("block_path", "");
+&SetEnv("block_path_re", "");
+&SetEnv("cookie_lock", "");
+&SetEnv("debug_trap", "");
+&SetEnv("extra_processing_csv", "");
+&SetEnv("foreignmap_csv", "");
+&SetEnv("hardcoded_endpoint_csv", "");
+&SetEnv("host_blacklist", "");
+&SetEnv("host_blacklist_re", "");
+&SetEnv("host_whitelist", "");
+&SetEnv("host_whitelist_re", "");
+&SetEnv("nginx_resolver_flags", "");
 &SetEnv("no_cache_content_type", "");
 &SetEnv("no_cache_host", "");
-
-&SetEnv("extra_processing_csv", "");
-
-&SetEnv("preserve_csv", "");
-&SetEnv("preserve_preamble", "[>@\\\\s]");
-&SetEnv("preserve_cookie", "~-=~=-~");
-
-&SetEnv("hardcoded_endpoint_csv", "");
-&SetEnv("paths_contain_onions", 0);
-
-&SetEnv("redirect_host_csv", "");
-&SetEnv("redirect_path_csv", "");
-&SetEnv("redirect_location_csv", "");
-
-&SetEnv("cookie_lock", "");
-&SetEnv("hard_mode", 0);
-
-&SetEnv("foreignmap_csv", "");
-&SetEnv("host_blacklist", "");
-&SetEnv("host_whitelist", "");
 &SetEnv("param_blacklist", "");
+&SetEnv("param_blacklist_re", "");
 &SetEnv("param_whitelist", "");
+&SetEnv("param_whitelist_re", "");
 &SetEnv("path_blacklist", "");
+&SetEnv("path_blacklist_re", "");
 &SetEnv("path_whitelist", "");
+&SetEnv("path_whitelist_re", "");
+&SetEnv("preserve_csv", "");
+&SetEnv("redirect_host_csv", "");
+&SetEnv("redirect_location_csv", "");
+&SetEnv("redirect_path_csv", "");
 &SetEnv("referer_blacklist", "");
+&SetEnv("referer_blacklist_re", "");
 &SetEnv("referer_whitelist", "");
+&SetEnv("referer_whitelist_re", "");
 &SetEnv("user_agent_blacklist", "");
+&SetEnv("user_agent_blacklist_re", "");
 &SetEnv("user_agent_whitelist", "");
+&SetEnv("user_agent_whitelist_re", "");
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
