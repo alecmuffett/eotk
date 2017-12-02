@@ -402,46 +402,52 @@ sub DoProject {
 &SetEnv("x_from_onion_value", "1");
 
 # default-empty variables
-&SetEnv("block_host", "");
-&SetEnv("block_host_re", "");
-&SetEnv("block_location", "");
-&SetEnv("block_location_re", "");
-&SetEnv("block_param", "");
-&SetEnv("block_param_re", "");
-&SetEnv("block_path", "");
-&SetEnv("block_path_re", "");
-&SetEnv("cookie_lock", "");
-&SetEnv("debug_trap", "");
-&SetEnv("extra_processing_csv", "");
-&SetEnv("foreignmap_csv", "");
-&SetEnv("hardcoded_endpoint_csv", "");
-&SetEnv("host_blacklist", "");
-&SetEnv("host_blacklist_re", "");
-&SetEnv("host_whitelist", "");
-&SetEnv("host_whitelist_re", "");
-&SetEnv("nginx_resolver_flags", "");
-&SetEnv("no_cache_content_type", "");
-&SetEnv("no_cache_host", "");
-&SetEnv("param_blacklist", "");
-&SetEnv("param_blacklist_re", "");
-&SetEnv("param_whitelist", "");
-&SetEnv("param_whitelist_re", "");
-&SetEnv("path_blacklist", "");
-&SetEnv("path_blacklist_re", "");
-&SetEnv("path_whitelist", "");
-&SetEnv("path_whitelist_re", "");
-&SetEnv("preserve_csv", "");
-&SetEnv("redirect_host_csv", "");
-&SetEnv("redirect_location_csv", "");
-&SetEnv("redirect_path_csv", "");
-&SetEnv("referer_blacklist", "");
-&SetEnv("referer_blacklist_re", "");
-&SetEnv("referer_whitelist", "");
-&SetEnv("referer_whitelist_re", "");
-&SetEnv("user_agent_blacklist", "");
-&SetEnv("user_agent_blacklist_re", "");
-&SetEnv("user_agent_whitelist", "");
-&SetEnv("user_agent_whitelist_re", "");
+my @set_blank = qw(
+    block_host
+    block_host_re
+    block_location
+    block_location_re
+    block_param
+    block_param_re
+    block_path
+    block_path_re
+    cookie_lock
+    debug_trap
+    extra_processing_csv
+    foreignmap_csv
+    hardcoded_endpoint_csv
+    host_blacklist
+    host_blacklist_re
+    host_whitelist
+    host_whitelist_re
+    nginx_resolver_flags
+    no_cache_content_type
+    no_cache_host
+    param_blacklist
+    param_blacklist_re
+    param_whitelist
+    param_whitelist_re
+    path_blacklist
+    path_blacklist_re
+    path_whitelist
+    path_whitelist_re
+    preserve_csv
+    redirect_host_csv
+    redirect_location_csv
+    redirect_path_csv
+    referer_blacklist
+    referer_blacklist_re
+    referer_whitelist
+    referer_whitelist_re
+    user_agent_blacklist
+    user_agent_blacklist_re
+    user_agent_whitelist
+    user_agent_whitelist_re
+    );
+
+foreach my $var (@set_blank) {
+    &SetEnv($var, "");
+}
 
 &SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
