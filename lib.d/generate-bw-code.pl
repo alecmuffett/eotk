@@ -150,27 +150,32 @@ __END__;
 
 # blocks: issue a 403
 block suppress_tor2web if ( $http_x_tor2web )
-block block_host if ( $host = "%0%" )
-block block_host_re if ( $host ~* "%0%" )
+block block_referer if ( $http_referer = "%0%" )
+block block_referer_re if ( $http_referer ~* "%0%" )
+block block_origin if ( $http_origin = "%0%" )
+block block_origin_re if ( $http_origin ~* "%0%" )
+block block_host if ( $http_host = "%0%" )
+block block_host_re if ( $http_host ~* "%0%" )
 block block_path if ( $uri = "%0%" )
 block block_path_re if ( $uri ~* "%0%" )
-# legacy
+## legacy
 block block_location location %0%
 block block_location_re location ~* "%0%"
-# query parameters
+## query parameters
 block block_param if ( $arg_%1% = "%2%" )
 block block_param_re if ( $arg_%1% ~* "%2%" )
 
 # redirects
 redirect redirect_host_csv if ( $host ~* "%1%" )
 redirect redirect_path_csv if ( $uri ~* "%1%" )
-# legacy
+## legacy
 redirect redirect_location_csv location ~* "%1%"
 
 # blacklists and whitelists: issue a 500
 # nb: second argument gets interpolated into variablenames
 bwlist user_agent $http_user_agent "%0%"
 bwlist referer $http_referer "%0%"
+bwlist origin $http_origin "%0%"
 bwlist host $http_host "%0%"
 bwlist path $uri "%0%"
 bwlist param $arg_%1% "%2%"
