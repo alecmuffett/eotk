@@ -579,28 +579,6 @@ http {
     # include generated blocks
     %%INCLUDE templates.d/nginx-generated-blocks.conf
 
-    %%IF %REDIRECT_HOST_CSV%
-    # redirect_hosts: 1=host_re,2=scheme://host.dom,3=code
-    %%CSV %REDIRECT_HOST_CSV%
-    if ( $host ~* "%1%" ) {
-      return %3% %2%$request_uri;
-    }
-    %%ENDCSV
-    %%ELSE
-    # no redirect_hosts
-    %%ENDIF
-
-    %%IF %REDIRECT_LOCATION_CSV%
-    # redirect_locations: 1=location_re,2=scheme://host.dom,3=code
-    %%CSV %REDIRECT_LOCATION_CSV%
-    location ~* "%1%" {
-      return %3% %2%$request_uri;
-    }
-    %%ENDCSV
-    %%ELSE
-    # no redirect_locations
-    %%ENDIF
-
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
     location ~* ^/hello[-_]onion/?$ {

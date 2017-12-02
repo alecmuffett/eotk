@@ -6,6 +6,7 @@ $end = "# ---- END GENERATED CODE ----\n";
 
 $indent = "  ";
 @polite = ();
+@redirect = ();
 @black = ();
 @white = ();
 @tail = ();
@@ -61,11 +62,21 @@ while (<DATA>) {
         push(@polite, "%%CSV %$uc_what%\n");
         push(@polite, "$condition { return 403 \"%BLOCK_ERR%\"; }\n");
         push(@polite, "%%ENDCSV\n");
-
         push(@polite, "%%ELSE\n");
         push(@polite, "# no polite block for $lc_what $warning\n");
         push(@polite, "%%ENDIF\n");
         push(@polite, "\n");
+    }
+    elsif ($how eq "redirect") {
+        push(@redirect, "%%IF %$uc_what%\n");
+        push(@redirect, "# redirect $lc_what: 1=regexp,2=dest,3=code $warning\n");
+        push(@redirect, "%%CSV %$uc_what%\n");
+        push(@redirect, "$condition { return %3% %2%\$request_uri; }\n");
+        push(@redirect, "%%ENDCSV\n");
+        push(@redirect, "%%ELSE\n");
+        push(@redirect, "# no redirect $lc_what $warning\n");
+        push(@redirect, "%%ENDIF\n");
+        push(@redirect, "\n");
     }
     else {
         die "bad config line at line $.: $_\n";
@@ -76,19 +87,29 @@ open(OUT, ">nginx-generated-blocks.conf") || die;
 print OUT $indent x 2, $begin;
 print OUT $indent x 2, "# polite blocks $warning\n\n";
 foreach $x (@polite) {
-    print OUT $indent x 2, $x;
+    print OUT $indent x 2 if ($x !~ /^\s*$/);
+    print OUT $x;
 }
 print OUT "\n";
 
 print OUT $indent x 2, "# blacklists $warning\n\n";
 foreach $x (@black) {
-    print OUT $indent x 2, $x;
+    print OUT $indent x 2 if ($x !~ /^\s*$/);
+    print OUT $x;
+}
+print OUT "\n";
+
+print OUT $indent x 2, "# redirects $warning\n\n";
+foreach $x (@redirect) {
+    print OUT $indent x 2 if ($x !~ /^\s*$/);
+    print OUT $x;
 }
 print OUT "\n";
 
 print OUT $indent x 2, "# whitelists $warning\n\n";
 foreach $x (@white) {
-    print OUT $indent x 2, $x;
+    print OUT $indent x 2 if ($x !~ /^\s*$/);
+    print OUT $x;
 }
 print OUT "\n";
 print OUT $indent x 2, $end;
@@ -98,7 +119,8 @@ open(OUT, ">nginx-generated-checks.conf") || die;
 print OUT $indent x 3, $begin;
 print OUT $indent x 3, "# whitelist checks $warning\n\n";
 foreach $x (@tail) {
-    print OUT $indent x 3, $x;
+    print OUT $indent x 3 if ($x !~ /^\s*$/);
+    print OUT $x;
 }
 print OUT "\n";
 print OUT $indent x 3, $end;
@@ -117,6 +139,12 @@ block block_path_re if ( $uri ~* "%0%" )
 # legacy
 block block_location location %0%
 block block_location_re location ~* "%0%"
+
+# redirects
+redirect redirect_host_csv if ( $host ~* "%1%" )
+redirect redirect_path_csv if ( $uri ~* "%1%" )
+# legacy
+redirect redirect_location_csv location ~* "%1%"
 
 # blacklists and whitelists: issue a 500
 # nb: second argument gets interpolated into variablenames

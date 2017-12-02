@@ -443,7 +443,9 @@ sub DoProject {
 &SetEnv("paths_contain_onions", 0);
 
 &SetEnv("redirect_host_csv", "");
+&SetEnv("redirect_path_csv", "");
 &SetEnv("redirect_location_csv", "");
+
 &SetEnv("cookie_lock", "");
 &SetEnv("hard_mode", 0);
 
