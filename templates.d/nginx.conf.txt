@@ -556,8 +556,10 @@ http {
     ~^(?<servernamesubdomain>([-0-9a-z]+\\.)+)%ONION_ADDRESS_RE2%$
     ;
 
+    %%INCLUDE templates.d/nginx-generated-blocks.conf
+
     %%IF %COOKIE_LOCK%
-    # if we are visiting the magic path, issue a cookie immediately
+    # if we are visiting the magic path, open the cookie-lock
     location "%COOKIE_LOCK%" {
       add_header Set-Cookie "eotk_lock=%COOKIE_LOCK%;Domain=.%ONION_ADDRESS%;Path=/;Max-Age=604800";
       return 200 "OK";
@@ -565,8 +567,6 @@ http {
     %%ELSE
     # no cookie_lock cookie setting
     %%ENDIF
-
-    %%INCLUDE templates.d/nginx-generated-blocks.conf
 
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
@@ -580,7 +580,7 @@ http {
     %%IF %HARDCODED_ENDPOINT_CSV%
     # hardcoded_endpoints: 1=path_re,2=response
     %%CSV %HARDCODED_ENDPOINT_CSV%
-    location ~* %1% {
+    location "%1%" {
       return 200 %2%;
     }
     %%ENDCSV
@@ -646,7 +646,7 @@ http {
       # check for cookie-lock
       if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) { %NGINX_ACTION_ABORT%; }
       %%ELSE
-      # no cookie lock checks
+      # no cookie-lock checks
       %%ENDIF
 
       proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%"; # note $scheme
