@@ -20,10 +20,12 @@ sub blackwhite {
     if ($operator eq "~*") {
         $uc_bl = "${uc_what}_BLACKLIST_RE";
         $uc_wl = "${uc_what}_WHITELIST_RE";
+        $flag = "\$fail_${lc_what}_whitelist_re";
     }
     elsif ($operator eq "=") {
         $uc_bl = "${uc_what}_BLACKLIST";
         $uc_wl = "${uc_what}_WHITELIST";
+        $flag = "\$fail_${lc_what}_whitelist";
     }
     else {
         die "bad blackwhite operator";
@@ -31,7 +33,6 @@ sub blackwhite {
 
     $lc_bl = lc($uc_bl);
     $lc_wl = lc($uc_wl);
-    $flag = "\$non_whitelist_${lc_what}";
 
     push(@black, "%%IF %$uc_bl%\n");
     push(@black, "# check $lc_bl $warning\n");
