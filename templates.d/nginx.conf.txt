@@ -725,7 +725,7 @@ http {
 
     %%IF %USER_AGENT_BLACKLIST_RE%
     # check user_agent_blacklist_re
-    %%CSV USER_AGENT_BLACKLIST_RE
+    %%CSV %USER_AGENT_BLACKLIST_RE%
     if ( $http_user_agent ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
@@ -734,7 +734,7 @@ http {
 
     %%IF %REFERER_BLACKLIST_RE%
     # check referer_blacklist_re
-    %%CSV REFERER_BLACKLIST_RE
+    %%CSV %REFERER_BLACKLIST_RE%
     if ( $http_referer ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
@@ -743,7 +743,7 @@ http {
 
     %%IF %HOST_BLACKLIST_RE%
     # check host_blacklist_re
-    %%CSV HOST_BLACKLIST_RE
+    %%CSV %HOST_BLACKLIST_RE%
     if ( $http_host ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
@@ -752,7 +752,7 @@ http {
 
     %%IF %PATH_BLACKLIST_RE%
     # check path_blacklist_re
-    %%CSV PATH_BLACKLIST_RE
+    %%CSV %PATH_BLACKLIST_RE%
     if ( $uri ~* "%0%" ) { %NGINX_ACTION_ABORT%; }
     %%ENDCSV
     %%ELSE
