@@ -32,6 +32,10 @@ sub SetEnv {
             if !exists($ENV{$var});
     }
 
+    if (defined($ENV{$var}) and ($ENV{$var} ne "")) {
+        warn "WARNING: setting $var overwrites existing '$ENV{$var}' with '$val'\n";
+    }
+
     $ENV{$var} = $val;
     warn (($why ? "($why) " : "") . "set $var to $val\n");
 }
@@ -407,10 +411,14 @@ my @set_blank = qw(
     block_host_re
     block_location
     block_location_re
+    block_origin
+    block_origin_re
     block_param
     block_param_re
     block_path
     block_path_re
+    block_referer
+    block_referer_re
     cookie_lock
     debug_trap
     extra_processing_csv
@@ -420,9 +428,12 @@ my @set_blank = qw(
     host_blacklist_re
     host_whitelist
     host_whitelist_re
-    nginx_resolver_flags
     no_cache_content_type
     no_cache_host
+    origin_blacklist
+    origin_blacklist_re
+    origin_whitelist
+    origin_whitelist_re
     param_blacklist
     param_blacklist_re
     param_whitelist

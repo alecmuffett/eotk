@@ -37,8 +37,7 @@ http {
   map_hash_bucket_size %NGINX_HASH_BUCKET_SIZE%;
 
   # dns for proxy (sigh)
-  # we should do `ipv6=off` here, but compat issues, hence NGINX_RESOLVER_FLAGS
-  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s %NGINX_RESOLVER_FLAGS%;
+  resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s;
   resolver_timeout %NGINX_TIMEOUT%s;
 
   # we walk a line between keeping it small and flooding resources...

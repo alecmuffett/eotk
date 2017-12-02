@@ -33,7 +33,6 @@
 # set nginx_block_size 16k
 # set nginx_hash_bucket_size 128
 # set nginx_resolver 8.8.8.8
-# set nginx_resolver_flags <unset>
 # set nginx_rlim 256
 # set nginx_syslog error
 # set nginx_template $here/templates.d/nginx.conf.txt
