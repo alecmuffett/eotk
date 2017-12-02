@@ -16,8 +16,8 @@ set nginx_cache_size 256m
 set nginx_tmpfile_size 64m
 
 # ARE YOU CONFIDENT IN THE COMPLETENESS OF YOUR 100% HTTPS SOLUTION?
-# let's assume not, for the moment; else you will see a lot of 307 redirects
-set force_https 0
+# let's assume so; if wrong you will see a lot of 307 redirects
+set force_https 1
 
 # wikipedia occasionally puts .../foo.wikipedia.org/... in paths;
 # these got onionified, and so need to be deonionified upon request
@@ -26,18 +26,14 @@ set paths_contain_onions 1
 # proof-of-concept: let's make this read-only:
 set suppress_methods_except_get 1
 
-# proof-of-concept: block logins by blocking access to login.*
-#set block_host_re ^login\\.
+# proof-of-concept: block access to some sites
+set block_host_re ^(login|donate)\\.
 
-# proof-of-concept: block logins by blocking access to login.*
-#set block_location_re ^/login/
+# proof-of-concept: block access to some paths
+set block_path_re /(User|Special):
 
-# proof-of-concept: block logins by "parameter,value"
-set block_param_re title,^Special:UserLogin$
-
-# blocking access to query parameter lists is more complex, but given
-# this is a read-only proof of concept with POST blocked, ignore that
-# for the moment. Wikipedia block edits from Tor anyway, so...
+# proof-of-concept: block access to some parameters
+set block_param_re title,^(User|Special):
 
 # nb: you might want to investigate "no_cache_content_type" or
 # "no_cache_host" in the instances that you want limitations upon
@@ -70,7 +66,5 @@ softmap %NEW_SOFT_ONION% wikisource.org m
 softmap %NEW_SOFT_ONION% wikiversity.org m
 softmap %NEW_SOFT_ONION% wikivoyage.org m
 softmap %NEW_SOFT_ONION% wiktionary.org m
-
 # more?
-
 # nb: by subdomain we mean FOO in en.FOO.wikipedia.org, etc.
