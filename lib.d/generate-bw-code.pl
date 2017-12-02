@@ -73,7 +73,7 @@ while (<DATA>) {
     ($how, $lc_what, $condition) = split(/\s+/, $_, 3);
 
     if ($how eq "bwlist") {
-        #&blackwhite("=", $lc_what, split(" ", $condition));
+        &blackwhite("=", $lc_what, split(" ", $condition));
         &blackwhite("~*", $lc_what, split(" ", $condition));
     }
     elsif ($how eq "block") {
