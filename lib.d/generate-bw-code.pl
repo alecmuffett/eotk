@@ -101,15 +101,12 @@ while (<DATA>) {
     }
 }
 
+##################################################################
+
 open(OUT, ">nginx-generated-blocks.conf") || die;
 print OUT $indent x 2, $begin;
-print OUT $indent x 2, "# polite blocks $warning\n";
-foreach $x (@polite) {
-    print OUT $indent x 2 if ($x !~ /^\s*$/);
-    print OUT $x;
-}
-print OUT "\n";
 
+# things we hate
 print OUT $indent x 2, "# blacklists $warning\n";
 foreach $x (@black) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
@@ -117,6 +114,15 @@ foreach $x (@black) {
 }
 print OUT "\n";
 
+# things we dislike
+print OUT $indent x 2, "# polite blocks $warning\n";
+foreach $x (@polite) {
+    print OUT $indent x 2 if ($x !~ /^\s*$/);
+    print OUT $x;
+}
+print OUT "\n";
+
+# things that should be somewhere else
 print OUT $indent x 2, "# redirects $warning\n";
 foreach $x (@redirect) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
@@ -124,25 +130,33 @@ foreach $x (@redirect) {
 }
 print OUT "\n";
 
+# possibly okay things
 print OUT $indent x 2, "# whitelists $warning\n";
 foreach $x (@white) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
     print OUT $x;
 }
 print OUT "\n";
+
 print OUT $indent x 2, $end;
 close(OUT);
 
+##################################################################
+
 open(OUT, ">nginx-generated-checks.conf") || die;
 print OUT $indent x 3, $begin;
+
 print OUT $indent x 3, "# whitelist checks $warning\n";
 foreach $x (@tail) {
     print OUT $indent x 3 if ($x !~ /^\s*$/);
     print OUT $x;
 }
 print OUT "\n";
+
 print OUT $indent x 3, $end;
 close(OUT);
+
+##################################################################
 
 # NB: AVOID `location` DIRECTIVE IN THE CONDITIONALS, BECAUSE IT
 # TRIGGERS A HANDLER...
