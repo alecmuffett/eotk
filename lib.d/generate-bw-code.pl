@@ -39,7 +39,7 @@ sub blackwhite {
     push(@black, "$condition { %NGINX_ACTION_ABORT%; }\n");
     push(@black, "%%ENDCSV\n");
     push(@black, "%%ELSE\n");
-    push(@black, "# no $lc_bl $warning\n");
+    push(@black, "# no $lc_bl\n");
     push(@black, "%%ENDIF\n");
 
     push(@white, "%%IF %$uc_wl%\n");
@@ -49,14 +49,14 @@ sub blackwhite {
     push(@white, "$condition { set $flag 0; }\n");
     push(@white, "%%ENDCSV\n");
     push(@white, "%%ELSE\n");
-    push(@white, "# no $lc_wl $warning\n");
+    push(@white, "# no $lc_wl\n");
     push(@white, "%%ENDIF\n");
 
     push(@tail, "%%IF %$uc_wl%\n");
     push(@tail, "# check success of $lc_wl $warning\n");
     push(@tail, "if ( $flag ) { %NGINX_ACTION_ABORT%; }\n");
     push(@tail, "%%ELSE\n");
-    push(@tail, "# no check for success of $lc_wl $warning\n");
+    push(@tail, "# no $lc_wl\n");
     push(@tail, "%%ENDIF\n");
 }
 
@@ -81,7 +81,7 @@ while (<DATA>) {
         push(@polite, "$condition { return 403 \"%BLOCK_ERR%\"; }\n");
         push(@polite, "%%ENDCSV\n");
         push(@polite, "%%ELSE\n");
-        push(@polite, "# no polite block for $lc_what $warning\n");
+        push(@polite, "# no $lc_what\n");
         push(@polite, "%%ENDIF\n");
     }
     elsif ($how eq "redirect") {
@@ -92,7 +92,7 @@ while (<DATA>) {
         push(@redirect, "$condition { return %3% %2%\$request_uri; }\n");
         push(@redirect, "%%ENDCSV\n");
         push(@redirect, "%%ELSE\n");
-        push(@redirect, "# no redirect $lc_what $warning\n");
+        push(@redirect, "# no $lc_what\n");
         push(@redirect, "%%ENDIF\n");
     }
     else {
