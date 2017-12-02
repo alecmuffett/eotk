@@ -430,6 +430,11 @@ sub DoProject {
 &SetEnv("host_whitelist_re", "");
 &SetEnv("host_blacklist_re", "");
 
+&SetEnv("block_param", "");
+&SetEnv("block_param_re", "");
+&SetEnv("param_whitelist_re", "");
+&SetEnv("param_blacklist_re", "");
+
 &SetEnv("no_cache_content_type", "");
 &SetEnv("no_cache_host", "");
 

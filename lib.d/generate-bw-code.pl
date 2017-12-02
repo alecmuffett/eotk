@@ -139,6 +139,9 @@ block block_path_re if ( $uri ~* "%0%" )
 # legacy
 block block_location location %0%
 block block_location_re location ~* "%0%"
+# query parameters
+block block_param if ( $arg_%1% = "%2%" )
+block block_param_re if ( $arg_%1% ~* "%2%" )
 
 # redirects
 redirect redirect_host_csv if ( $host ~* "%1%" )
@@ -152,3 +155,4 @@ bwlist user_agent if ( $http_user_agent ~* "%0%" )
 bwlist referer if ( $http_referer ~* "%0%" )
 bwlist host if ( $http_host ~* "%0%" )
 bwlist path if ( $uri ~* "%0%" )
+bwlist param if ( $arg_%1% ~* "%2%" )
