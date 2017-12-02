@@ -41,7 +41,6 @@ sub blackwhite {
     push(@black, "%%ELSE\n");
     push(@black, "# no $lc_bl $warning\n");
     push(@black, "%%ENDIF\n");
-    push(@black, "\n");
 
     push(@white, "%%IF %$uc_wl%\n");
     push(@white, "# check $lc_wl $warning\n");
@@ -52,7 +51,6 @@ sub blackwhite {
     push(@white, "%%ELSE\n");
     push(@white, "# no $lc_wl $warning\n");
     push(@white, "%%ENDIF\n");
-    push(@white, "\n");
 
     push(@tail, "%%IF %$uc_wl%\n");
     push(@tail, "# check success of $lc_wl $warning\n");
@@ -60,7 +58,6 @@ sub blackwhite {
     push(@tail, "%%ELSE\n");
     push(@tail, "# no check for success of $lc_wl $warning\n");
     push(@tail, "%%ENDIF\n");
-    push(@tail, "\n");
 }
 
 
@@ -86,7 +83,6 @@ while (<DATA>) {
         push(@polite, "%%ELSE\n");
         push(@polite, "# no polite block for $lc_what $warning\n");
         push(@polite, "%%ENDIF\n");
-        push(@polite, "\n");
     }
     elsif ($how eq "redirect") {
         my $uc_what = uc($lc_what);
@@ -98,7 +94,6 @@ while (<DATA>) {
         push(@redirect, "%%ELSE\n");
         push(@redirect, "# no redirect $lc_what $warning\n");
         push(@redirect, "%%ENDIF\n");
-        push(@redirect, "\n");
     }
     else {
         die "bad config line at line $.: $_\n";
@@ -107,28 +102,28 @@ while (<DATA>) {
 
 open(OUT, ">nginx-generated-blocks.conf") || die;
 print OUT $indent x 2, $begin;
-print OUT $indent x 2, "# polite blocks $warning\n\n";
+print OUT $indent x 2, "# polite blocks $warning\n";
 foreach $x (@polite) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
     print OUT $x;
 }
 print OUT "\n";
 
-print OUT $indent x 2, "# blacklists $warning\n\n";
+print OUT $indent x 2, "# blacklists $warning\n";
 foreach $x (@black) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
     print OUT $x;
 }
 print OUT "\n";
 
-print OUT $indent x 2, "# redirects $warning\n\n";
+print OUT $indent x 2, "# redirects $warning\n";
 foreach $x (@redirect) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
     print OUT $x;
 }
 print OUT "\n";
 
-print OUT $indent x 2, "# whitelists $warning\n\n";
+print OUT $indent x 2, "# whitelists $warning\n";
 foreach $x (@white) {
     print OUT $indent x 2 if ($x !~ /^\s*$/);
     print OUT $x;
@@ -139,7 +134,7 @@ close(OUT);
 
 open(OUT, ">nginx-generated-checks.conf") || die;
 print OUT $indent x 3, $begin;
-print OUT $indent x 3, "# whitelist checks $warning\n\n";
+print OUT $indent x 3, "# whitelist checks $warning\n";
 foreach $x (@tail) {
     print OUT $indent x 3 if ($x !~ /^\s*$/);
     print OUT $x;

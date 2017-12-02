@@ -566,7 +566,6 @@ http {
     # no cookie_lock cookie setting
     %%ENDIF
 
-    # include generated blocks
     %%INCLUDE templates.d/nginx-generated-blocks.conf
 
     %%IF %NGINX_HELLO_ONION%
@@ -641,7 +640,6 @@ http {
 
     # for traffic
     location / {
-      # include generated whitelist checks
       %%INCLUDE templates.d/nginx-generated-checks.conf
 
       %%IF %COOKIE_LOCK%
