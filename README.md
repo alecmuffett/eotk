@@ -1,7 +1,6 @@
 # The Enterprise Onion Toolkit
-## eotk (c) 2017 Alec Muffett
-
 ![banner image](docs.d/hello-onion-text.png)
+## eotk (c) 2017 Alec Muffett
 
 ## Primary Supported Platforms
 
