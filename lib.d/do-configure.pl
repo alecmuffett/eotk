@@ -18,6 +18,44 @@ chdir($here) or die "chdir: $here: $!\n";
 
 ##################################################################
 
+sub JoinLines {
+    my @input = @_;
+    my @output = ();
+    my $append_next = 0;
+    foreach my $line (@input) {
+        # are we left in a cached state?
+        if ($append_next) {
+            my $prev = pop(@output);
+            $prev =~ s!\s+$!!;
+            $line =~ s!^\s+!!;
+            $line = $prev . " " . $line;
+            $append_next = 0;
+            # fallthru
+        }
+
+        # no trailing slashes -> push
+        if ($line !~ m!(\\+)$!o) {
+            $append_next = 0;
+            push(@output, $line);
+            next;
+        }
+
+        # trailing \\ or \\\\ ... -> push
+        if ((length($1) % 2) == 0) {
+            $append_next = 0;
+            push(@output, $line);
+            next;
+        }
+
+        # remove trailing \, mark for append, and push
+        die "failure to remove trailing slash" unless ($line =~ s!\\$!!o);
+        push(@output, $line);
+        $append_next = 1;
+    }
+    die "error: hanging backslash at end of input\n" if ($append_next);
+    return @output;
+}
+
 sub SetEnv {
     my ($var, $val, $why) = @_;
     die "bad varname: $var\n" if ($var !~ /^[A-Za-z_]\w+/);
@@ -483,8 +521,11 @@ else {
 die "$config: no such file / missing configuration: $config\n" unless (-f $config);
 
 open(CONFIG, $config) or die "$config: $!\n";
-chomp(@config = grep(!/^\s*(#.*)?$/, <CONFIG>));
+@config = <CONFIG>;
 close(CONFIG);
+@config = &JoinLines(@config);
+@config = grep(!/^\s*(#.*)?$/, @config);
+chomp(@config);
 
 # run it
 
