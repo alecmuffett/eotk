@@ -88,7 +88,18 @@ while (<DATA>) {
     elsif ($how eq "redirect") {
         my $uc_what = uc($lc_what);
         push(@redirect, "%%IF %$uc_what%\n");
-        push(@redirect, "# redirect $lc_what: 1=regexp,2=dest,3=code $warning\n");
+        push(@redirect, "# redirect $lc_what: 1=regexp,2=code,3=dest $warning\n");
+        push(@redirect, "%%CSV %$uc_what%\n");
+        push(@redirect, "$condition { return %2% %3%\$request_uri; }\n");
+        push(@redirect, "%%ENDCSV\n");
+        push(@redirect, "%%ELSE\n");
+        push(@redirect, "# no $lc_what\n");
+        push(@redirect, "%%ENDIF\n");
+    }
+    elsif ($how eq "legacy-redirect") {
+        my $uc_what = uc($lc_what);
+        push(@redirect, "%%IF %$uc_what%\n");
+        push(@redirect, "# legacy-redirect $lc_what: 1=regexp,2=dest,3=code $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
         push(@redirect, "$condition { return %3% %2%\$request_uri; }\n");
         push(@redirect, "%%ENDCSV\n");
@@ -180,10 +191,12 @@ block block_param if ( $arg_%1% = "%2%" )
 block block_param_re if ( $arg_%1% ~* "%2%" )
 
 # redirects
-redirect redirect_host_csv if ( $host ~* "%1%" )
-redirect redirect_path_csv if ( $uri ~* "%1%" )
-## legacy
-redirect redirect_location_csv location ~* "%1%"
+redirect redirect_host if ( $host ~* "%1%" )
+redirect redirect_path if ( $uri ~* "%1%" )
+## legacy - different/silly argument order
+legacy-redirect redirect_host_csv if ( $host ~* "%1%" )
+legacy-redirect redirect_path_csv if ( $uri ~* "%1%" )
+legacy-redirect redirect_location_csv location ~* "%1%"
 
 # blacklists and whitelists: issue a 500
 # nb: second argument gets interpolated into variablenames
