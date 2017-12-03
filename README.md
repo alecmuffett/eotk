@@ -5,6 +5,7 @@
 
 * OSX Sierra with Homebrew, Latest Updates
 * Raspbian Jessie/Jessie-Lite, Latest Updates
+* Raspbian Stretch/Stretch-Lite, Latest Updates
 * Ubuntu 16.04+, Latest Updates
 
 ## Maillist / Group
