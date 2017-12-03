@@ -1,8 +1,6 @@
 # The Enterprise Onion Toolkit
 ![banner image](docs.d/hello-onion-text.png)
 
-*eotk (c) 2017 Alec Muffett*
-
 ## Primary Supported Platforms
 
 * OSX Sierra with Homebrew, Latest Updates
@@ -507,3 +505,7 @@ the rest of the FB-over-Tor team.  Hugs.
 ### softmap 4
 
 ![softmap 4](docs.d/softmap-4.png)
+
+----
+*eotk (c) 2017 Alec Muffett*
+
