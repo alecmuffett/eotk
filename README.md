@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ## eotk (c) 2017 Alec Muffett
 
-> "Does for Onions what LetsEncrypt does for SSL..." - *anon*
+![banner image](docs.d/hello-onion-text.png)
 
 ## Primary Supported Platforms
 
