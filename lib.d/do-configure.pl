@@ -459,6 +459,7 @@ my @set_blank = qw(
     block_referer_re
     cookie_lock
     debug_trap
+    deprecated_redirect
     extra_processing_csv
     foreignmap_csv
     hardcoded_endpoint_csv
