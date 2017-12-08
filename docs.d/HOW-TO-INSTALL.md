@@ -27,17 +27,19 @@ currently installed:
 * `cd eotk`
 * `./opt.d/install-everything-on-ubuntu-16.04.sh`
 
-## Raspbian Jessie / Jessie-Lite (manual builds)
+## Raspbian (manual builds)
 
 Serially, this takes about 1h45m on a PiZero, or about 30m on a Pi3b.
 These figures should improve when recent Tor updates sediment into Raspbian.
 
+Scripts are supplied for `VERSION` = jessie, stretch
+
 * `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/build-nginx-on-raspbian.sh`
-* `./opt.d/build-tor-on-raspbian.sh`
-* `./opt.d/install-onionbalance-on-raspbian.sh`
+* `./opt.d/build-nginx-on-raspbian-VERSION.sh`
+* `./opt.d/build-tor-on-raspbian-VERSION.sh`
+* `./opt.d/install-onionbalance-on-raspbian-VERSION.sh`
 
 # Piecemeal Installation Notes
 
