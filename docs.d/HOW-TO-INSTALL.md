@@ -8,6 +8,7 @@ EOTK requires recent `nginx` with the following modules/features enabled:
 * `ngx_http_substitutions_filter_module`
 * `http_sub`
 * `http_ssl`
+* Lua and/or LuaJIT
 
 # Fresh Installations (by platform)
 
