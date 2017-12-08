@@ -694,7 +694,7 @@ http {
 	  %%ENDIF
 	  "Link"
 	}
-	local k
+	local i, k
 	for i, k in ipairs(rewrites) do
 	  local v = ngx.header[k]
 	  if v then
