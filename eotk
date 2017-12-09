@@ -525,18 +525,18 @@ case "$cmd" in
         Print gathering mappings for OnionBalance for projects: $projects
         mappings=__om$$.tmp
         $self maps $projects |
-            awk '/^::::/{next;} $2=="softmap"{print;}' >$mappings
+            awk '/^::::/{next;} $4=="softmap"{print;}' >$mappings
 
         # check the mappings
         for p in $projects ; do
-            n=`awk '$1=="'"$p"'"'<$mappings  | wc -l`
+            n=`awk '$3=="'"$p"'"'<$mappings  | wc -l`
             if [ $n = 0 ] ; then
                 Warn no mappings yet for project $p: does it exist / is it started / is it not a softmap project "?"
                 rm $mappings
                 exit 1
             else
-                m=`awk '$1=="'"$p"'"{print $3}'<$mappings | sort -u | wc -l`
-                w=`awk '$1=="'"$p"'"{print $6}'<$mappings | sort -u | wc -l`
+                m=`awk '$3=="'"$p"'"{print $1}'<$mappings | sort -u | wc -l`
+                w=`awk '$3=="'"$p"'"{print $6}'<$mappings | sort -u | wc -l`
                 Print project $p contains $n mappings
                 Print project $p uses $m master onions
                 Print project $p uses $w worker onions
@@ -650,7 +650,7 @@ case "$cmd" in
             exit 1
         fi
         $self maps "$@" |
-            awk '/^::::/{next;} $2=="softmap"{print $3, $4}' |
+            awk '/^::::/{next;} $4=="softmap"{print $1, $2}' |
             sort -k 2 -u
         ;;
 

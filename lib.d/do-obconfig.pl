@@ -8,10 +8,10 @@ my %dnsmap = (); # $dnsmap{$master_onion} = $dns_domain
 # input
 
 while (<>) {
-    my ($project,
-	$softmap,
-	$master_onion,
+    my ($master_onion,
 	$dns_domain,
+        $project,
+	$softmap,
 	$via,
 	$worker_onion) = split(" ");
 
