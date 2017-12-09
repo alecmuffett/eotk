@@ -7,12 +7,12 @@ for hfile in `echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/hostname` ; do
     test -f "$hfile" || continue
     onion=`cat $hfile`
     %%BEGIN
-    echo %PROJECT% softmap %ONION_ADDRESS% %DNS_DOMAIN% via $onion
+    echo %ONION_ADDRESS% %DNS_DOMAIN% %PROJECT% softmap via $onion
     %%END
 done
 %%ELSE
 %%BEGIN
-echo %PROJECT% hardmap %ONION_ADDRESS% %DNS_DOMAIN%
+echo %ONION_ADDRESS% %DNS_DOMAIN% %PROJECT% hardmap
 %%END
 %%ENDIF
 
