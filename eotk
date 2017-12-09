@@ -654,6 +654,10 @@ case "$cmd" in
             sort -k 2 -u
         ;;
 
+    ob-watch|obwatch)
+        watch -n 5 $self ob-status
+        ;;
+
     ## FREEZE/BACKUP
 
     mirror|pull)
