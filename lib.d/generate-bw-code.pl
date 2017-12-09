@@ -169,12 +169,16 @@ close(OUT);
 
 ##################################################################
 
-# NB: AVOID `location` DIRECTIVE IN THE CONDITIONALS, BECAUSE IT
-# TRIGGERS A HANDLER...
+# NOTES:
+# 1) DEPRECATE `location` BECAUSE IT TRIGGERS A PAGE HANDLER.
+# 2) THE ORDER OF ITEMS BELOW IS MEANINGFUL, DO NOT SORT THEM.
+
 __END__;
 
 # blocks: issue a 403
 block suppress_tor2web if ( $http_x_tor2web )
+block block_user_agent if ( $http_user_agent = "%0%" )
+block block_user_agent_re if ( $http_user_agent ~* "%0%" )
 block block_referer if ( $http_referer = "%0%" )
 block block_referer_re if ( $http_referer ~* "%0%" )
 block block_origin if ( $http_origin = "%0%" )

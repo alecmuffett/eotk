@@ -457,6 +457,8 @@ my @set_blank = qw(
     block_path_re
     block_referer
     block_referer_re
+    block_user_agent
+    block_user_agent_re
     cookie_lock
     debug_trap
     deprecated_redirect
