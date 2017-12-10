@@ -504,6 +504,17 @@ http {
     "" "";
   }
 
+  # deonionify the request_uri for forwarding
+  set_by_lua_block $request_uri2 {
+    local old = ngx.var.request_uri
+    -- onion_to_dns is potentially expensive at scale, so do a cheap test
+    local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+    if not m then -- nothing to attempt to rewrite, quick return
+      return old
+    end
+    return onion_to_dns(old)
+  }
+
   %%BEGIN
   %%IF %FORCE_HTTPS%
   # FORCE_HTTPS is in use; set up separate server for port 80 & force redirects
@@ -535,7 +546,8 @@ http {
     # tell the client to try again as HTTPS without ever leaving the onion
     # use 307 / temporary redirect because your URIs may change in future
     # use $host (not $server) to copy-over subdomains, etc, transparently
-    return 307 https://$host$request_uri;
+    # SEND BACK ORIGINAL PARAMS, GET THEM ON ACTUAL FORWARD TO THE PROXY.
+    return 307 https://$host$request_uri; # NOT $request_uri2
   }
   %%ELSE
   # FORCE_HTTPS is not in use, cleartext data may traverse the internet
@@ -661,16 +673,7 @@ http {
       # no cookie-lock checks
       %%ENDIF
 
-      set_by_lua_block $request_uri2 {
-        local old = ngx.var.request_uri
-        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
-        if not m then -- nothing to attempt to rewrite, quick return
-          return old
-        end
-        return onion_to_dns(old)
-      }
-
-      # note $scheme and de-onionified uri (both path and args)
+      # note $scheme and the deonionified uri (both path and args)
       set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
       proxy_pass $new_url;
       proxy_http_version 1.1;
