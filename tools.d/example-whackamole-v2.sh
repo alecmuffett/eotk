@@ -9,6 +9,7 @@ www.wikipedia.org
 en.wikipedia.org
 en.m.wikipedia.org
 
+commons.wikimedia.org
 login.wikimedia.org
 meta.wikimedia.org
 upload.wikimedia.org
