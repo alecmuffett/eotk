@@ -292,7 +292,7 @@ http {
 
     onion_to_dns = function (i)
       if i == nil or i == "" then
-	return i
+        return i
       end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
@@ -311,6 +311,15 @@ http {
     end
 
     dns_to_onion = function (i)
+      if (type(i) == "table") then
+        local j, k
+        local result = {}
+        for j, k in ipairs(i) do
+          table.insert(result, dns_to_onion(k))
+        end
+        return result
+      end
+
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
@@ -358,8 +367,8 @@ http {
     if v == "%1%" then
     local m, err = ngx.re.match(ngx.var.uri, "%2%", "io")
       if m then
-	ngx.ctx.needs_extra_processing = 1
-	ngx.header.content_length = nil
+        ngx.ctx.needs_extra_processing = 1
+        ngx.header.content_length = nil
       end
     end
     %%ENDCSV
@@ -430,15 +439,15 @@ http {
       ngx.log(ngx.ERR, "gmatch error: ", err)
     else
       while true do
-	local m, err = iterator()
-	if err then
-	  ngx.log(ngx.ERR, "iterator error: ", err)
-	  break
-	end
-	if not m then
-	  break
-	end
-	slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
+        local m, err = iterator()
+        if err then
+          ngx.log(ngx.ERR, "iterator error: ", err)
+          break
+        end
+        if not m then
+          break
+        end
+        slog(string.format("TRAP <<%s>> CONTEXT <<%s>> TYPE <<%s>> URI %s", m[1], m[0], ct, uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
@@ -608,18 +617,18 @@ http {
     # document the issue with that workaround
     if ( $uri ~ "\\.onion" ) { # cheapest, static, case-sensitive test, here...
       set_by_lua_block $deonionified_uri {
-	local old_uri = ngx.var.uri
-	-- more expensive case-sensitive test, here...
-	local m, err = ngx.re.match(old_uri, "\\b[a-z2-7]{16}\\.onion\\b", "o")
-	if not m then
-	  return "" -- nothing to attempt to rewrite, quick return
-	end
-	-- attempt rewrites (function is case-insensitive, hence...)
-	local new_uri = onion_to_dns(old_uri)
-	if new_uri == old_uri then -- nothing changed, quick return
-	  return ""
-	end
-	return new_uri
+        local old_uri = ngx.var.uri
+        -- more expensive case-sensitive test, here...
+        local m, err = ngx.re.match(old_uri, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        if not m then
+          return "" -- nothing to attempt to rewrite, quick return
+        end
+        -- attempt rewrites (function is case-insensitive, hence...)
+        local new_uri = onion_to_dns(old_uri)
+        if new_uri == old_uri then -- nothing changed, quick return
+          return ""
+        end
+        return new_uri
       }
     }
     if ( $deonionified_uri ) {
@@ -652,7 +661,18 @@ http {
       # no cookie-lock checks
       %%ENDIF
 
-      proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%"; # note $scheme
+      set_by_lua_block $request_uri2 {
+        local old = ngx.var.request_uri
+        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        if not m then -- nothing to attempt to rewrite, quick return
+          return old
+        end
+        return onion_to_dns(old)
+      }
+
+      # note $scheme and de-onionified uri (both path and args)
+      set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
+      proxy_pass $new_url;
       proxy_http_version 1.1;
 
       # a note on proxy_set_header, add_header, similar methods, etc;
@@ -678,7 +698,7 @@ http {
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
       # suppress non-GET methods (e.g.: POST)
       limit_except GET {
-	deny all;
+        deny all;
       }
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
@@ -686,21 +706,21 @@ http {
 
       # fix multiple response headers using lua
       header_filter_by_lua_block {
-	local rewrites = {
-	  %%IF ! %DEPRECATED_REDIRECT%
-	  "Location", -- we are not using proxy_redirect (which is deprecated)
-	  %%ELSE
-	  -- we are using deprecated proxy_redirect, so: no Location here
-	  %%ENDIF
-	  "Link"
-	}
-	local i, k
-	for i, k in ipairs(rewrites) do
-	  local v = ngx.header[k]
-	  if v then
-	    ngx.header[k] = dns_to_onion(v)
-	  end
-	end
+        local rewrites = {
+          %%IF ! %DEPRECATED_REDIRECT%
+          "Location", -- we are not using proxy_redirect (which is deprecated)
+          %%ELSE
+          -- we are using deprecated proxy_redirect, so: no Location here
+          %%ENDIF
+          "Link"
+        }
+        local i, k
+        for i, k in ipairs(rewrites) do
+          local v = ngx.header[k]
+          if v then
+            ngx.header[k] = dns_to_onion(v)
+          end
+        end
       }
     }
   }
