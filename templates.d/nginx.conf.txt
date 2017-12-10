@@ -242,26 +242,6 @@ http {
   %%ENDIF
   #==================================================================
 
-  # fix the cookies
-  %%BEGIN
-  proxy_cookie_domain
-  ~^(.*?)\\b%DNS_DOMAIN_RE2%$
-  $1%ONION_ADDRESS%
-  ;
-  %%END
-
-  %%IF %DEPRECATED_REDIRECT%
-  # fix the header-redirects
-  %%BEGIN
-  proxy_redirect
-  ~*^(.*?)\\b%DNS_DOMAIN_RE2%\\b(.*)$
-  $1%ONION_ADDRESS%$2
-  ;
-  %%END
-  %%ELSE
-  # we are not using proxy_redirect (which is deprecated)
-  %%ENDIF
-
   # o_to_d_lookup -> if cannot remap, return input.  note: old versions
   # of lua-plugin cannot cope with code like o_to_d_mappings[o[1]]
   # because of `long bracket syntax`; the `[o[` freaks it out.
@@ -294,6 +274,14 @@ http {
       if i == nil or i == "" then
         return i
       end
+      if (type(i) == "table") then
+        local j, k, result
+        result = {}
+        for j, k in ipairs(i) do
+          table.insert(result, onion_to_dns(k))
+        end
+        return result
+      end
       local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
       return o
     end
@@ -311,15 +299,17 @@ http {
     end
 
     dns_to_onion = function (i)
+      if i == nil or i == "" or i == "*" then
+        return i
+      end
       if (type(i) == "table") then
-        local j, k
-        local result = {}
+        local j, k, result
+        result = {}
         for j, k in ipairs(i) do
           table.insert(result, dns_to_onion(k))
         end
         return result
       end
-
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
@@ -335,6 +325,7 @@ http {
 
     dnsre_to_onionre = function (i)
       local num, errs
+      -- TODO: BRING THIS INTO LINE WITH dns_to_onion --
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RERE2%\\b", "%ONION_ADDRESS_RE2%", "io")
       %%END
@@ -379,30 +370,26 @@ http {
     %%ENDIF
     -- ==================================================================
 
-    -- rewrite cors/acao
-    k = "Access-Control-Allow-Origin"
-    v = ngx.header[k]
-    if v and v ~= "*" then
-      ngx.header[k] = dns_to_onion(v)
-    end
+    local origin_rewrites = {
+      "Access-Control-Allow-Origin",
+      %%IF %SUPPRESS_HEADER_CSP%
+      -- CSP headers are suppressed via SUPPRESS_HEADER_CSP
+      %%ELSE
+      "Content-Security-Policy",
+      "Content-Security-Policy-Report-Only",
+      %%ENDIF
+      "Link",
+      "Location",
+      "Set-Cookie"
+    }
 
-    %%IF %SUPPRESS_HEADER_CSP%
-    -- csp suppressed, no rewrite needed
-    %%ELSE
-    -- rewrite csp
-    k = "Content-Security-Policy"
-    v = ngx.header[k]
-    if v then
-      ngx.header[k] = dns_to_onion(v)
+    local i, k
+    for i, k in ipairs(origin_rewrites) do
+      local v = ngx.header[k]
+      if v then
+        ngx.header[k] = dns_to_onion(v)
+      end
     end
-
-    -- rewrite csp (report-only)
-    k = "Content-Security-Policy-Report-Only"
-    v = ngx.header[k]
-    if v then
-      ngx.header[k] = dns_to_onion(v)
-    end
-    %%ENDIF
   }
 
   # filter the response body en-route back to the user
@@ -648,6 +635,10 @@ http {
       set_by_lua_block $origin2 { return onion_to_dns(ngx.var.http_origin) }
       proxy_set_header Origin $origin2;
 
+      # rewrite request cookies
+      set_by_lua_block $cookie2 { return onion_to_dns(ngx.var.http_cookie) }
+      proxy_set_header Cookie $cookie2;
+
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
       # suppress non-GET methods (e.g.: POST)
       limit_except GET {
@@ -656,25 +647,6 @@ http {
       %%ELSE
       # non-GET methods (e.g.: POST) are not suppressed
       %%ENDIF
-
-      # fix multiple response headers using lua
-      header_filter_by_lua_block {
-        local rewrites = {
-          %%IF ! %DEPRECATED_REDIRECT%
-          "Location", -- we are not using proxy_redirect (which is deprecated)
-          %%ELSE
-          -- we are using deprecated proxy_redirect, so: no Location here
-          %%ENDIF
-          "Link"
-        }
-        local i, k
-        for i, k in ipairs(rewrites) do
-          local v = ngx.header[k]
-          if v then
-            ngx.header[k] = dns_to_onion(v)
-          end
-        end
-      }
     }
   }
 

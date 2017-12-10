@@ -29,7 +29,6 @@ my %known =
      'CERT_PREFIX' => 1,
      'COOKIE_LOCK' => 1,
      'DEBUG_TRAP' => 1,
-     'DEPRECATED_REDIRECT' => 1,
      'DNS_DOMAIN' => 1, # site being mapped
      'DNS_DOMAIN_RE' => 1, # ...with dots escaped
      'DNS_DOMAIN_RE2' => 1, # ...with dots double-escaped
