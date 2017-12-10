@@ -36,6 +36,7 @@ my %known =
      'DNS_DOMAIN_RERE2' => 1, # ...with dots double-escaped
      'EOTK_HOME' => 1,
      'EXTRA_PROCESSING_CSV' => 1,
+     'EXTRA_SUBS_FILTER_TYPES' => 1,
      'FORCE_HTTPS' => 1,
      'FOREIGNMAP_CSV' => 1,
      'HARDCODED_ENDPOINT_CSV' => 1,

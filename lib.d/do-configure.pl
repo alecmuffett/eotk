@@ -461,6 +461,7 @@ my @set_blank = qw(
     cookie_lock
     debug_trap
     extra_processing_csv
+    extra_subs_filter_types
     foreignmap_csv
     hardcoded_endpoint_csv
     host_blacklist

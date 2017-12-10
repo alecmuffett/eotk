@@ -115,6 +115,12 @@ http {
   text/css
   text/javascript
   text/xml
+  %%IF %EXTRA_SUBS_FILTER_TYPES%
+  # extra_subs_filter_types
+  %EXTRA_SUBS_FILTER_TYPES%
+  %%ELSE
+  # no extra_subs_filter_types
+  %%ENDIF
   ;
 
   #==================================================================
