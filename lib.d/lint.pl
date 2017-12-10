@@ -78,7 +78,6 @@ my %known =
      'PARAM_BLACKLIST_RE' => 1,
      'PARAM_WHITELIST' => 1,
      'PARAM_WHITELIST_RE' => 1,
-     'PATHS_CONTAIN_ONIONS' => 1,
      'PATH_BLACKLIST' => 1,
      'PATH_BLACKLIST_RE' => 1,
      'PATH_WHITELIST' => 1,

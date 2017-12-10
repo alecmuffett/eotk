@@ -26,10 +26,6 @@ set nginx_tmpfile_size 64m
 # let's assume so; if wrong you will see a lot of 307 redirects
 set force_https 1
 
-# wikipedia occasionally puts .../foo.wikipedia.org/... in paths;
-# these got onionified, and so need to be deonionified upon request
-set paths_contain_onions 1
-
 # proof-of-concept: let's make this read-only:
 set suppress_methods_except_get 1
 

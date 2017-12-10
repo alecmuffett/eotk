@@ -422,7 +422,6 @@ sub DoProject {
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
-&SetEnv("paths_contain_onions", 0);
 &SetEnv("preserve_cookie", "~-=~=-~");
 &SetEnv("preserve_preamble", "[>@\\\\s]");
 &SetEnv("project", "default");
