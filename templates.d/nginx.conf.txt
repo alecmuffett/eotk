@@ -504,17 +504,6 @@ http {
     "" "";
   }
 
-  # deonionify the request_uri for forwarding
-  set_by_lua_block $request_uri2 {
-    local old = ngx.var.request_uri
-    -- onion_to_dns is potentially expensive at scale, so do a cheap test
-    local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
-    if not m then -- nothing to attempt to rewrite, quick return
-      return old
-    end
-    return onion_to_dns(old)
-  }
-
   %%BEGIN
   %%IF %FORCE_HTTPS%
   # FORCE_HTTPS is in use; set up separate server for port 80 & force redirects
@@ -546,8 +535,8 @@ http {
     # tell the client to try again as HTTPS without ever leaving the onion
     # use 307 / temporary redirect because your URIs may change in future
     # use $host (not $server) to copy-over subdomains, etc, transparently
-    # SEND BACK ORIGINAL PARAMS, GET THEM ON ACTUAL FORWARD TO THE PROXY.
-    return 307 https://$host$request_uri; # NOT $request_uri2
+    # SEND BACK ORIGINAL PARAMS, FIX THEM ONLY UPON FORWARD TO THE PROXY.
+    return 307 https://$host$request_uri;
   }
   %%ELSE
   # FORCE_HTTPS is not in use, cleartext data may traverse the internet
@@ -612,56 +601,6 @@ http {
     # no hardcoded_endpoints
     %%ENDIF
 
-    %%IF %PATHS_CONTAIN_ONIONS%
-    #==================================================================
-    %%IF %HARD_MODE%
-    # ---- BEGIN HARD MODE CODE ----
-    # URI paths may contain onionified hostnames which need rewriting
-    # before passing upwards to the origin; this is a consequence of
-    # "hard-mode" brute-force rewriting, and needs gentle unpicking:
-    set $deonionified_uri '';
-    # There is an irreducible problem: what if the URI origin path
-    # *literally* includes the name of one of our onions? Well, it
-    # will be re-written to the corresponding DNS domain name. This is
-    # a small price to pay for the benefits of "hard-mode" rewrites on
-    # complex websites, but we can reduce the pain a tiny bit by
-    # making the in-path comparisons case-sensitive to lowercase, and
-    # document the issue with that workaround
-    if ( $uri ~ "\\.onion" ) { # cheapest, static, case-sensitive test, here...
-      set_by_lua_block $deonionified_uri {
-        local old_uri = ngx.var.uri
-        -- more expensive case-sensitive test, here...
-        local m, err = ngx.re.match(old_uri, "\\b[a-z2-7]{16}\\.onion\\b", "o")
-        if not m then
-          return "" -- nothing to attempt to rewrite, quick return
-        end
-        -- attempt rewrites (function is case-insensitive, hence...)
-        local new_uri = onion_to_dns(old_uri)
-        if new_uri == old_uri then -- nothing changed, quick return
-          return ""
-        end
-        return new_uri
-      }
-    }
-    if ( $deonionified_uri ) {
-      set $new_uri $deonionified_uri; # swap
-      set $deonionified_uri ''; # prevent revisiting
-      rewrite ^ $new_uri last;
-    }
-    # ---- END HARD MODE CODE ----
-    #------------------------------------------------------------------
-    %%ELSE
-    # ---- BEGIN CLASSIC MODE CODE ----
-    # NOTE: PATHS_CONTAIN_ONIONS IS SET BUT SHOULD NOT APPLY TO THIS
-    # CONFIGURATION; IF YOU FIND CIRCUMSTANCE WHERE ONIONIFICATION OF
-    # PATHS IS AN ISSUE FOR THIS CONFIGURATION, PLEASE LOG A BUG.
-    # ---- END CLASSIC MODE CODE ----
-    %%ENDIF
-    #==================================================================
-    %%ELSE
-    # paths are assumed not to contain onionified hostnames
-    %%ENDIF
-
     # for traffic
     location / {
       %%INCLUDE templates.d/nginx-generated-checks.conf
@@ -673,7 +612,18 @@ http {
       # no cookie-lock checks
       %%ENDIF
 
-      # note $scheme and the deonionified uri (both path and args)
+      # deonionify the request_uri for forwarding (both path and args)
+      set_by_lua_block $request_uri2 {
+        local old = ngx.var.request_uri
+        -- onion_to_dns is potentially expensive at scale, so do a cheap test
+        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        if not m then -- nothing to attempt to rewrite, quick return
+          return old
+        end
+        return onion_to_dns(old)
+      }
+
+      # note use of both $scheme and the deonionified uri (both path and args)
       set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
       proxy_pass $new_url;
       proxy_http_version 1.1;
