@@ -40,6 +40,9 @@ init=eotk-init.sh
 # log retention
 log_retain=8
 
+# hostname for log purposes
+hostname=`uname -n`
+
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$EOTK_HOME:$PATH
 
@@ -187,7 +190,11 @@ LogRotate() {
     if $do_ob ; then
         $self ob-restart -a
     fi
-    bzip2 -fv $to_compress
+    if [ "x$to_compress" != "x" ] ; then
+        Print $hostname COMPRESSING LOGS: patience please, this may take several minutes...
+        ls -l $to_compress
+        bzip2 -fv $to_compress
+    fi
 }
 
 # essentially the projects.d folder is a little database
