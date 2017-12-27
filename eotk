@@ -472,6 +472,20 @@ case "$cmd" in
         InvokeRemotely ps
         ;;
 
+    df)
+        $flag_remote || echo :::: eotk filesystem space ::::
+        df -akh $EOTK_HOME
+        # InvokeRemotely prints remote-ness banner diags
+        InvokeRemotely df
+        ;;
+
+    logsize|logsizes)
+        $flag_remote || echo :::: eotk log sizes ::::
+        find $EOTK_HOME -name "*.log" -ls
+        # InvokeRemotely prints remote-ness banner diags
+        InvokeRemotely logsize
+        ;;
+
     ## ---- ONIONBALANCE ----
 
     push)
