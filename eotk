@@ -573,7 +573,8 @@ case "$cmd" in
             echo DataDirectory $ob_dir
             echo ControlPort unix:$ob_tor_control_sock
             echo PidFile $ob_dir/tor.pid
-            echo Log info file $ob_dir/tor.log
+            echo "#" Log info file $ob_dir/tor.log
+            echo Log notice file $ob_dir/tor.log
             echo SafeLogging 1
             echo HeartbeatPeriod 60 minutes
             echo RunAsDaemon 1
