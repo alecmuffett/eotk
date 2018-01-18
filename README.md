@@ -19,6 +19,8 @@ NB: bugs are still best reported through `Issues`, above.
 
 ### In the News
 
+* Jan 2018 [Volunteer Spotlight: Alec Helps Companies Activate Onion Services
+](https://blog.torproject.org/volunteer-spotlight-alec-helps-companies-activate-onion-services)
 * Nov 2017 [Un service Wikipedia pour le Dark Web a été lancé par un ingénieur en sécurité](https://www.developpez.com/actu/175523/Un-service-Wikipedia-pour-le-Dark-Web-a-ete-lance-par-un-ingenieur-en-securite-afin-de-contourner-la-censure-dans-certains-pays/)
 * Nov 2017 [Δημιουργήθηκε σκοτεινή έκδοση της Βικιπαίδειας για ανθρώπους σε λογοκριμένα καθεστώτα](https://texnologia.net/dhmiourgithike-skoteinh-ekdosh-ths-wikipedia-gia-anthropous-se-logokrimena-kathestota/2017/11)
 * Nov 2017 [A security expert built an unofficial Wikipedia for the dark web](https://www.engadget.com/2017/11/25/a-security-expert-built-an-unofficial-wikipedia-for-the-dark-web/)
