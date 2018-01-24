@@ -20,10 +20,10 @@ LongLivedPorts 80,443
 RunAsDaemon 1
 
 %%IF %TOR_SINGLE_ONION%
-# use single onions
-SocksPort 0 # have to disable this for single onions
-HiddenServiceSingleHopMode 1 # yep, i want single onions
-HiddenServiceNonAnonymousMode 1 # yes, really, honest, i swear
+# use single onions, many settings to tweak:
+SocksPort 0
+HiddenServiceSingleHopMode 1
+HiddenServiceNonAnonymousMode 1
 %%ELSE
 # use normal onions
 SocksPort 0 # frankly we don't want SOCKS anyway
