@@ -33,6 +33,10 @@ while read onion_url ; do
     test x$onion_url = x && continue
     url="https://$onion_url/hello-onion/"
     echo "open -a "TorBrowser" $url && sleep $DELAY"
+    case $onion_url in
+        *.onion) ;;
+        *) echo oops: $onion_url is not onionified. ; exit 1 ;;
+    esac
 done
 
 # done
