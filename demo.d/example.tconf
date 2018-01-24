@@ -1,5 +1,60 @@
 # -*- conf -*-
 
+# ---- INTERNAL STUFF && STUFF YET TO BE DOC'D, DON'T MESS WITH THIS ----
+
+# set debug_trap
+# set foreignmap_csv
+# set nginx_action_abort
+# set preserve_cookie
+# set preserve_preamble
+# set project
+# set projects_home
+# set ssl_tool
+# set template_tool
+# set tor_worker_prefix
+
+# ---- CUTE HACKS ----
+
+# create a URL which must be hit BEFORE the onion will work (sets a
+# cookie, cheap/hacky form of access control)
+#
+# set cookie_lock /open-sesame
+
+# EOTK sets a header (X-From-Onion) to pass to Origin; default value is "1"
+#
+# set x_from_onion_value 1
+
+# When you're proving SSL ownership, you may want arbitrary text
+# strings to be returned for a GET upon an arbitrary "/path"
+#
+# set hardcoded_endpoint_csv /path,stringvalue ...
+
+# ---- HARD-MODE ----
+
+# hard-mode is an experimental but very powerful brute-force
+# search-and-replace strategy for editing content on the fly; it
+# changes the way the nginx.conf works to rewrite HTML/other
+# content. One side-effect of this is that some instances of domain
+# names may be rewritten unwantedly (eg: foo@facebook.com ->
+# foo@facebookcorewwwi.onion) which is reason for `preserve_csv` which
+# uses a very simple heuristic to try and protect plaintext domain
+# names from being rewritten.
+
+# set hard_mode 1
+# set preserve_csv uniquetoken,regexp,regexpcaseflag,replacement ...
+
+# eg: `set preserve_csv fbtld,facebook\\.com,i,facebook.com` ... will
+# canonicalise FOO@FACEBOOK.COM to FOO@facebook.com (because the 'i'
+# flag implies case-insensitive) but at least it won't be onionified.
+
+# ---- REDIRECTS BY HOST OR URL-PATH ----
+
+# set redirect_host regexp,code,destination ...
+# set redirect_path regexp,code,destination ...
+# set redirect_host_csv # DEPRECATED DO NOT USE
+# set redirect_location_csv # DEPRECATED DO NOT USE
+# set redirect_path_csv # DEPRECATED DO NOT USE
+
 # ---- BLOCKING SITES BY NAME OR REGEXP ----
 
 # you can use either/both of the re/non-re forms of host-blocking and
@@ -7,24 +62,74 @@
 # careful of polluting multiple projects.  If your site needs
 # different blocking for different onions, consider splitting your
 # config into multiple files and using `foreignmap` to stitch the
-# hostname rewrites together.
+# hostname rewrites together.  Blocks generally cause a 403.
 
 # set block_err "This action is not supported over Onion yet sorry."
-# set block_host <unset>
-# set block_host_re <unset>
-# set block_location <unset>
-# set block_location_re <unset>
+# set block_host value ...
+# set block_host_re regexp ...
+# set block_location value ...
+# set block_location_re regexp ...
+# set block_origin value ...
+# set block_origin_re regexp ...
+# set block_param value ...
+# set block_param_re regexp ...
+# set block_path value ...
+# set block_path_re regexp ...
+# set block_referer value ...
+# set block_referer_re regexp ...
+# set block_user_agent value ...
+# set block_user_agent_re regexp ...
+
+# ---- BLACKLISTS AND WHITELISTS ----
+
+# You may blacklist or whitelist characteristics of requests;
+# blacklists are applied first, whitelists second.  Whitelists are
+# "all requests not matching <foo> will fail". Blacklists are "all
+# requests matching <foo> will fail".  Failures are generally 500
+# because it presents the least attack surface to a penetration
+# tester.  All black/whitelists are multi-valued (you may specify
+# several values on one line, space-separated)
+
+# set host_blacklist value ...
+# set host_blacklist_re regexp ...
+# set host_whitelist value ...
+# set host_whitelist_re regexp ...
+# set origin_blacklist value ...
+# set origin_blacklist_re regexp ...
+# set origin_whitelist value ...
+# set origin_whitelist_re regexp ...
+# set param_blacklist value ...
+# set param_blacklist_re regexp ...
+# set param_whitelist value ...
+# set param_whitelist_re regexp ...
+# set path_blacklist value ...
+# set path_blacklist_re regexp ...
+# set path_whitelist value ...
+# set path_whitelist_re regexp ...
+# set referer_blacklist value ...
+# set referer_blacklist_re regexp ...
+# set referer_whitelist value ...
+# set referer_whitelist_re regexp ...
+# set user_agent_blacklist value ...
+# set user_agent_blacklist_re regexp ...
+# set user_agent_whitelist value ...
+# set user_agent_whitelist_re regexp ...
 
 # ---- "EXTRA PROCESSING" ----
+
+# By default, EOTK rewrites application/javascript application/json
+# application/x-javascript text/css text/html text/javascript
+# text/xml; you can add to this list, if necessary ...
+#
+# set extra_subs_filter_types xml/foo+bar ...
 
 # This is a list of "content-type,uri-regexp" patterns of content to
 # apply "extra processing" (ie: content hostname rewrites) too; if for
 # instance your CMS emits JSON as "application/octet-stream" in file
 # URIs ending with ".jblob" then you could try something like:
 #
+# set extra_processing_csv type/subtype,regexp ...
 # set extra_processing_csv application/octet-stream,\\.jblob$
-
-# set extra_processing_csv <unset> ...
 
 # ---- NGINX TUNABLES ----
 
@@ -51,11 +156,10 @@
 # caching; after that the other variables will come into play.
 
 # set nginx_cache_seconds 0
-
 # set nginx_cache_min_uses 1
 # set nginx_cache_size 256m
-# set no_cache_content_type <unset>
-# set no_cache_host <unset>
+# set no_cache_content_type
+# set no_cache_host
 
 # ---- SSL CERTIFICATE DIRECTORY ----
 
