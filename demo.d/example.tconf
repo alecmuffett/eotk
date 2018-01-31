@@ -5,13 +5,23 @@
 # set debug_trap
 # set foreignmap_csv
 # set nginx_action_abort
-# set preserve_cookie
-# set preserve_preamble
+# set preserve_after
+# set preserve_before
 # set project
 # set projects_home
 # set ssl_tool
 # set template_tool
 # set tor_worker_prefix
+# nonce128_1
+# nonce128_2
+# nonce128_3
+# nonce128_4
+# nonce128_5
+# nonce256_1
+# nonce256_2
+# nonce256_3
+# nonce256_4
+# nonce256_5
 
 # ---- CUTE HACKS ----
 

@@ -18,6 +18,24 @@ chdir($here) or die "chdir: $here: $!\n";
 
 ##################################################################
 
+sub Nonce {
+    my $want_bits = shift || 128;
+    my $got_bits = 0;
+    my $dev = "/dev/urandom";
+    my $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    my $nonce = "";
+    open(RANDOM, $dev) || die "$0: open: $dev: $!\n";
+    while (read(RANDOM, $buffer, 1) == 1) {
+        my $offset = unpack("C", $buffer);
+        $offset &= 0x1f; # 5 bits
+        $got_bits += 5; # 5 bits
+        $nonce .= substr($chars, $offset, 1);
+        last if ($got_bits >= $want_bits);
+    }
+    close(RANDOM);
+    return $nonce;
+}
+
 sub JoinLines {
     my @input = @_;
     my @output = ();
@@ -422,7 +440,8 @@ sub DoProject {
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
-&SetEnv("preserve_cookie", "~-=~=-~");
+&SetEnv("preserve_before", "~-~");
+&SetEnv("preserve_after", "~".&Nonce(128)."~");
 &SetEnv("preserve_preamble", "[>@\\\\s]");
 &SetEnv("project", "default");
 &SetEnv("projects_home", "$here/projects.d");
@@ -441,6 +460,17 @@ sub DoProject {
 &SetEnv("tor_template", "$here/templates.d/tor.conf.txt");
 &SetEnv("tor_worker_prefix", "hs");
 &SetEnv("x_from_onion_value", "1");
+
+&SetEnv("nonce128_1", &Nonce(128));
+&SetEnv("nonce128_2", &Nonce(128));
+&SetEnv("nonce128_3", &Nonce(128));
+&SetEnv("nonce128_4", &Nonce(128));
+&SetEnv("nonce128_5", &Nonce(128));
+&SetEnv("nonce256_1", &Nonce(256));
+&SetEnv("nonce256_2", &Nonce(256));
+&SetEnv("nonce256_3", &Nonce(256));
+&SetEnv("nonce256_4", &Nonce(256));
+&SetEnv("nonce256_5", &Nonce(256));
 
 # default-empty variables
 my @set_blank = qw(
