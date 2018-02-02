@@ -141,12 +141,20 @@ http {
   %%ENDIF
 
   %%BEGIN
-  # for %DNS_DOMAIN% -> %ONION_ADDRESS%
+  # HARD-MODE: %DNS_DOMAIN% -> %ONION_ADDRESS%
   subs_filter
   \\b%DNS_DOMAIN_RE2%\\b
   %ONION_ADDRESS%
   gir
   ;
+  %%IF %HARD_MODE% > 1
+  # HARD-MODE-EXTRA: %DNS_DOMAIN_RE% -> %ONION_ADDRESS_RE%
+  subs_filter
+  \\b%DNS_DOMAIN_RERE2%\\b
+  %ONION_ADDRESS_RE2%
+  gir
+  ;
+  %%ENDIF
   %%END
 
   %%IF %FOREIGNMAP_CSV%
