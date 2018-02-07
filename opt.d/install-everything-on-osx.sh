@@ -11,8 +11,10 @@ brew install openssl tor socat
 : do not worry if the next step fails
 brew unlink nginx
 
+# this appears to be defunct - 2018/2/7
+# brew tap homebrew/nginx
+
 : install the full nginx
-brew tap homebrew/nginx
 brew install \
      nginx-full \
      --with-lua-module \
