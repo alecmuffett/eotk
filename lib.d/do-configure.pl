@@ -18,6 +18,11 @@ chdir($here) or die "chdir: $here: $!\n";
 
 ##################################################################
 
+sub ValidOnion {
+    my $onion = shift;
+    return ( $onion =~ /^[a-z2-7]{16}(?:[a-z2-7]{40})?$/o );
+}
+
 sub Nonce {
     my $want_bits = shift || 128;
     my $got_bits = 0;
@@ -228,11 +233,12 @@ sub DoMap {
         $onion =~ s!^.*/!!;
         $onion =~ s!\.(key|pem)!!;
         $onion =~ s!\.(onion)!!; # cleanup dups
+        die "map: $onion: bad onion address\n" unless (&ValidOnion($onion));
     }
     elsif ($what eq "softmap") {
         $onion = $from;
         $onion =~ s!\.(onion)!!; # cleanup dups
-        die "map: $onion: bad onion address\n" unless ($onion =~ /^[a-z2-7]{16}$/);
+        die "map: $onion: bad onion address\n" unless (&ValidOnion($onion));
     }
     else {
         die "wtf?\n";
@@ -381,8 +387,12 @@ sub DoProject {
             &MakeDir($hs_dir);
 
             # install keyfile
+            # TODO:
             my $keyfile = ${$row}{KEYFILE};
             &CopyFile($keyfile, "$hs_dir/private_key");
+            # ...when using V3 onions, copy/restore these files instead
+            # $hs_dir/hs_ed25519_public_key from $onion.v3pub.key
+            # $hs_dir/hs_ed25519_secret_key from $onion.v3sec.key
 
             # bypass key-poisoning obscurity hassle
             $poison = "$hs_dir/onion_service_non_anonymous";
@@ -440,6 +450,7 @@ sub DoProject {
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
+&SetEnv("onion_version", "2");
 &SetEnv("preserve_before", "~-~");
 &SetEnv("preserve_after", "~".&Nonce(128)."~");
 &SetEnv("preserve_preamble", "[>@\\\\s]");

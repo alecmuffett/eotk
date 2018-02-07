@@ -20,6 +20,10 @@ HiddenServiceDir $dir
 HiddenServicePort 1 127.0.0.1:1
 EOF
 
+if [ x$ONION_VERSION = x3 ] ; then
+    echo HiddenServiceVersion 3 >> $dir/config
+fi
+
 tor -f $dir/config >$log 2>&1
 
 loops=0
@@ -37,12 +41,20 @@ kill -TERM `cat $dir/tor.pid` # shut it down
 
 onion=`cat $dir/hostname`
 onion=`basename $onion .onion`
-file=$onion.key
 
-mv $dir/private_key $file || exit 1
+if [ x$ONION_VERSION = x3 ] ; then
+    pfile=$onion.v3pub.key
+    sfile=$onion.v3sec.key
+    mv $dir/hs_ed25519_public_key $pfile || exit 1
+    mv $dir/hs_ed25519_secret_key $sfile || exit 1
+    echo $pfile
+    echo $sfile
+else
+    file=$onion.key
+    mv $dir/private_key $file || exit 1
+    echo $file
+fi
 
 rm -r $dir $log || exit 1
-
-echo $file
 
 exit 0

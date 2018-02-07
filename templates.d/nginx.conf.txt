@@ -296,7 +296,7 @@ http {
         end
         return result
       end
-      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}\\.onion)\\b", o_to_d_lookup, "io")
+      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o_to_d_lookup, "io")
       return o
     end
 
@@ -617,7 +617,7 @@ http {
       set_by_lua_block $request_uri2 {
         local old = ngx.var.request_uri
         -- onion_to_dns is potentially expensive at scale, so do a cheap test
-        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}\\.onion\\b", "o")
+        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "o")
         if not m then -- nothing to attempt to rewrite, quick return
           return old
         end
