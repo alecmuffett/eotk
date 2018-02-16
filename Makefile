@@ -1,11 +1,11 @@
 all:
-	echo nope:
+	echo "make what?"
 
 lint:
-	echo checking for expression typos:
-	./lib.d/lint-expressions.pl templates.d/*
 	echo checking for lint:
 	./lib.d/lint.pl templates.d/* | sort -k 2
+	echo checking for expression typos:
+	./lib.d/lint-expressions.pl templates.d/*
 
 test: lint
 	( cd lib.d ; ./test-expand-template.sh )

@@ -331,12 +331,16 @@ sub Cat { # THIS IS NOT THE SAME AS "#include" / CONTENTS NOT PROCESSED
 
 sub Slurp {
     &Warn("Slurp: @_\n");
-    my $flist = shift;
+    my ($hard_include, $flist) = @_;
     my ($junk, @filenames) = split(" ", $flist);
     my @lines = ();
     foreach my $file (@filenames) {
-        &Warn("Slurping: $file\n");
-        open(FILE, $file) || die "Slurp: $file: $!\n";
+        if (!open(FILE, $file)) {
+            die "Slurp: open: $file: $!\n" if ($hard_include);
+            &Warn("Not Slurping Nonexistent File: $file\n");
+            next;
+        }
+        &Warn("Slurping(hard_include=$hard_include): $file\n");
         push(@lines, <FILE>);
         close(FILE);
     }
@@ -445,14 +449,14 @@ do {
     $include_flag = 0;
     my @new_template = ();
     foreach my $line (@template) {
-        if ($line !~ /^\s*%%INCLUDE\b/) {
+        if ($line !~ /^\s*%%INCLUDE(IF)?\b/) {
             push(@new_template, $line);
             next;
         }
-        &Warn("processing include: $line\n");
+        my $hard_include = ($1 eq 'IF') ? 0 : 1;
         $include_flag++;
         $include_count++;
-        my @include_body = &Slurp($line);
+        my @include_body = &Slurp($hard_include, $line);
         push(@new_template, @include_body);
     }
     @template = @new_template; # swap

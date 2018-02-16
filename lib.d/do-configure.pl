@@ -453,7 +453,7 @@ sub DoProject {
 &SetEnv("onion_version", "2");
 &SetEnv("preserve_before", "~-~");
 &SetEnv("preserve_after", "~".&Nonce(128)."~");
-&SetEnv("preserve_preamble", "[>@\\\\s]");
+&SetEnv("preserve_preamble_re", "[>@\\\\s]");
 &SetEnv("project", "default");
 &SetEnv("projects_home", "$here/projects.d");
 &SetEnv("softmap_nginx_workers", "auto"); # nginx_workers * softmap_tor_workers

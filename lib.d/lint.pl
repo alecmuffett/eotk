@@ -92,6 +92,7 @@ my %known =
      'PATH_BLACKLIST_RE' => 1,
      'PATH_WHITELIST' => 1,
      'PATH_WHITELIST_RE' => 1,
+     'PRESERVE_PREAMBLE_RE' => 1,
      'PRESERVE_AFTER' => 1,
      'PRESERVE_BEFORE' => 1,
      'PRESERVE_CSV' => 1,

@@ -131,7 +131,7 @@ http {
   %%CSV %PRESERVE_CSV%
   # saving regexp '%2%' as '%1%' for replacement with '%4%' (%3%)
   subs_filter
-  (%PRESERVE_PREAMBLE%)(%2%)\\b
+  (%PRESERVE_PREAMBLE_RE%)(%2%)\\b
   $1%PRESERVE_BEFORE%%1%%PRESERVE_AFTER%
   g%3%r
   ;
