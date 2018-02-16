@@ -63,6 +63,16 @@ sub Evaluate {
         return not $args[1];
     }
 
+    if ($#args >= 1 and
+        $args[0] =~ m!exists?!o) {
+        shift(@args);
+        &Warn("Evaluate1-exist @args");
+        foreach my $fname (@args) {
+            return 0 unless (-f $fname); # fail if any do not exist
+        }
+        return 1;
+    }
+
     if ($#args == 2) {
         my ($a, $op, $b, @junk) = @args;
         &Warn("Evaluate2 $a");
@@ -314,16 +324,19 @@ sub FindMatchingEndCsv {
     return &FindMatching('%%CSV', '%%ENDCSV', @_);
 }
 
-sub Cat { # THIS IS NOT THE SAME AS "#include" / CONTENTS NOT PROCESSED
-    &Warn("Cat: @_\n");
+sub Splice { # THIS IS NOT THE SAME AS "%%INCLUDE", CONTENTS NOT PROCESSED
+    &Warn("Splice: @_\n");
     my $flist = shift;
+    $flist =~ s/%([\w+]*)%/&Lookup($1)/ge;
+
     my ($junk, @filenames) = split(" ", $flist);
+
     foreach my $file (@filenames) {
-        &Warn("Catting: $file\n");
-        open(FILE, $file) || die "Cat: $file: $!\n";
+        &Warn("Splicing: $file\n");
+        open(FILE, $file) || die "Splice: $file: $!\n";
         my $line;
         while ($line = <FILE>) {
-            print $line;        # why bother slurping?
+            print $line;        # no point in slurping this one
         }
         close(FILE);
     }
@@ -407,8 +420,8 @@ sub PrintBlock {
             next;               # bump pointer and continue
         }
 
-        if ($line =~ /^\s*%%CAT\b/) {
-            &Cat($template[$i]);
+        if ($line =~ /^\s*%%SPLICE\b/) {
+            &Splice($template[$i]);
             next;
         }
 

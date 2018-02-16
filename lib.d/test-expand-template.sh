@@ -656,11 +656,11 @@ Test csv1 < /dev/null
 
 ##################################################################
 
-# see if `cat` works
+# see if `splice` works
 
 Template <<EOF
 foo
-%%CAT /etc/passwd /etc/group
+%%SPLICE /etc/passwd /etc/group
 bar
 EOF
 
@@ -670,7 +670,7 @@ EOF
     echo bar
 ) | Expect
 
-Test file cat < /dev/null
+Test file splice < /dev/null
 
 ##################################################################
 
