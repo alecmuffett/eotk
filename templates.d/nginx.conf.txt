@@ -604,13 +604,13 @@ http {
 
     %%IF exists templates.d/nginx-site-%ONION_ADDRESS%.conf
     # A note on spliced content; any file that you splice into the
-    # final configuration MUST NOT contain any '%' variables, nor any
-    # '%%' template directives, simply because these will all be
-    # ignored / may cause NGINX syntax errors.  The `splice` hack is
-    # meant for small bits of production-quality NGINX config that
-    # MUST occur only in the definition of one particular onion out of
+    # final configuration MUST NOT contain any EOTK-variables, nor any
+    # EOTK template directives, simply because these will all be
+    # ignored and may cause NGINX syntax errors.  The `splice` hack is
+    # meant for small bits of production-ready NGINX config that MUST
+    # occur only in the definition of one particular onion out of
     # (presumably several) in the eventual configuration file; most
-    # likely this will be something like: per-onion access control
+    # likely this will be something like: per-onion access control.
 
     # The SPLICE directive is executed at template-generation time,
     # and is subject to flow-control like IF/ELSE/ENDIF; by contrast
