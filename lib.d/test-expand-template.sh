@@ -748,26 +748,3 @@ EOF
 ) | Expect
 
 Test file include < /dev/null
-
-##################################################################
-
-# see if `includeif` works
-
-included="/tmp/tmplinclif$$"
-cat >$included <<EOF
-%%INCLUDEIF /etc/passwd /etc/probably-nonexistent-file
-EOF
-
-Template <<EOF
-foo
-%%INCLUDE $included
-bar
-EOF
-
-(
-    echo foo
-    cat /etc/passwd
-    echo bar
-) | Expect
-
-Test file include < /dev/null
