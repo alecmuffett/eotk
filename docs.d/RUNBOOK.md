@@ -199,6 +199,16 @@ Yes, assuming that there is enough disk space on Brenda, you might want to pull 
 * `eotk mirror` # to build a local mirror of all worker `eotk` installations
 * `eotk backup` # to make a compressed backup of a fresh mirror, for archiving.
 
+# A note regarding small configurations
+
+The value of `tor_intros_per_daemon` is set to `3` by default, in the expectation that we will be using horizontal scaling (i.e.: multiple workers) to gain performance, and that some of the workers may be down at any given time.
+Also EOTK configures a semi-hardcoded number of Tor daemons per worker, in order to try and get a little more cryptographic multiprocessing out of Tor. This value (`softmap_tor_workers`) is currently set to `2` and is probably *not* helpful to change; the tor daemon itself is generally not a performance bottleneck.
+Overall, our theory is that if `N=6` workers have `M=2` tor daemons, each of which has `P=3` introduction points, then that provides a pool of `N*M*P=36` introduction points for OnionBalance to scrape and attempt to synthesise into a "production" descriptor for one of the public onions.
+But if you are only using a single soft map worker, `N=1` and so `N*M*P` is `1*2*3=6`, which is kinda small; in no way are 6 introduction points inadequate for testing, but in production it does mean that basically all circuit setups for any given onion will be negotiated through only 6 machines on the internet at any given time; and that those 6 introduction points will be servicing *all* connection-setups for *all* of the onion addresses that you configure in a project. This could be substantial.
+The hard-limit cap for introduction points in a descriptor is `10`, and OnionBalance uses a magic trick ("distinct descriptors") to effectively multiply *that* number by 6, and so (in summary) EOTK can theoretically support 60 introduction points for any given `softmap` Onion Address, which it constructs by scraping introduction points out of the pool of worker onions.
+But if you only have one worker, then it's only got 6 to work with.
+In such circumstances I might suggest raising `tor_intros_per_daemon` to `8` or even `10` for single-worker configs, so that (`N*M*P=1*2*8=`) 16 or more introduction points exist, so that onionbalance has a bit more material to work with; but a change like this is probably going to be kinda "faffy" unless you are rebuilding from a clean slate.  And/or/else, you could always add more workers to increase `N`.
+
 # Q&A
 
 * What if I want `localhost` as part of the pool of workers?
