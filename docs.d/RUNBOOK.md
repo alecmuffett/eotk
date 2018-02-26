@@ -213,7 +213,9 @@ The current hard-limit cap for `P` / the number of introduction points in a desc
 
 But if you only have one worker, then by default OnionBalance only has 6 introduction points to work with.
 
-In such circumstances I might suggest raising the value of `P` (i.e.: `tor_intros_per_daemon`) to `8` or even `10` for single-worker configs, so that (`N*M*P=1*2*8=`) 16 or more introduction points exist, so that OnionBalance has a bit more material to work with; but a change like this is probably going to be kinda "faffy" unless you are rebuilding from a clean slate.  And/or/else, you could always add more workers to increase `N`.
+In such circumstances I might suggest raising the value of `P` (i.e.: `tor_intros_per_daemon`) to `8` or even `10` for single-worker configs, so that (`N*M*P=1*2*8=`) 16 or more introduction points exist, so that OnionBalance has a bit more material to work with; but a change like this is probably going to be kinda "faffy" unless you are rebuilding from a clean slate. It may also lead to temporary additional *lag* when a worker "goes down" while the old introduction points are polled.
+
+And/or/else, you could always add more workers to increase `N`.
 
 ## But what if my pool of introduction points exceeds 60?!?
 
