@@ -217,7 +217,7 @@ In such circumstances I might suggest raising `tor_intros_per_daemon` to `8` or 
 
 ## But what if my pool of introduction points exceeds 60?!?
 
-That's fine; OnionBalance randomly samples from within that pool, so that (averaged over time) all of the introduction points will see *some* traffic; but don't push it too far because that would be silly and wasteful to no benefit.  For existing v2 onion addresses (16 characters long) the optimal size of `N*M*P` is probably "anywhere between 20-ish and 60-ish".
+That's fine; OnionBalance randomly samples from within that pool, so that (averaged over time) all of the introduction points will see *some* traffic; but don't push it too far because that would be silly and wasteful to no benefit.  For existing v2 onion addresses (16 characters long) the optimal size of `N*M*P` is probably "anywhere between 18-ish and 60-ish".
 
 # Q&A
 
