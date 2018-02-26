@@ -211,9 +211,13 @@ But if you are only using a single `softmap` worker then `N=1` and so `N*M*P` is
 
 The hard-limit cap for introduction points in a descriptor is `10`, and OnionBalance uses a magic trick ("distinct descriptors") to effectively multiply *that* number by 6, and so (in summary) EOTK can theoretically support 60 introduction points for any given `softmap` Onion Address, which it constructs by scraping introduction points out of the pool of worker onions.
 
-But if you only have one worker, then by default OnioBalance only has 6 introduction points to work with.
+But if you only have one worker, then by default OnionBalance only has 6 introduction points to work with.
 
 In such circumstances I might suggest raising `tor_intros_per_daemon` to `8` or even `10` for single-worker configs, so that (`N*M*P=1*2*8=`) 16 or more introduction points exist, so that OnionBalance has a bit more material to work with; but a change like this is probably going to be kinda "faffy" unless you are rebuilding from a clean slate.  And/or/else, you could always add more workers to increase `N`.
+
+## But what if my pool of introduction points exceeds 60?!?
+
+That's fine; OnionBalance randomly samples from within that pool, so that (averaged over time) all of the introduction points will see *some* traffic; but don't push it too far because that would be silly and wasteful to no benefit.  For existing v2 onion addresses (16 characters long) the optimal size of `N*M*P` is probably "anywhere between 20-ish and 60-ish".
 
 # Q&A
 
