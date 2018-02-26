@@ -3,7 +3,7 @@
 The EOTK template engine is an enormous (but reasonably clean) kludge
 for automating repetitive tasks in template-building; it started off
 as a small Perl hack (because existing templaters really sucked, or
-required YAML or other such nonsense) and then gret to add
+required YAML or other such nonsense) and then grew to add
 functionality in a mostly-considered, mostly-orthogonal way.
 
 For further examples, see also the unit tests in
