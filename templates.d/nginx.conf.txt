@@ -458,9 +458,12 @@ http {
   }
 
   %%IF %SUPPRESS_HEADER_CSP%
-  # csp suppression
-  proxy_hide_header "Content-Security-Policy";
-  proxy_hide_header "Content-Security-Policy-Report-Only";
+    # csp suppression
+    proxy_hide_header "Content-Security-Policy";
+    proxy_hide_header "Content-Security-Policy-Report-Only";
+    %%IF %USE_CUSTOM_HEADER_CSP%
+      proxy_set_header Content-Security-Policy "%CUSTOM_HEADER_CSP%";
+    %%ENDIF
   %%ELSE
   # csp not suppressed, will be rewritten instead, see below
   %%ENDIF
