@@ -19,7 +19,7 @@ prog=`basename $0`
 self=$EOTK_HOME/$prog
 
 # meta
-version=1.2
+version=1.5.0
 
 # set project directory; this path is hard-replicated elsewhere
 project_dir=$EOTK_HOME/projects.d
@@ -366,7 +366,7 @@ Configure() {
 # argument 'parser' - ha!
 
 cmd="$1" # we may need the remaining args
-shift
+test $# = 0 || shift # if no cmd-arg skip shifting, fall-thru
 
 case "$cmd" in
     version|test)
