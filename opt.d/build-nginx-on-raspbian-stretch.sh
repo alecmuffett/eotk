@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 keyserver=keyserver.ubuntu.com
-ngxversion=1.13.7
+ngxversion=1.13.12
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
 LUAJITURL="http://luajit.org/download/LuaJIT-2.0.5.tar.gz"

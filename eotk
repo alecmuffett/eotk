@@ -34,6 +34,9 @@ ob_status_sock=$ob_dir/ob-status.sock
 ob_tor_conf=$ob_dir/tor.conf
 ob_tor_control_sock=$ob_dir/tor-control.sock
 
+# what are the hostnames of the remote workers?
+host_list=$EOTK_HOME/eotk-workers.conf # <--------------------------- HOST FILE
+
 # init script name
 init=eotk-init.sh
 
@@ -80,9 +83,6 @@ while : ; do
     esac
 done
 
-# what are the hostnames of the remote workers?
-host_list=$EOTK_HOME/eotk-workers.conf
-
 CloudHosts() {
     # use --remote hack to forcibly stop risk of recursion...
     if $flag_remote ; then
@@ -106,7 +106,7 @@ CloudHosts() {
         return 0
     fi
 
-    # todo: if eotk-hosts.conf exists,
+    # todo: if hosts-file exists,
     # cat it (strip comments?)
     # and return
     if [ -s $host_list ] ; then
