@@ -566,16 +566,47 @@ case "$cmd" in
 
         Print building OnionBalance configurations...
         (
+            # notes/commentary, including onionbalance defaults, at:
+            # https://media.readthedocs.org/pdf/onionbalance/latest/onionbalance.pdf
             echo LOG_LEVEL: info
             echo TOR_ADDRESS: $tor_address
             echo TOR_PORT: $tor_port
-            echo REFRESH_INTERVAL: 300 # non-default, expect fast cycling
-            echo PUBLISH_CHECK_INTERVAL: 150 # non-default, 0.5x REFRESH_INTERVAL
-            echo INITIAL_DELAY: 90 # non-default
             echo STATUS_SOCKET_LOCATION: $ob_status_sock
+
+            # REFRESH_INTERVAL How often to check for updated backend
+            # hidden service descriptors. This value can be decreased
+            # if your backend instance are under heavy loaded causing
+            # them to rotate introduction points quickly. (default:
+            # 600 seconds).
+            refresh=600 # to be tuned
+            echo REFRESH_INTERVAL: $refresh
+
+            # INITIAL_DELAY How long to wait between starting
+            # OnionBalance and publishing the master descrip- tor. If
+            # you have more than 20 backend instances you may need to
+            # wait longer for all instance descriptors to download
+            # before starting (default: 45 seconds).
+            echo INITIAL_DELAY: `expr $refresh / 6`
+
+            # PUBLISH_CHECK_INTERVAL How often should to check if new
+            # descriptors need to be published for the master hidden
+            # service (default: 360 seconds).
+            echo PUBLISH_CHECK_INTERVAL: `expr $refresh / 2`
+
+            # DESCRIPTOR_OVERLAP_PERIOD How long to overlap hidden
+            # service descriptors when changing descriptor IDs
+            # (default: 3600 seconds)
+            echo DESCRIPTOR_OVERLAP_PERIOD: `expr $refresh '*' 4`
+
+            # DESCRIPTOR_UPLOAD_PERIOD How often to publish a
+            # descriptor, even when the introduction points don't
+            # change (default: 3600 seconds)
+            echo DESCRIPTOR_UPLOAD_PERIOD: `expr $refresh '*' 4`
+
+            # DESCRIPTOR_VALIDITY_PERIOD How long a hidden service
+            # descriptor remains valid (default: 86400 seconds)
             echo DESCRIPTOR_VALIDITY_PERIOD: 86400 # 1 day
-            echo DESCRIPTOR_OVERLAP_PERIOD: 3600 # 1 hour
-            echo DESCRIPTOR_UPLOAD_PERIOD: 1200 # non-default, 3x per hour
+
             do-obconfig.pl <$mappings
         ) > $ob_conf
 
