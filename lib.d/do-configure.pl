@@ -433,7 +433,7 @@ sub DoProject {
 # default-set values
 &SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
 &SetEnv("force_https", 1);
-&SetEnv("hard_mode", 0);
+&SetEnv("hard_mode", 1);
 &SetEnv("nginx_action_abort", "return 500");
 &SetEnv("nginx_block_busy_size", "16k");
 &SetEnv("nginx_block_count", 8);

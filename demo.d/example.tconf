@@ -39,18 +39,16 @@
 #
 # set hardcoded_endpoint_csv /path,stringvalue ...
 
-# ---- HARD-MODE ----
+# ---- PRESERVE_CSV ----
 
-# hard-mode is an experimental but very powerful brute-force
-# search-and-replace strategy for editing content on the fly; it
-# changes the way the nginx.conf works to rewrite HTML/other
-# content. One side-effect of this is that some instances of domain
-# names may be rewritten unwantedly (eg: foo@facebook.com ->
-# foo@facebookcorewwwi.onion) which is reason for `preserve_csv` which
-# uses a very simple heuristic to try and protect plaintext domain
-# names from being rewritten.
+# EOTK uses a search-and-replace strategy for editing content on the
+# fly; one side-effect of this is that some instances of domain names
+# may be rewritten unwantedly (eg: email addresses like
+# foo@facebook.com become foo@facebookcorewwwi.onion)
 
-# set hard_mode 1
+# `preserve_csv` uses a very simple heuristic to try and protect
+# plaintext domain names from being rewritten.
+
 # set preserve_csv uniquetoken,regexp,regexpcaseflag,replacement ...
 
 # eg: `set preserve_csv fbtld,facebook\\.com,i,facebook.com` ... will

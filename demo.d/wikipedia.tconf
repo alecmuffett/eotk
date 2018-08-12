@@ -1,9 +1,6 @@
 # -*- conf -*-
 # eotk (c) 2017 Alec Muffett
 
-# use brute-force "search and replace" strategy
-set hard_mode 1
-
 # CSVs of canonical domains (eg: email) to preserve (todo: more here?)
 # nb: you must explicitly list all domains that are of preservation;
 # "foo.com" & "www.foo.com" are treated as separate, for this purpose

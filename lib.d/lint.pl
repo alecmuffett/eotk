@@ -40,7 +40,6 @@ my %known =
      'FORCE_HTTPS' => 1,
      'FOREIGNMAP_CSV' => 1,
      'HARDCODED_ENDPOINT_CSV' => 1,
-     'HARD_MODE' => 1,
      'HOST_BLACKLIST' => 1,
      'HOST_BLACKLIST_RE' => 1,
      'HOST_WHITELIST' => 1,
