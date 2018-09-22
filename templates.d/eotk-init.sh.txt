@@ -10,6 +10,20 @@ EOTK_USER=%USER%
 EOTK_STARTUP_LOG=/tmp/eotk-startup.log
 EOTK_OB_DELAY=90 # backgrounded pause
 
+# The general thinking here is:
+#
+# 1) you create the script by using:
+#
+#   eotk make-init-script
+#
+# 2) copy/symlink it into the relevant system; e.g. for Linux
+#    you will probably do something like:
+#
+#   sudo cp eotk-init.sh /etc/init.d
+#   sudo update-rc.d eotk-init.sh defaults
+#
+# If you want logging to appear elsewhere, redefine log_message()
+
 ### BEGIN INIT INFO
 # Provides:          eotk
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -18,18 +32,6 @@ EOTK_OB_DELAY=90 # backgrounded pause
 # Default-Stop:      0 1 6
 # Description:       Enterprise Onion Toolkit
 ### END INIT INFO
-
-# The general thinking here is: you create the script by using:
-
-#   eotk make-init-script
-
-# ...and then copy/symlink it into the relevant system; e.g. for Linux
-# you will probably want something like: (as root)
-
-#   cp eotk-init.sh /etc/init.d
-#   update-rc.d eotk-init.sh defaults
-
-# If you want logging to appear elsewhere, redefine log_message()
 
 exec </dev/null >>$EOTK_STARTUP_LOG 2>&1
 
@@ -44,7 +46,7 @@ log_message() {
 # eotk wrapper
 
 run_eotk() {
-    su $EOTK_USER -c "exec $EOTK_HOME/eotk --boot $*"
+    sudo -u $EOTK_USER $EOTK_HOME/eotk --boot "$@"
     return $?
 }
 

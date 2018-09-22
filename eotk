@@ -744,7 +744,9 @@ case "$cmd" in
         ;;
 
     make-init-script)
-        lib.d/expand-template.pl templates.d/$init.txt </dev/null >$init
+        lib.d/expand-template.pl templates.d/$init.txt </dev/null >$init 2>/dev/null
+        Print init script is now in: $init
+        Print please read that file for further instructions.
         chmod 755 $init
         ;;
 
