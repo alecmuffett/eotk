@@ -8,23 +8,29 @@ brew upgrade || exit 1
 : install tor, openssl, tools...
 brew install openssl tor socat
 
-: do not worry if the next step fails
-brew unlink nginx
+: do not worry if the next few steps fail
+(
+    brew unlink nginx # unlink old copy
+    brew uninstall nginx # remove old copy
+    brew uninstall nginx-full # remove old copy
+    brew untap homebrew/nginx # remove the tap which interferes with install
+)
 
-# this appears to be defunct - 2018/2/7
-# brew tap homebrew/nginx
+# ref: https://github.com/denji/homebrew-nginx
+
+NGINX_MODULES="
+--with-lua-module
+--with-subs-filter-module
+--with-headers-more-module
+"
 
 : install the full nginx
-brew install \
-     nginx-full \
-     --with-lua-module \
-     --with-subs-filter-module \
-     --with-headers-more-module
+brew tap denji/nginx && brew install nginx-full $NGINX_MODULES || exit 1
 
 : install onionbalance
 sudo easy_install onionbalance # also warms-up sudo
 
-: fix(?) the resulting permissions trainwreck
+: fix the resulting permissions trainwreck
 PYDIRS="/usr/local/bin /usr/local/lib /Library/Python"
 sudo find $PYDIRS -perm -0400 -print0 | sudo xargs -0 chmod a+r
 sudo find $PYDIRS -perm -0100 -print0 | sudo xargs -0 chmod a+x
