@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 keyserver=keyserver.ubuntu.com
-torversion=0.3.3.9
+torversion=0.3.4.9
 torsigningkeys="6AFEE6D49E92B601 C218525819F78451"
 
 here=`dirname $0`
