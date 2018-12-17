@@ -37,8 +37,9 @@ sudo find $PYDIRS -perm -0100 -print0 | sudo xargs -0 chmod a+x
 
 : prioritise a sane openssl
 BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
+optdir=`dirname $0`
 if [ -f $BREW_OPENSSL ] ; then
-    ( cd opt.d ; ln -sf $BREW_OPENSSL )
+    ( cd $optdir ; ln -sf $BREW_OPENSSL )
 fi
 
 exit 0
