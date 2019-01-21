@@ -16,6 +16,14 @@ certfile="$PRIMARY.cert"
 
 this=`basename $0`
 
+# abort on any pre-existing PEM clash, figure it out later
+for existing in $pemfile $csrfile $certfile ; do
+    if [ -s $existing ] ; then
+        echo $this: $existing already exists, exiting... 1>&2
+        exit 1
+    fi
+done
+
 tmp_suffix="$$.tmp"
 dns="dns_${tmp_suffix}"
 
@@ -66,13 +74,6 @@ dn_l="Onion Space" # LocalityName
 dn_o="The SSL Onion Space" # OrganizationName
 dn_ou="Self Signed Certificates" # OrganizationalUnitName
 SUBJECT="/C=${dn_c}/ST=${dn_st}/L=${dn_l}/O=${dn_o}/OU=${dn_ou}/CN=${PRIMARY}"
-
-for existing in $pemfile $csrfile $certfile ; do
-    if [ -s $existing ] ; then
-        echo $this: $existing already exists, exiting... 1>&2
-        exit 1
-    fi
-done
 
 subjectaltname=`awk '{printf "DNS." NR ":" $1 ","}' < $dns | sed -e 's/,$//'`
 
