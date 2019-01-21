@@ -18,6 +18,7 @@ RunAsDaemon 1
 SocksPort 0
 HiddenServiceDir $dir
 HiddenServicePort 1 127.0.0.1:1
+HiddenServiceVersion 2
 EOF
 
 if [ x$ONION_VERSION = x3 ] ; then
