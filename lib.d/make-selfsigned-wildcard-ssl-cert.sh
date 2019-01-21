@@ -1,5 +1,34 @@
 #!/bin/sh
-# eotk (c) 2017 Alec Muffett
+# eotk (c) 2019 Alec Muffett
+
+if [ "x$1" == "x" ] ; then
+    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
+    exit 1
+fi
+
+# 2019: reorganised argument parsing to accomodate `mkcert`
+
+PRIMARY="$1" # first argument = primary domain
+
+pemfile="$PRIMARY.pem"
+csrfile="$PRIMARY.csr"
+certfile="$PRIMARY.cert"
+
+this=`basename $0`
+
+tmp_suffix="$$.tmp"
+dns="dns_${tmp_suffix}"
+
+for tld in "$@" ; do
+    echo "$tld" # for every foo.com
+    echo "*.$tld" # add a wildcard: *.foo.com
+done > $dns # is used in mkcert, or lower down
+
+if [ x$SSL_MKCERT = x1 ] ; then # placeholder punting to mkcert
+    mkcert -cert-file $certfile -key-file $pemfile `cat $dns`
+    rm $dns
+    exit 0
+fi
 
 # there is a *lot* of bad advice on the web about how to do this -
 # which is understandable because some of it is geared at making a
@@ -31,12 +60,6 @@ else
     OPENSSL_CONFIG=/etc/ssl/openssl.cnf
 fi
 
-if [ "x$1" == "x" ] ; then
-    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
-    exit 1
-fi
-
-PRIMARY="$1" # first argument = primary domain
 dn_c="AQ" # CountryName: Antarctica
 dn_st="The Internet" # StateOrProvinceName
 dn_l="Onion Space" # LocalityName
@@ -44,25 +67,12 @@ dn_o="The SSL Onion Space" # OrganizationName
 dn_ou="Self Signed Certificates" # OrganizationalUnitName
 SUBJECT="/C=${dn_c}/ST=${dn_st}/L=${dn_l}/O=${dn_o}/OU=${dn_ou}/CN=${PRIMARY}"
 
-tmp_suffix="$$.tmp"
-pemfile="$PRIMARY.pem"
-csrfile="$PRIMARY.csr"
-certfile="$PRIMARY.cert"
-this=`basename $0`
-
 for existing in $pemfile $csrfile $certfile ; do
     if [ -s $existing ] ; then
         echo $this: $existing already exists, exiting... 1>&2
         exit 1
     fi
 done
-
-dns="dns_${tmp_suffix}"
-
-for tld in "$@" ; do
-    echo "$tld" # for every foo.com
-    echo "*.$tld" # add a wildcard: *.foo.com
-done > $dns
 
 subjectaltname=`awk '{printf "DNS." NR ":" $1 ","}' < $dns | sed -e 's/,$//'`
 
