@@ -15,12 +15,12 @@ EOTK requires recent `nginx` with the following modules/features enabled:
 Where you don't have Tor, NGINX or OnionBalance, or much other stuff
 currently installed:
 
-## OSX Sierra (prebuilt via homebrew)
+## macOS Mojave (prebuilt via homebrew)
 
 * install Homebrew: http://brew.sh
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/install-everything-on-osx.sh`
+* `./opt.d/install-everything-on-macos.sh`
 
 ## Ubuntu 16.04 (prebuilt via tor and canonical)
 

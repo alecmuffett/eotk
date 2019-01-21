@@ -35,6 +35,7 @@ HiddenServiceDir %TOR_DIR%
 HiddenServicePort 80 unix:%TOR_DIR%/port-80.sock
 HiddenServicePort 443 unix:%TOR_DIR%/port-443.sock
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+HiddenServiceVersion 2
 
 %%ELSE
 %%BEGIN
@@ -43,6 +44,7 @@ HiddenServiceDir %PROJECT_DIR%/%ONION_ADDRESS%.d
 HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock
 HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+HiddenServiceVersion 2
 
 %%END
 %%ENDIF

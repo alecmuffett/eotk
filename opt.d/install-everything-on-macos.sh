@@ -8,11 +8,15 @@ brew upgrade || exit 1
 : install tor, openssl, tools...
 brew install openssl tor socat
 
-: do not worry if the next few steps fail
+: cleanup
 (
+    : do not worry if the next step fails
     brew unlink nginx # unlink old copy
+    : do not worry if the next step fails
     brew uninstall nginx # remove old copy
+    : do not worry if the next step fails
     brew uninstall nginx-full # remove old copy
+    : do not worry if the next step fails
     brew untap homebrew/nginx # remove the tap which interferes with install
 )
 
@@ -42,4 +46,5 @@ if [ -f $BREW_OPENSSL ] ; then
     ( cd $optdir ; ln -sf $BREW_OPENSSL )
 fi
 
+: done
 exit 0
