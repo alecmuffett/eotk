@@ -76,7 +76,7 @@ done
 # make NGINX
 
 export LUAJIT_LIB=$opt_dir/usr/local/lib
-export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.0
+export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.1
 
 env \
     ./configure \
