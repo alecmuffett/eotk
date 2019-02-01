@@ -273,21 +273,23 @@ http {
 
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
-    %%IF %DROP_UNREWRITABLE_CONTENT%
     -- did upstream miss our request for 'identity'?
     local ce = ngx.var.upstream_http_content_encoding or ''
     if is_compression[ce] then
-      Slog("Compressed data returned from Origin, Content-Encoding: "..ce)
-      ngx.exit(520) -- en.wikipedia.org/wiki/List_of_HTTP_status_codes
+      Slog("compressed data returned from origin: "..ce)
+      %%IF %DROP_UNREWRITABLE_CONTENT%
       -- I'd prefer to do something nice like this:
       --   ngx.status = 520
       --   ngx.say("upstream content was compressed and therefore not rewritable")
       --   ngx.exit(ngx.OK)
-      -- ...but say() requires an API that is not available in this phase
+      -- ...but say() needs an API that is not available in this phase:
+      --   https://github.com/openresty/lua-nginx-module#header_filter_by_lua
+      -- therefore:
+      ngx.exit(520) -- en.wikipedia.org/wiki/List_of_HTTP_status_codes
+      %%ELSE
+      -- UNREWRITABLE CONTENT NOT DROPPED, COMPRESSION ONION LEAKS POSSIBLE
+      %%ENDIF
     end
-    %%ELSE
-    -- unrewritable content not dropped, onion leaks more possible
-    %%ENDIF
 
     local k, v
 
@@ -343,7 +345,7 @@ http {
         if not m then
           break
         end
-        Slog(string.format("\nTRAP |%s|\nCONTEXT |%s|\nTYPE |%s|\nURI %s\n", m[1], m[0], ct, uri))
+        Slog(string.format("\n\tTRAP %s\n\tTYPE %s\n\tCODE %s\n\tURI %s\n", m[1], ct, m[0], uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
