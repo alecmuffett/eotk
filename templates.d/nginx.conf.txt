@@ -274,7 +274,7 @@ http {
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
     -- did upstream miss our request for 'identity'?
-    local ce = ngx.var.upstream_http_content_encoding or ''
+    local ce = ngx.var.upstream_http_content_encoding or ""
     if is_compression[ce] then
       Slog("compressed data returned from origin: "..ce)
       %%IF %DROP_UNREWRITABLE_CONTENT%
@@ -315,23 +315,28 @@ http {
     end
   }
 
-  # filter the response body en-route back to the user
+  %%IF %DEBUG_TRAP%
+  # debug trap: filter the response body en-route back to the user
+  # hello! you have found the debug_trap code, which is not
+  # well-documented but adds repeated chunks of very slow code to
+  # capture/log any server-supplied content matching the supplied
+  # regular expressions, with up-to-64 chars of preceding and trailing
+  # context; use with caution, and probably do not put this into
+  # production, against ALL CONTENT INCLUDING (eg:) VIDEO; this code
+  # exists to help debug situations where some HTML or JS content is
+  # being passed through NGINX to the browser, but you don't know how
+  # it got there.
+  # config usage: set debug_trap foo\\.regex\\.tld [...]
   body_filter_by_lua_block {
-    %%IF %DEBUG_TRAP%
-    -- debug traps
+    -- change auxh to Content-Encoding or Set-Cookie or whatever, if needed
+    local auxh = "Access-Control-Allow-Origin"
+
     local i = ngx.arg[1]
-    local ct = ngx.header["Content-Type"]
-    local uri = ngx.var.uri
+    local ct = ngx.header["Content-Type"] or ""
+    local aux = ngx.header[auxh] or ""
+    local uri = ngx.var.uri or ""
     local iterator, err
     %%CSV %DEBUG_TRAP%
-    -- hello! you have found the debug_trap code, which is not well-documented
-    -- but adds repeated chunks of rather slow code to capture/log any
-    -- server-supplied content matching the supplied regular expressions, with
-    -- up-to-64 chars of preceding and trailing context; use with caution, and
-    -- probably do not put this into production; it exists to help debug
-    -- situations where some HTML or JS content is being passed through NGINX
-    -- to the browser, but you don't know how it got there...
-    -- usage: set debug_trap foo\\.regex\\.tld [...]
     iterator, err = ngx.re.gmatch(i, ".{0,64}(%1%).{0,64}")
     if not iterator then
       ngx.log(ngx.ERR, "gmatch error: ", err)
@@ -345,14 +350,25 @@ http {
         if not m then
           break
         end
-        Slog(string.format("\n\tTRAP %s\n\tTYPE %s\n\tCODE %s\n\tURI %s\n", m[1], ct, m[0], uri))
-      end -- while true
+        local msg =
+          string.format("\n\tTRAP %s\n"..
+                        "\tTYPE %s\n"..
+                        "\tAUXH %s: %s\n"..
+                        "\tCODE %s\n"..
+                        "\tURI %s\n",
+                        m[1],
+                        ct,
+                        auxh, aux,
+                        m[0],
+                        uri)
+          Slog(msg)
+        end -- while true
     end -- if iterator
     %%ENDCSV
-    %%ELSE
-    -- no debug traps
-    %%ENDIF
   }
+  %%ELSE
+  # no debug traps
+  %%ENDIF
 
   %%IF %SUPPRESS_HEADER_CSP%
   # csp suppression
@@ -535,7 +551,7 @@ http {
 
       # deonionify the request_uri for forwarding (both path and args)
       set_by_lua_block $request_uri2 {
-        local old = ngx.var.request_uri
+        local old = ngx.var.request_uri or ""
         -- onion_to_dns is potentially expensive at scale, so do a cheap test
         local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "o")
         if not m then -- nothing to attempt to rewrite, quick return
