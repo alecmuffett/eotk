@@ -185,13 +185,13 @@ http {
   init_by_lua_block {
     -- helper functions for elsewhere
 
-    Dictionary = function (list)
+    TrueMap = function (list)
       local set = {}
       for _, l in ipairs(list) do set[l] = true end
       return set
     end
 
-    is_compression = Dictionary{ "br", "compress", "deflate", "gzip", }
+    is_compression = TrueMap{ "br", "compress", "deflate", "gzip", }
 
     Slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, s)
