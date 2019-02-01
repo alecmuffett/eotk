@@ -18,11 +18,12 @@ RunAsDaemon 1
 SocksPort 0
 HiddenServiceDir $dir
 HiddenServicePort 1 127.0.0.1:1
-HiddenServiceVersion 2
 EOF
 
 if [ x$ONION_VERSION = x3 ] ; then
     echo HiddenServiceVersion 3 >> $dir/config
+else
+    echo HiddenServiceVersion 2 >> $dir/config
 fi
 
 tor -f $dir/config >$log 2>&1
