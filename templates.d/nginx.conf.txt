@@ -179,12 +179,20 @@ http {
   init_by_lua_block {
     -- helper functions for elsewhere
 
-    slog = function (s) -- in case of manual debugging
+    Dictionary = function (list)
+      local set = {}
+      for _, l in ipairs(list) do set[l] = true end
+      return set
+    end
+
+    is_compression = Dictionary{ "br", "compress", "deflate", "gzip", }
+
+    Slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, s)
       return
     end
 
-    has_suffix = function (s, x)
+    HasSuffix = function (s, x)
       return string.sub(s, -string.len(x)) == x
     end
 
@@ -265,6 +273,22 @@ http {
 
   # filter the response headers en-route back to the user
   header_filter_by_lua_block {
+    %%IF %DROP_UNREWRITABLE_CONTENT%
+    -- did upstream miss our request for 'identity'?
+    local ce = ngx.var.upstream_http_content_encoding or ''
+    if is_compression[ce] then
+      Slog("Compressed data returned from Origin, Content-Encoding: "..ce)
+      ngx.exit(520) -- en.wikipedia.org/wiki/List_of_HTTP_status_codes
+      -- I'd prefer to do something nice like this:
+      --   ngx.status = 520
+      --   ngx.say("upstream content was compressed and therefore not rewritable")
+      --   ngx.exit(ngx.OK)
+      -- ...but say() requires an API that is not available in this phase
+    end
+    %%ELSE
+    -- unrewritable content not dropped, onion leaks more possible
+    %%ENDIF
+
     local k, v
 
     local origin_rewrites = {
@@ -319,7 +343,7 @@ http {
         if not m then
           break
         end
-        slog(string.format("\nTRAP |%s|\nCONTEXT |%s|\nTYPE |%s|\nURI %s\n", m[1], m[0], ct, uri))
+        Slog(string.format("\nTRAP |%s|\nCONTEXT |%s|\nTYPE |%s|\nURI %s\n", m[1], m[0], ct, uri))
       end -- while true
     end -- if iterator
     %%ENDCSV
@@ -559,6 +583,12 @@ http {
   }
 
   %%END
+
+  %%IF %DEBUG_ORIGIN_HEADERS%
+  more_set_headers "EOTK-Upstream: ct=$upstream_http_content_type;ce=$upstream_http_content_encoding"
+  %%ELSE
+  # origin headers not debugged
+  %%ENDIF
 
   # header purge
   more_clear_headers "Age";
