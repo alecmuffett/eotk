@@ -1,7 +1,13 @@
 # -*- awk -*-
-# eotk (c) 2017 Alec Muffett
-
 # EMACS awk mode works quite well for nginx configs
+
+# eotk (c) 2019 Alec Muffett
+
+# SECURITY NOTE: the contents of this file, when actualised, should
+# not be made world-readable nor published without redaction;
+# password-like 128-bit "nonces" are used in the static regexps which
+# substiture hostnames.  It a leak occurs: simply rebuild the
+# configurations (which will create new nonces) and redeploy.
 
 # logs and pids
 pid %PROJECT_DIR%/nginx.pid;

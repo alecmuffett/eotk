@@ -453,8 +453,8 @@ sub DoProject {
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
 &SetEnv("onion_version", "2");
-&SetEnv("preserve_before", "~-~");
-&SetEnv("preserve_after", "~".&Nonce(128)."~");
+&SetEnv("preserve_before", "~".&Nonce(128)."~");
+&SetEnv("preserve_after", "~");
 &SetEnv("preserve_preamble_re", "[>@\\\\s]");
 &SetEnv("project", "default");
 &SetEnv("projects_home", "$here/projects.d");
