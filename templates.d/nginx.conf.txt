@@ -397,12 +397,13 @@ http {
     -- as you could benefit from the regexp optimiser in-place + tune casei
     local edit_map = {} -- example config follows:
     -- edit_map["regular\\.expression"] = "replacement.string"
+    -- edit_map["insertion.preamble"] = "${0}inserted.code"
     -- ...
 
     for regexp, replacement in pairs(edit_map) do
       local m, err = ngx.re.match(ngx.arg[1], regexp, "i")
       if m then -- could just gsub it blindly but i want the logs
-        Slog("replacing: "..m[0])
+        Slog("REPLACE: "..m[0].." BY "..replacement.."\n")
         local i, num, errs = ngx.re.gsub(ngx.arg[1], regexp, replacement, "i")
         ngx.arg[1] = i
       end
