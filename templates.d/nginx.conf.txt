@@ -185,19 +185,30 @@ http {
   init_by_lua_block {
     -- helper functions for elsewhere
 
+    -- builds data structures
+    -- http://www.lua.org/pil/11.5.html
     TrueMap = function (list)
       local set = {}
       for _, l in ipairs(list) do set[l] = true end
       return set
     end
 
+    -- for compression sanity-testing
     is_compression = TrueMap{ "br", "compress", "deflate", "gzip", }
 
+    -- for neutering entire uris to be filled with "<!--EOTK-->"
+    is_neutered_uri = TrueMap{
+        -- "/path/goes/here",
+        -- ...
+    }
+
+    -- for debug messages
     Slog = function (s) -- in case of manual debugging
       ngx.log(ngx.ERR, s)
       return
     end
 
+    -- for matching uri suffixes, etc
     HasSuffix = function (s, x)
       return string.sub(s, -string.len(x)) == x
     end
@@ -319,6 +330,16 @@ http {
         ngx.header[k] = dns_to_onion(v)
       end
     end
+
+    %%IF %DEBUG_CSP_SANDBOX%
+    local csp_sandbox =
+    "sandbox allow-forms allow-modals allow-orientation-lock"..
+    " allow-pointer-lock allow-popups allow-popups-to-escape-sandbox"..
+    " allow-presentation allow-same-origin allow-scripts;"
+    ngx.header["Content-Security-Policy"] = csp_sandbox
+    %%ELSE
+    -- no debug csp sandboxing
+    %%ENDIF
   }
 
   %%IF %DEBUG_TRAP%
@@ -343,7 +364,7 @@ http {
     local uri = ngx.var.uri or ""
     local iterator, err
     %%CSV %DEBUG_TRAP%
-    iterator, err = ngx.re.gmatch(i, ".{0,64}(%1%).{0,64}")
+    iterator, err = ngx.re.gmatch(i, ".{0,64}(%1%).{0,64}", "io")
     if not iterator then
       ngx.log(ngx.ERR, "gmatch error: ", err)
     else
@@ -367,10 +388,31 @@ http {
                         auxh, aux,
                         m[0],
                         uri)
-          Slog(msg)
-        end -- while true
+        Slog(msg)
+      end -- while true
     end -- if iterator
     %%ENDCSV
+
+    -- search and replace; this would be faster to do with a linear CSV unwind,
+    -- as you could benefit from the regexp optimiser in-place + tune casei
+    local edit_map = {} -- example config follows:
+    -- edit_map["regular\\.expression"] = "replacement.string"
+    -- ...
+
+    for regexp, replacement in pairs(edit_map) do
+      local m, err = ngx.re.match(ngx.arg[1], regexp, "i")
+      if m then -- could just gsub it blindly but i want the logs
+        Slog("replacing: "..m[0])
+        local i, num, errs = ngx.re.gsub(ngx.arg[1], regexp, replacement, "i")
+        ngx.arg[1] = i
+      end
+    end
+
+    -- neutering, if any (return "safe" content)
+    if is_neutered_uri[uri] then
+      Slog("neutering: "..uri)
+      ngx.arg[1] = "<!--EOTK-->"
+    end
   }
   %%ELSE
   # no debug traps

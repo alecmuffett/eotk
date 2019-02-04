@@ -432,6 +432,7 @@ sub DoProject {
 
 # default-set values
 &SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
+&SetEnv("debug_csp_sandbox", 0);
 &SetEnv("debug_origin_headers", 0);
 &SetEnv("drop_unrewritable_content", 1);
 &SetEnv("force_https", 1);

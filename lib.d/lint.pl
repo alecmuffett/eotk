@@ -28,6 +28,7 @@ my %known =
      'BLOCK_USER_AGENT_RE' => 1,
      'CERT_PREFIX' => 1,
      'COOKIE_LOCK' => 1,
+     'DEBUG_CSP_SANDBOX' => 1,
      'DEBUG_ORIGIN_HEADERS' => 1,
      'DEBUG_TRAP' => 1,
      'DNS_DOMAIN' => 1, # site being mapped
