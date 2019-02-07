@@ -12,8 +12,7 @@
 # 2) copy/symlink it into the relevant system; e.g. for Linux
 #    you will probably do something like:
 #
-#   sudo cp eotk-init.sh /etc/init.d
-#   sudo update-rc.d eotk-init.sh defaults
+#   sudo cp eotk-init.sh /etc/init.d && sudo update-rc.d eotk-init.sh defaults
 #
 # If you want logging to appear elsewhere, redefine log_message()
 

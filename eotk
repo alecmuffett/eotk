@@ -737,7 +737,7 @@ case "$cmd" in
         InvokeRemotely logrotate
         # do we need to do onionbalance logs?
         if [ -d $ob_dir ] ; then
-            need_to_do_ob_logs=true # ALEC THIS MAY BE THE PROBLEM BECAUSE IF YOU ARE RUNNING WITH --LOCAL OUT OF A CRONJOB THIS FLAG MAY OT BE SET; POSSIBLY YOU NEED TO EXPAND THE REASONS WHY THE DO_PROJ FLAG WOULD GET HIY, OR ELSE IT BIT BE A INVOCATION LOGINC ISSUE IN THE FUNCTION.
+            need_to_do_ob_logs=true
         else
             need_to_do_ob_logs=false
         fi
