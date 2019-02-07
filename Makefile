@@ -16,6 +16,7 @@ clean:
 distclean dist-clean: clean
 	./eotk shutdown
 	rm -rf projects.d onionbalance.d
+	rm -f eotk-housekeeping.sh eotk-init.sh
 
 test-ob-tor:
 	@echo this should print: onion

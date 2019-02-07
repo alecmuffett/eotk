@@ -1,20 +1,13 @@
 #!/bin/sh
-# eotk (c) 2017 Alec Muffett
+# eotk (c) 2019 Alec Muffett
 
-# Let's factor these out in case of manual editing, although moving
-# configured projects around the filesystem will be challenging;
-# easier to configure in-situ and as the intended user.
-
-EOTK_HOME=%EOTK_HOME%
-EOTK_USER=%USER%
-EOTK_STARTUP_LOG=/tmp/eotk-startup.log
-EOTK_OB_DELAY=90 # backgrounded pause
+# IMPORTANT NOTE: THIS SCRIPT MUST BE INDIVIDUALLY INSTALLED/ENABLED ON EVERY MACHINE RUNNING EOTK
 
 # The general thinking here is:
 #
 # 1) you create the script by using:
 #
-#   eotk make-init-script
+#   eotk make-init-scripts
 #
 # 2) copy/symlink it into the relevant system; e.g. for Linux
 #    you will probably do something like:
@@ -33,7 +26,16 @@ EOTK_OB_DELAY=90 # backgrounded pause
 # Description:       Enterprise Onion Toolkit
 ### END INIT INFO
 
-exec </dev/null >>$EOTK_STARTUP_LOG 2>&1
+# Let's factor these out in case of manual editing, although moving
+# configured projects around the filesystem will be challenging;
+# easier instead to configure in-situ and as the intended user.
+
+EOTK_HOME=%EOTK_HOME%
+EOTK_USER=%USER% # hardcode owner of the directory & files
+EOTK_INIT_LOG=/tmp/eotk-init.log
+EOTK_OB_DELAY=90 # backgrounded pause
+
+exec </dev/null >>$EOTK_INIT_LOG 2>&1
 
 date # help with debugging
 

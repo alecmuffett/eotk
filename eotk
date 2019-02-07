@@ -39,6 +39,7 @@ host_list=$EOTK_HOME/eotk-workers.conf # <--------------------------- HOST FILE
 
 # init script name
 init=eotk-init.sh
+housekeeping=eotk-housekeeping.sh
 
 # log retention
 log_retain=8
@@ -736,18 +737,20 @@ case "$cmd" in
         InvokeRemotely logrotate
         # do we need to do onionbalance logs?
         if [ -d $ob_dir ] ; then
-            need_to_do_ob_logs=true
+            need_to_do_ob_logs=true # ALEC THIS MAY BE THE PROBLEM BECAUSE IF YOU ARE RUNNING WITH --LOCAL OUT OF A CRONJOB THIS FLAG MAY OT BE SET; POSSIBLY YOU NEED TO EXPAND THE REASONS WHY THE DO_PROJ FLAG WOULD GET HIY, OR ELSE IT BIT BE A INVOCATION LOGINC ISSUE IN THE FUNCTION.
         else
             need_to_do_ob_logs=false
         fi
         LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
-    make-init-script)
-        lib.d/expand-template.pl templates.d/$init.txt </dev/null >$init 2>/dev/null
-        Print init script is now in: $init
-        Print please read that file for further instructions.
-        chmod 755 $init
+    scripts|script|make-init-scripts|make-init-script)
+        for t in $init $housekeeping ; do
+            lib.d/expand-template.pl templates.d/$t.txt </dev/null >$t 2>/dev/null
+            chmod 755 $t
+            Print created: $t
+        done
+        Print please read those files for installation instructions.
         ;;
 
     *)

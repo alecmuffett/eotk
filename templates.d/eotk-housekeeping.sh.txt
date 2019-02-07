@@ -1,0 +1,32 @@
+#!/bin/sh
+# eotk (c) 2019 Alec Muffett
+
+# IMPORTANT NOTE: THIS SCRIPT MUST BE INDIVIDUALLY INSTALLED/ENABLED ON EVERY MACHINE RUNNING EOTK
+
+# The general thinking here is:
+#
+# 1) you create the script by using:
+#
+#   eotk make-init-scripts
+#
+# 2) insert the following command into the cron file for user "%USER%"
+#
+#  00 08 * * 1 exec %EOTK_HOME%/eotk-houskeeping.sh
+
+EOTK_HOME=%EOTK_HOME%
+EOTK_USER=%USER% # hardcode owner of the directory & files
+EOTK_HOUSEKEEPING_LOG=/tmp/eotk-housekeeping.log
+
+exec </dev/null >>$EOTK_HOUSEKEEPING_LOG 2>&1
+
+date # help with debugging
+
+if [ ! "x$USER" = "x$EOTK_USER" ] ; then # sanity check
+    echo "error: this script was created for, and should be running in the cronjob for, the user: $EOTK_USER"
+    echo "error: please fix this else logs will not be rotated."
+    exit 1
+fi
+
+exec $EOTK_HOME/eotk --local logrotate
+
+exit 1
