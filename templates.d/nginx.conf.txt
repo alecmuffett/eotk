@@ -140,14 +140,27 @@ http {
   %ONION_ADDRESS%
   gir
   ;
-  %%IF %HARD_MODE% > 1
-  # extra map: %DNS_DOMAIN_RE% -> %ONION_ADDRESS_RE%
+  # map: %DNS_DOMAIN_RE% -> %ONION_ADDRESS_RE%
   subs_filter
-  \\b%DNS_DOMAIN_RERE2%\\b
+  \\b%DNS_DOMAIN_RE4%\\b
   %ONION_ADDRESS_RE2%
   gir
   ;
+  %%IF %HARD_MODE% > 1
+  # hard2 map: %DNS_DOMAIN_RE2% -> %ONION_ADDRESS_RE2%
+  subs_filter
+  \\b%DNS_DOMAIN_RE8%\\b
+  %ONION_ADDRESS_RE4%
+  gir
+  ;
+  # hard2 map: %DNS_DOMAIN_RE3% -> %ONION_ADDRESS_RE3%
+  subs_filter
+  \\b%DNS_DOMAIN_RE12%\\b
+  %ONION_ADDRESS_RE6%
+  gir
+  ;
   %%ENDIF
+
   %%END
 
   %%IF %FOREIGNMAP_CSV%
@@ -268,21 +281,6 @@ http {
       local num, errs
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
-      %%END
-      return i
-    end
-
-    -- a note for future maintainers; if we were being strictly orthogonal then
-    -- the replacement with ONION_ADDRESS in much of this Lua block would have to
-    -- be double-escaped for potential backslashes, because double-quotes;
-    -- however this is not needed because DNS forbids backslash; the only code
-    -- where this becomes evident/necessary is here, with "_RE2":
-
-    dnsre_to_onionre = function (i)
-      local num, errs
-      -- TODO: BRING THIS INTO LINE WITH dns_to_onion --
-      %%BEGIN
-      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RERE2%\\b", "%ONION_ADDRESS_RE2%", "io")
       %%END
       return i
     end

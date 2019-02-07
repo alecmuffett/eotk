@@ -31,11 +31,14 @@ my %known =
      'DEBUG_CSP_SANDBOX' => 1,
      'DEBUG_ORIGIN_HEADERS' => 1,
      'DEBUG_TRAP' => 1,
-     'DNS_DOMAIN' => 1, # site being mapped
-     'DNS_DOMAIN_RE' => 1, # ...with dots escaped
-     'DNS_DOMAIN_RE2' => 1, # ...with dots double-escaped
-     'DNS_DOMAIN_RERE' => 1, # ...with dots escaped
-     'DNS_DOMAIN_RERE2' => 1, # ...with dots double-escaped
+     'DNS_DOMAIN' => 1,
+     'DNS_DOMAIN_RE' => 1,
+     'DNS_DOMAIN_RE2' => 1,
+     'DNS_DOMAIN_RE3' => 1,
+     'DNS_DOMAIN_RE4' => 1,
+     'DNS_DOMAIN_RE6' => 1,
+     'DNS_DOMAIN_RE8' => 1,
+     'DNS_DOMAIN_RE12' => 1,
      'DROP_UNREWRITABLE_CONTENT' => 1,
      'EOTK_HOME' => 1,
      'EXTRA_PROCESSING_CSV' => 1,
@@ -78,11 +81,14 @@ my %known =
      'NONCE256_5' => 1,
      'NO_CACHE_CONTENT_TYPE' => 1,
      'NO_CACHE_HOST' => 1,
-     'ONION_ADDRESS' => 1, # onion being mapped-to
-     'ONION_ADDRESS_RE' => 1, # with dots escaped
-     'ONION_ADDRESS_RE2' => 1, # with dots double-escaped
-     'ONION_ADDRESS_RERE' => 1, # with dots escaped
-     'ONION_ADDRESS_RERE2' => 1, # with dots double-escaped
+     'ONION_ADDRESS' => 1,
+     'ONION_ADDRESS_RE' => 1,
+     'ONION_ADDRESS_RE2' => 1,
+     'ONION_ADDRESS_RE3' => 1,
+     'ONION_ADDRESS_RE4' => 1,
+     'ONION_ADDRESS_RE6' => 1,
+     'ONION_ADDRESS_RE8' => 1,
+     'ONION_ADDRESS_RE12' => 1,
      'ORIGIN_BLACKLIST' => 1,
      'ORIGIN_BLACKLIST_RE' => 1,
      'ORIGIN_WHITELIST' => 1,
@@ -141,7 +147,7 @@ while (<>) { s/%(\w*)%/$syms{$1}++, '-'/ge; }
 
 foreach $var (sort keys %syms) {
     print "$syms{$var} $var";
-    print " <- *unknown*" unless ($known{$var});
+    print " <-------------------- *unknown*" unless ($known{$var});
     print "\n";
 }
 

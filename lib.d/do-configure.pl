@@ -161,10 +161,13 @@ sub CopyFile {
     chmod(0600, $to) or die "chmod: $to: $!\n";
 }
 
-sub SlashDot { # dotify a regexp
-    warn "SlashDot @_\n";
+sub PolySlash { # dotify a regexp
+    warn "PolySlash @_\n";
     my $arg = shift;
-    $arg =~ s!\.!\\.!g;
+    my $count = shift;
+    while ($count--) {
+        $arg =~ s!\.!\\.!go;
+    }
     return $arg;
 }
 
@@ -259,27 +262,23 @@ sub DoMap {
 
     # create the row
     my %row = ();
-    my $x = $to;
-    $row{DNS_DOMAIN} = $x; # foo.com
-    $x = &SlashDot($x);
-    $row{DNS_DOMAIN_RE} = $x; # foo\.com - static
-    $x =~ s!\\!\\\\!g;
-    $row{DNS_DOMAIN_RE2} = $x; # foo\\.com -- double-escaped
-    $x = &SlashDot($x);
-    $row{DNS_DOMAIN_RERE} = $x; # foo\\\.com - re static
-    $x =~ s!\\!\\\\!g;
-    $row{DNS_DOMAIN_RERE2} = $x; # foo\\\\\\.com -- double-escaped
+    $row{DNS_DOMAIN} = $to;
+    $row{DNS_DOMAIN_RE}  = &PolySlash($to, 1);
+    $row{DNS_DOMAIN_RE2} = &PolySlash($to, 2);
+    $row{DNS_DOMAIN_RE3} = &PolySlash($to, 3);
+    $row{DNS_DOMAIN_RE4} = &PolySlash($to, 4);
+    $row{DNS_DOMAIN_RE6} = &PolySlash($to, 6);
+    $row{DNS_DOMAIN_RE8} = &PolySlash($to, 8);
+    $row{DNS_DOMAIN_RE12} = &PolySlash($to, 12);
 
-    $x = $onion;
-    $row{ONION_ADDRESS} = $x; # foo.onion
-    $x = &SlashDot($x);
-    $row{ONION_ADDRESS_RE} = $x; # foo\.onion
-    $x =~ s!\\!\\\\!g;
-    $row{ONION_ADDRESS_RE2} = $x; # foo\\.onion
-    $x = &SlashDot($x);
-    $row{ONION_ADDRESS_RERE} = $x; # foo\\\.onion
-    $x =~ s!\\!\\\\!g;
-    $row{ONION_ADDRESS_RERE2} = $x; # foo\\\\\\.onion
+    $row{ONION_ADDRESS} = $onion;
+    $row{ONION_ADDRESS_RE}  = &PolySlash($onion, 1);
+    $row{ONION_ADDRESS_RE2} = &PolySlash($onion, 2);
+    $row{ONION_ADDRESS_RE3} = &PolySlash($onion, 3);
+    $row{ONION_ADDRESS_RE4} = &PolySlash($onion, 4);
+    $row{ONION_ADDRESS_RE6} = &PolySlash($onion, 6);
+    $row{ONION_ADDRESS_RE8} = &PolySlash($onion, 8);
+    $row{ONION_ADDRESS_RE12} = &PolySlash($onion, 12);
 
     $row{KEYFILE} = $keyfile;
 
@@ -614,19 +613,13 @@ foreach $domain (sort keys %foreign_by_domain) {
     my $onion = $foreign_by_domain{$domain};
     my @elements = ();
 
-    $x = $onion; # onion
-    push(@elements, $x);
-    $x = &SlashDot($x); # _RE
-    push(@elements, $x);
-    $x = &SlashDot($x); # _RE2
-    push(@elements, $x);
+    push(@elements, $onion);
+    push(@elements, &PolySlash($onion, 1));
+    push(@elements, &PolySlash($onion, 2));
 
-    $x = $domain; # domain
-    push(@elements, $x);
-    $x = &SlashDot($x); # _RE
-    push(@elements, $x);
-    $x = &SlashDot($x); # _RE2
-    push(@elements, $x);
+    push(@elements, $domain);
+    push(@elements, &PolySlash($domain, 1));
+    push(@elements, &PolySlash($domain, 2));
 
     push(@flist, join(",", @elements));
 }
