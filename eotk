@@ -485,7 +485,7 @@ case "$cmd" in
 
     logsize|logsizes)
         $flag_remote || echo :::: eotk log sizes ::::
-        find $EOTK_HOME -name "*.log" -ls
+        find $EOTK_HOME -name "*.log" -o -name "*.log.*" -ls
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely logsize
         ;;

@@ -16,12 +16,18 @@
 #
 # ...a slight delay is automatically added for OnionBalance machines
 
+EOTK_HOUSEKEEPING_LOG=/tmp/eotk-housekeeping.log
+DELETE_LAST_LOG=true # or: false
+
 EOTK_HOME=%EOTK_HOME%
 EOTK_USER=%USER% # hardcode owner of the directory & files
-EOTK_HOUSEKEEPING_LOG=/tmp/eotk-housekeeping.log
 EOTK_OB_DELAY=90 # backgrounded pause
 
 EOTK_PATH=%PATH% # freeze the path at template expansion time (not wise for init-script)
+
+if $DELETE_LAST_LOG && test -f $EOTK_HOUSEKEEPING_LOG ; then
+    rm $EOTK_HOUSEKEEPING_LOG || exit 1
+fi
 
 exec </dev/null >>$EOTK_HOUSEKEEPING_LOG 2>&1
 
@@ -43,5 +49,8 @@ if [ -d $ob_dir ] ; then
     sleep $EOTK_OB_DELAY
 fi
 
-exec $EOTK_HOME/eotk --local logrotate # overlay
-exit 1
+$EOTK_HOME/eotk --local logrotate || exit 1
+
+date # again
+echo done.
+exit 0
