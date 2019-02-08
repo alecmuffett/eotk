@@ -4,7 +4,8 @@ keyserver=keyserver.ubuntu.com
 ngxversion=1.15.8
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
-LUAJITURL="http://luajit.org/download/LuaJIT-2.0.5.tar.gz"
+# docs: https://github.com/openresty/lua-nginx-module#installation
+luaurl="https://github.com/openresty/luajit2.git"
 
 MODS="
 https://github.com/openresty/headers-more-nginx-module.git
@@ -44,14 +45,13 @@ cd $ngxdir || exit 1
 
 src_dir=`pwd`
 
-# make luajiturl
-
-luaurl=$LUAJITURL
-luafile=`basename "$luaurl"`
-luadir=`basename "$luafile" .tar.gz`
-
-test -f "$luafile" || curl -o "$luafile" "$luaurl" || exit 1
-test -d "$luadir" || tar zxf "$luafile" || exit 1
+# make luajit
+luadir=`basename $luaurl .git`
+if [ -d $luadir ] ; then
+    ( cd $luadir ; exec git pull ) || exit 1
+else
+    git clone $luaurl || exit 1
+fi
 
 cd $luadir || exit 1
 
@@ -76,7 +76,7 @@ done
 # make NGINX
 
 export LUAJIT_LIB=$opt_dir/usr/local/lib
-export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.0
+export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.1
 
 env \
     ./configure \
