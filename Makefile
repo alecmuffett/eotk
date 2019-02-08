@@ -24,3 +24,18 @@ test-ob-tor:
 
 test-gok:
 	env PATH=./opt.d:./lib.d:.:$$PATH ./lib.d/generate-onion-key.sh
+
+##################################################################
+
+docker-test:
+	docker build --tag eotk-image opt.d
+	docker run -it --cap-drop=all --name eotk-container eotk-image
+
+docker-status:
+	docker images -a
+	docker ps -a
+
+docker-clean:
+	docker system prune --volumes
+	docker image prune -a
+	make docker-status
