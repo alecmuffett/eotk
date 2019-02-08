@@ -1,10 +1,8 @@
-# Notes
+# Requirements
 
 EOTK requires Tor 0.3.5.7+
 
-# Requirements
-
-EOTK requires recent `nginx` with the following modules/features enabled:
+EOTK requires recent `nginx` (1.15.8+) with the following modules/features enabled:
 
 * `headers_more`
 * `ngx_http_substitutions_filter_module`
@@ -25,7 +23,7 @@ This will create two files:
 * `eotk-housekeeping.sh` - for cronjob log rotation and other cleanup work
 
 Please read the individual files for installation instructions; 
-it's intended to be pretty simple.
+local setup is intended to be pretty simple.
 
 # Per-Platform Installations
 
