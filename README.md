@@ -3,9 +3,9 @@
 
 ## Primary Supported Platforms
 
-* OSX Sierra with Homebrew, Latest Updates
-* Raspbian Jessie/Jessie-Lite, Latest Updates
+* OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
+* Raspbian Jessie/Jessie-Lite, Latest Updates
 * Ubuntu 16.04+, Latest Updates
 
 ## Maillist / Group
@@ -17,22 +17,28 @@ General discussion mailllist: deployment, tweaks and tuning:
 
 NB: bugs are still best reported through `Issues`, above.
 
-### In the News
-
-* Jan 2018 [Volunteer Spotlight: Alec Helps Companies Activate Onion Services
-](https://blog.torproject.org/volunteer-spotlight-alec-helps-companies-activate-onion-services)
-* Nov 2017 [Un service Wikipedia pour le Dark Web a été lancé par un ingénieur en sécurité](https://www.developpez.com/actu/175523/Un-service-Wikipedia-pour-le-Dark-Web-a-ete-lance-par-un-ingenieur-en-securite-afin-de-contourner-la-censure-dans-certains-pays/)
-* Nov 2017 [Δημιουργήθηκε σκοτεινή έκδοση της Βικιπαίδειας για ανθρώπους σε λογοκριμένα καθεστώτα](https://texnologia.net/dhmiourgithike-skoteinh-ekdosh-ths-wikipedia-gia-anthropous-se-logokrimena-kathestota/2017/11)
-* Nov 2017 [A security expert built an unofficial Wikipedia for the dark web](https://www.engadget.com/2017/11/25/a-security-expert-built-an-unofficial-wikipedia-for-the-dark-web/)
-* Nov 2017 [There’s Now a Dark Web Version of Wikipedia](https://motherboard.vice.com/en_us/article/7x4g4b/theres-now-a-dark-web-version-of-wikipedia-tor-alec-muffett)
-* Oct 2017 [The New York Times is Now Available as a Tor Onion Service](https://open.nytimes.com/https-open-nytimes-com-the-new-york-times-as-a-tor-onion-service-e0d0b67b7482)
-* Apr 2017 [This Company Will Create Your Own Tor Hidden Service](https://motherboard.vice.com/en_us/article/this-company-will-create-your-own-tor-hidden-service)
-* Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
-
 ## Changelog
 
-### Work In Progress (HEAD, will become v1.4)
-* TBD
+### HEAD
+* new features
+  * auto-generate (`eotk make-scripts`) wrapper scripts for:
+    * installation into "init" startup `eotk-init.sh`
+    * log rotation / housekeeping via installation into eotk-user cronjob (`eotk-housekeeping.sh`)
+  * stricter enforcement of onionification
+    * by default will drop compressed, non-onionifiable content with error code `520`
+    * if this is a problem (why?) use `set drop_unrewritable_content 0` to disable
+  * validate worker onion addresses upon creation
+    * works around [issue logged with tor](https://trac.torproject.org/projects/tor/ticket/29429) 
+  * `eotk spotpush` now permits pushing explicitly named scripts from `$EOTK_HOME`, as well as hunting in `projects.d`
+  * `set hard_mode 1` is now **default** and onionifies both `foo.com` AND `foo\.com` (regexp-style)
+    * use `set hard_mode 2` to further onionify `foo\\.com` and `foo\\\.com` at slight performance cost
+  * `set ssl_mkcert 1` to use [mkcert](https://github.com/FiloSottile/mkcert) by @FiloSottile for certificate generation, if you have installed it
+  * refactor nonces used in rewriting preserved strings
+  * improvements to `set debug_trap pattern [...]` logging
+  * support for OpenResty LuaJIT in Raspbian build scripts
+  * update code version for Raspbian builds scripts
+  * tor HiddenServiceVersion nits
+  * dead code removal
 
 ### v1.3
 * new features
@@ -64,6 +70,18 @@ NB: bugs are still best reported through `Issues`, above.
 * ["tunables"](docs.d/TEMPLATES.md) documentation for template content
 * `troubleshooting` section near the bottom of this page
 * See [project activity](https://github.com/alecmuffett/eotk/graphs/commit-activity) for information
+
+### In the News
+
+* Jan 2018 [Volunteer Spotlight: Alec Helps Companies Activate Onion Services
+](https://blog.torproject.org/volunteer-spotlight-alec-helps-companies-activate-onion-services)
+* Nov 2017 [Un service Wikipedia pour le Dark Web a été lancé par un ingénieur en sécurité](https://www.developpez.com/actu/175523/Un-service-Wikipedia-pour-le-Dark-Web-a-ete-lance-par-un-ingenieur-en-securite-afin-de-contourner-la-censure-dans-certains-pays/)
+* Nov 2017 [Δημιουργήθηκε σκοτεινή έκδοση της Βικιπαίδειας για ανθρώπους σε λογοκριμένα καθεστώτα](https://texnologia.net/dhmiourgithike-skoteinh-ekdosh-ths-wikipedia-gia-anthropous-se-logokrimena-kathestota/2017/11)
+* Nov 2017 [A security expert built an unofficial Wikipedia for the dark web](https://www.engadget.com/2017/11/25/a-security-expert-built-an-unofficial-wikipedia-for-the-dark-web/)
+* Nov 2017 [There’s Now a Dark Web Version of Wikipedia](https://motherboard.vice.com/en_us/article/7x4g4b/theres-now-a-dark-web-version-of-wikipedia-tor-alec-muffett)
+* Oct 2017 [The New York Times is Now Available as a Tor Onion Service](https://open.nytimes.com/https-open-nytimes-com-the-new-york-times-as-a-tor-onion-service-e0d0b67b7482)
+* Apr 2017 [This Company Will Create Your Own Tor Hidden Service](https://motherboard.vice.com/en_us/article/this-company-will-create-your-own-tor-hidden-service)
+* Feb 2017 [New Tool Takes Mere Minutes to Create Dark Web Version of Any Site](https://motherboard.vice.com/en_us/article/new-tool-takes-mere-minutes-to-create-dark-web-version-of-any-site)
 
 ## Introduction
 
