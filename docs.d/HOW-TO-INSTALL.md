@@ -1,6 +1,8 @@
 # Notes
 
-EOTK requires Tor 0.2.9.9+
+EOTK requires Tor 0.3.5.7+
+
+# Requirements
 
 EOTK requires recent `nginx` with the following modules/features enabled:
 
@@ -8,12 +10,27 @@ EOTK requires recent `nginx` with the following modules/features enabled:
 * `ngx_http_substitutions_filter_module`
 * `http_sub`
 * `http_ssl`
-* Lua and/or LuaJIT
+* Lua and/or LuaJIT (ideally from OpenResty)
 
-# Fresh Installations (by platform)
+# After the Installation
 
-Where you don't have Tor, NGINX or OnionBalance, or much other stuff
-currently installed:
+Once you have installed EOTK (below) and configured and tested it 
+for your project, run:
+
+* `eotk make-scripts`
+
+This will create two files: 
+
+* `eotk-init.sh` - for installing on your system as a startup script
+* `eotk-housekeeping.sh` - for cronjob log rotation and other cleanup work
+
+Please read the individual files for installation instructions; 
+it's intended to be pretty simple.
+
+# Per-Platform Installations
+
+Where you don't have Tor, NGINX or OnionBalance, 
+or much other stuff currently installed:
 
 ## macOS Mojave (prebuilt via homebrew)
 
@@ -33,14 +50,14 @@ currently installed:
 Serially, this takes about 1h45m on a PiZero, or about 30m on a Pi3b.
 These figures should improve when recent Tor updates sediment into Raspbian.
 
-Scripts are supplied for `VERSION` = jessie, stretch
+Scripts are supplied for stretch
 
 * `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/build-nginx-on-raspbian-VERSION.sh`
-* `./opt.d/build-tor-on-raspbian-VERSION.sh`
-* `./opt.d/install-onionbalance-on-raspbian-VERSION.sh`
+* `./opt.d/build-nginx-on-raspbian-stretch.sh`
+* `./opt.d/build-tor-on-raspbian-stretch.sh`
+* `./opt.d/install-onionbalance-on-raspbian-stretch.sh`
 
 # Piecemeal Installation Notes
 
