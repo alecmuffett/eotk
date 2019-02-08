@@ -5,7 +5,6 @@
 
 * OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
-* Raspbian Jessie/Jessie-Lite, Latest Updates
 * Ubuntu 16.04+, Latest Updates
 
 ## Maillist / Group
@@ -39,6 +38,7 @@ NB: bugs are still best reported through `Issues`, above.
   * update code version for Raspbian builds scripts
   * tor HiddenServiceVersion nits
   * dead code removal
+  * deprecate support for Raspbian Jessie
 
 ### v1.3
 * new features
