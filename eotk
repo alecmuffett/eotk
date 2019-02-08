@@ -747,7 +747,7 @@ case "$cmd" in
         LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
-    scripts|script|make-init-scripts|make-init-script)
+    script*|make-script*|make-init-script*)
         for t in $init $housekeeping ; do
             lib.d/expand-template.pl templates.d/$t.txt </dev/null >$t 2>/dev/null
             chmod 755 $t

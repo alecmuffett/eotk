@@ -1,32 +1,47 @@
 #!/bin/sh
 # eotk (c) 2019 Alec Muffett
 
-# IMPORTANT NOTE: THIS SCRIPT MUST BE INDIVIDUALLY INSTALLED/ENABLED ON EVERY MACHINE RUNNING EOTK
+# IMPORTANT: THIS SCRIPT MUST BE INDIVIDUALLY INSTALLED IN THE CRONTAB
+# FOR %USER% ON EVERY MACHINE RUNNING EOTK IN THE SAME WORKER GROUP.
 
 # The general thinking here is:
 #
 # 1) you create the script by using:
 #
-#   eotk make-init-scripts
+#   eotk make-scripts
 #
 # 2) insert the following command into the cron file for user "%USER%"
 #
 #  00 08 * * 1 exec %EOTK_HOME%/eotk-housekeeping.sh
+#
+# ...a slight delay is automatically added for OnionBalance machines
 
 EOTK_HOME=%EOTK_HOME%
 EOTK_USER=%USER% # hardcode owner of the directory & files
 EOTK_HOUSEKEEPING_LOG=/tmp/eotk-housekeeping.log
+EOTK_OB_DELAY=90 # backgrounded pause
+
+EOTK_PATH=%PATH% # freeze the path at template expansion time (not wise for init-script)
 
 exec </dev/null >>$EOTK_HOUSEKEEPING_LOG 2>&1
 
+PATH="$EOTK_PATH" ; export PATH
+
 date # help with debugging
 
-if [ ! "x$USER" = "x$EOTK_USER" ] ; then # sanity check
-    echo "error: this script was created for, and should be running in the cronjob for, the user: $EOTK_USER"
+cd $EOTK_HOME || exit 1
+
+if [ $EOTK_USER != `whoami` ] ; then # sanity check
+    echo "error: this script was created for, and should be running a the cronjob for, the user: $EOTK_USER"
     echo "error: please fix this else logs will not be rotated."
     exit 1
 fi
 
-exec $EOTK_HOME/eotk --local logrotate
+ob_dir=$EOTK_HOME/onionbalance.d
+if [ -d $ob_dir ] ; then
+    echo running OnionBalancer, sleeping for $EOTK_OB_DELAY seconds to permit the workers to reset.
+    sleep $EOTK_OB_DELAY
+fi
 
+exec $EOTK_HOME/eotk --local logrotate # overlay
 exit 1

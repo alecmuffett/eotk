@@ -7,7 +7,7 @@
 #
 # 1) you create the script by using:
 #
-#   eotk make-init-scripts
+#   eotk make-scripts
 #
 # 2) copy/symlink it into the relevant system; e.g. for Linux
 #    you will probably do something like:
