@@ -1,9 +1,11 @@
 # Development dockerfile for EOTK
 # EOTK will be downloaded and setup ready-to-run without root privileges
-# To build, run: docker build -t eotk .
 
-# To run the newly-built container:
-# docker run -it --cap-drop=all --name eotk eotk
+# To build:
+# docker build --tag eotk-image .
+
+# To run:
+# docker run -it --cap-drop=all --name eotk-container eotk-image
 
 # credit:
 # v1 Alex Haydock <alex@alexhaydock.co.uk>

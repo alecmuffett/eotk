@@ -335,7 +335,7 @@ sub DoProject {
     $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
     if (-f $cert) {
         warn "$cert exists!";
-    }
+    } # TODO: if the cert is already in the secrets.d directory, use it
     else {
         warn "making cert for $cert_prefix\n";
         &GoAndRun(
