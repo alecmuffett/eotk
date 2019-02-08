@@ -75,9 +75,10 @@ from https://www.torproject.org/docs/debian.html.en
 * Configure the APT repositories for Tor
   * I recommend that you add the tor repositories into a new file
     * Use: `/etc/apt/sources.list.d/tor.list` or similar
-* Do the gpg thing
-* Do the apt update thing
-* Do the tor installation thing
+* Follow the instructions given:
+  * Do the documented `gpg` thing
+  * Do the documented `apt update` thing
+  * Do the documented `tor` installation thing
 
 ## Ubuntu NGINX Installation
 
