@@ -220,14 +220,17 @@ ListProjects() {
 # TODO(alecm) resolve potential clashes between project names and
 # various other directory names ending in ".d"; maybe use ".proj"?
 
-SpotPush() {
-    for filename in "$@" ; do
+SpotPush() { # push any file named FOO from $EOTK_HOME and/or projects.d
+    for filename in "$@" ; do # GENERATE/USE ABSOLUTE PATHS
         files=`find $project_dir -type f -name "$filename" | sort`
+        # special: check top-level dir, too...
+        tldfile=${EOTK_HOME}/$filename # USE ABSOLUTE PATHS
+        test -f $tldfile && files="$files $tldfile"
         for host in $cloud_hosts ; do
             test "x$host" = "xlocalhost" && continue # skip self
-            echo :::: push $host ::::
+            echo :::: push $host $filename ::::
             for filepath in $files ; do
-                Print copying $filepath to $host
+                Print pushing $host:$filepath
                 scp -p $filepath $host:$filepath || exit 1
             done
         done

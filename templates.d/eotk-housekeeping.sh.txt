@@ -11,7 +11,7 @@
 #
 # 2) insert the following command into the cron file for user "%USER%"
 #
-#  00 08 * * 1 exec %EOTK_HOME%/eotk-houskeeping.sh
+#  00 08 * * 1 exec %EOTK_HOME%/eotk-housekeeping.sh
 
 EOTK_HOME=%EOTK_HOME%
 EOTK_USER=%USER% # hardcode owner of the directory & files
