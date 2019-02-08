@@ -19,7 +19,7 @@ NB: bugs are still best reported through `Issues`, above.
 
 ## Changelog
 
-### HEAD
+### HEAD (will become v1.4 after soak-testing)
 * new features
   * auto-generate (`eotk make-scripts`) wrapper scripts for:
     * installation into "init" startup `eotk-init.sh`
