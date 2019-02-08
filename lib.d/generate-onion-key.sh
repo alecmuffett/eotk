@@ -1,7 +1,23 @@
 #!/bin/sh
 
-# run this using the `eotk` wrapper, else you might not pick up the
-# necessary PATH to `tor`, etc...
+# WARNING: THIS SCRIPT MUST BE KEPT RE-ENTRANT BECAUSE OF THE CALL
+# TO `exec` BELOW, WHICH ENABLES ONION PRIVATE-KEY SANITY CHECKING.
+
+# this, and the checker, exist because of:
+# https://trac.torproject.org/projects/tor/ticket/29429
+
+GOK_DEPTH_MAX=16
+if [ ${GOK_DEPTH=0} -ge $GOK_DEPTH_MAX ] ; then
+    echo error: $GOK_DEPTH_MAX is too many attempts to create an onion key, failing
+    exit 1
+else
+    GOK_DEPTH=`expr $GOK_DEPTH + 1`
+fi
+export GOK_DEPTH
+
+# run this using the `eotk` wrapper,
+# otherwise you might not pick up
+# the necessary PATH to `tor`, etc...
 
 here=`pwd` # absolute pathnames are required by tor
 
@@ -53,6 +69,12 @@ if [ x$ONION_VERSION = x3 ] ; then
     echo $sfile
 else
     file=$onion.key
+    # sanity-check or re-exec?
+    if ! validate-onion-key.py $dir/private_key >/dev/null ; then
+        mv $dir/private_key $file,invalid || exit 1
+        rm -r $dir $log || exit 1
+        exec "$0" "$@" # try again, and trust the recursion-depth-checker
+    fi
     mv $dir/private_key $file || exit 1
     echo $file
 fi

@@ -21,3 +21,6 @@ distclean dist-clean: clean
 test-ob-tor:
 	@echo this should print: onion
 	curl -x socks5h://127.0.0.1:9050/ https://www.facebookcorewwwi.onion/si/proxy ; echo ""
+
+test-gok:
+	env PATH=./opt.d:./lib.d:.:$$PATH ./lib.d/generate-onion-key.sh
