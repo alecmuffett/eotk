@@ -231,6 +231,21 @@ sub DoMap {
 
     if ($what eq "hardmap") {
         $keyfile = $from;
+        # a little backwards compatibility: 'hardmap' originally was
+        # just 'map' and expected a filename, and then 'softmap'
+        # arrived and took just an onion address ... which is nicer;
+        # but I don't want to change the code very much, so if you are
+        # 'hardmap' and specify only an onion address, let's fill in
+        # the filename and then continue by stripping it away again.
+        # le huge sigh, hindsight is 20-20.
+
+        # allow "foo" and "foo.onion", convert them to secrets.d/foo.(pem|key)
+        if ($keyfile =~ /^([a-z2-7]{16}(?:[a-z2-7]{40})?)(\.onion)?$/o) {
+            my $tmp = "secrets.d/$1.pem";
+            $tmp = "secrets.d/$1.key" if ! -f $tmp;
+            $keyfile = $tmp
+        }
+
         die "map: $keyfile: no such file\n" unless -f ($keyfile);
         $onion = $keyfile;
         $onion =~ s!^.*/!!;

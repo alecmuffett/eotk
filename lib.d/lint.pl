@@ -5,8 +5,6 @@ my %known =
     (
      # demo fakes
      'NEW_ONION' => 1,
-     'NEW_HARD_ONION' => 1,
-     'NEW_SOFT_ONION' => 1,
      'SCRIPT_PAUSE' => 1,
      '' => 1, # an empty escape character
 

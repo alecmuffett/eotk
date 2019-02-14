@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import sys
-import Crypto
 import traceback
+import Crypto
+
 from Crypto.PublicKey import RSA
 for fname in sys.argv[1:]:
     with open (fname, 'rt') as fh:
@@ -12,7 +13,7 @@ for fname in sys.argv[1:]:
             #traceback.print_exc()
             print fname, "bad", e
             sys.exit(1)
-
         else:
             print fname, "ok", rsa.size()
+
 sys.exit(0)

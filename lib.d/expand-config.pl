@@ -7,23 +7,23 @@ if (-t STDIN) { # stderr is already redirected...
     }
 }
 
-sub HardOnion {
+sub HardOnion { # DEPRECATED
     chomp($onion = `eotk gen`);
-    return "secrets.d/$onion";
+    return "secrets.d/$onion"; # DEPRECATED
 }
 
 sub SoftOnion {
     chomp($onion = `eotk gen`);
     $onion =~ s/\.key//;
-    return $onion;
+    return $onion; # THIS IS THE UNIFIED FORMAT
 }
 
 sub Lookup {
     my $var = shift;
-    if ($var =~ /^NEW_(HARD_)?ONION$/) {
-        return &HardOnion();
+    if ($var =~ /^NEW_(HARD_)?ONION$/) { # NEW_HARD_ONION DEPRECATED
+        return &SoftOnion();
     }
-    if ($var =~ /^NEW_SOFT_ONION$/) {
+    if ($var =~ /^NEW_SOFT_ONION$/) { # DEPRECATED
         return &SoftOnion();
     }
     if (defined($ENV{$var})) {

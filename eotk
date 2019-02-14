@@ -756,6 +756,10 @@ case "$cmd" in
         Print please read those files for installation instructions.
         ;;
 
+    shell)
+        env PS1='eotk-env$ ' bash -i
+        ;;
+
     *)
         Print usage: see README.md for documentation
         exit 1
