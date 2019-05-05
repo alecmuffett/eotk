@@ -70,7 +70,7 @@ if [ x$ONION_VERSION = x3 ] ; then
 else
     file=$onion.key
     # sanity-check or re-exec?
-    if ! validate-onion-key.py $dir/private_key >/dev/null ; then
+    if false ; then # ! validate-onion-key.py $dir/private_key >/dev/null ; then
         mv $dir/private_key $file,invalid || exit 1
         rm -r $dir $log || exit 1
         exec "$0" "$@" # try again, and trust the recursion-depth-checker

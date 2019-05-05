@@ -13,7 +13,7 @@ my @template = (); # the template, obvs
 
 sub Warn {
     my $warning = join('', @_);
-    warn $warning if ($debug);
+    warn "$warning\n" if ($debug);
 }
 
 sub Lookup {
@@ -33,11 +33,11 @@ sub Lookup {
         return $ENV{$var};
     }
 
-    &Warn("start dumping scopes\n");
+    &Warn("start dumping scopes");
     foreach $symref (@scopes) {
         &Warn(Dumper($symref));
     }
-    &Warn("finish dumping scopes\n");
+    &Warn("finish dumping scopes");
 
     die "lookup: variable named '$var' not set\n";
 }
@@ -150,19 +150,19 @@ sub PrintExpansion {
     &Warn("expand end: $end $template[$end]");
 
     my @vars = split(" ", $dataset[0]); # 1st line is vars
-    &Warn("vars: @vars\n");
+    &Warn("vars: @vars");
 
     # push down a scope
     my %scope = ();
     unshift(@scopes, \%scope);
-    &Warn("scope $#scopes pushed\n");
+    &Warn("scope $#scopes pushed");
 
     # load the variables into the local scope
     for (my $i = 1; $i <= $#dataset; $i++) { # 2nd line onwards
 
         # split the input
         my @vals = split(" ", $dataset[$i]);
-        &Warn("vals: @vals\n");
+        &Warn("vals: @vals");
 
         # sanity check
         die "array mismatch:\n@vars\n@vals\n" if ($#vars != $#vals);
@@ -172,7 +172,7 @@ sub PrintExpansion {
         foreach my $val (@vals) {
             $var = $vars[$j++];
             $scope{$var} = $val;
-            &Warn("setting $var = $val in scope $#scopes\n");
+            &Warn("setting $var = $val in scope $#scopes");
         }
 
         # print the block
@@ -181,7 +181,7 @@ sub PrintExpansion {
 
     # nuke the scope
     shift(@scopes);
-    &Warn("scope popped, now at $#scopes\n");
+    &Warn("scope popped, now at $#scopes");
 }
 
 sub PrintRange {
@@ -193,12 +193,12 @@ sub PrintRange {
     # limits
     $line =~ s/%([\w+]*)%/&Lookup($1)/ge;
     my ($crap, $var, $start, $finish, @rest) = split(" ", $line);
-    &Warn("range: $var, $start, $finish\n");
+    &Warn("range: $var, $start, $finish");
 
     # push down a scope
     my %scope = ();
     unshift(@scopes, \%scope);
-    &Warn("scope $#scopes pushed\n");
+    &Warn("scope $#scopes pushed");
 
     # loop
     for (my $val = $start; $val <= $finish; $val++) {
@@ -211,7 +211,7 @@ sub PrintRange {
 
     # nuke the scope
     shift(@scopes);
-    &Warn("scope popped, now at $#scopes\n");
+    &Warn("scope popped, now at $#scopes");
 }
 
 sub PrintCsv {
@@ -223,13 +223,13 @@ sub PrintCsv {
     # limits
     $line =~ s/%([\w+]*)%/&Lookup($1)/ge;
     my ($crap, @csvs) = split(" ", $line);
-    &Warn("csv: @csvs\n");
+    &Warn("csv: @csvs");
 
     foreach my $csv (@csvs) {
         # push down a scope
         my %scope = ();
         unshift(@scopes, \%scope);
-        &Warn("scope $#scopes pushed\n");
+        &Warn("scope $#scopes pushed");
 
         # %0% = whole thing
         $scope{"0"} = $csv;
@@ -246,7 +246,7 @@ sub PrintCsv {
 
         # nuke the scope
         shift(@scopes);
-        &Warn("scope popped, now at $#scopes\n");
+        &Warn("scope popped, now at $#scopes");
     }
 }
 
@@ -293,17 +293,17 @@ sub PrintIf {         # having %%ELSE makes this a little more complex
     # evaluate the resulting string
     my ($ifstmt, @args) = split(" ", $cond);
     my $result = &Evaluate(@args);
-    &Warn("result: $result\n");
+    &Warn("result: $result");
 
     # act on the result
     if ($result) {              # true
-        &Warn("print true block\n");
+        &Warn("print true block");
         my $begin2 = $start + 1;
         my $end2 = defined($else_ptr) ? ($else_ptr - 1) : ($fi_ptr - 1);
         &PrintBlock($begin2, $end2);
     }
     elsif (defined($else_ptr)) { # false, maybe print else-block?
-        &Warn("print else block\n");
+        &Warn("print else block");
         my $begin2 = $else_ptr + 1;
         my $end2 = $fi_ptr - 1;
         &PrintBlock($begin2, $end2);
@@ -325,14 +325,14 @@ sub FindMatchingEndCsv {
 }
 
 sub Splice { # THIS IS NOT THE SAME AS "%%INCLUDE", CONTENTS NOT PROCESSED
-    &Warn("Splice: @_\n");
+    &Warn("Splice: @_");
     my $flist = shift;
     $flist =~ s/%([\w+]*)%/&Lookup($1)/ge;
 
     my ($junk, @filenames) = split(" ", $flist);
 
     foreach my $file (@filenames) {
-        &Warn("Splicing: $file\n");
+        &Warn("Splicing: $file");
         open(FILE, $file) || die "Splice: $file: $!\n";
         my $line;
         while ($line = <FILE>) {
@@ -343,12 +343,12 @@ sub Splice { # THIS IS NOT THE SAME AS "%%INCLUDE", CONTENTS NOT PROCESSED
 }
 
 sub Slurp {
-    &Warn("Slurp: @_\n");
+    &Warn("Slurp: @_");
     my $flist = shift;
     my ($junk, @filenames) = split(" ", $flist);
     my @lines = ();
     foreach my $file (@filenames) {
-        &Warn("Slurping: $file\n");
+        &Warn("Slurping: $file");
         open(FILE, $file) || die "Slurp: $file: $!\n";
         push(@lines, <FILE>);
         close(FILE);
@@ -359,7 +359,7 @@ sub Slurp {
 sub PrintBlock {
     my ($begin, $end) = @_;     # inclusive
 
-    &Warn("PrintBlock: begin at $begin, end at $end\n");
+    &Warn("PrintBlock: begin at $begin, end at $end");
 
     if ($begin > $end) {
         warn "begin: $template[$begin]";
@@ -388,7 +388,7 @@ sub PrintBlock {
                 &PrintRange($line, $begin2, $end2);
             }
             else {
-                &Warn("empty or negative range block: $begin2 $end2\n");
+                &Warn("empty or negative range block: $begin2 $end2");
             }
             $i = $end2 + 1;     # point at %%ENDRANGE
             next;               # bump pointer and continue
@@ -401,7 +401,7 @@ sub PrintBlock {
                 &PrintCsv($line, $begin2, $end2);
             }
             else {
-                &Warn("empty or negative csv block: $begin2 $end2\n");
+                &Warn("empty or negative csv block: $begin2 $end2");
             }
             $i = $end2 + 1;     # point at %%ENDCSV
             next;               # bump pointer and continue
@@ -414,7 +414,7 @@ sub PrintBlock {
                 &PrintExpansion($begin2, $end2);
             }
             else {
-                &Warn("empty or negative iteration block: $begin2 $end2\n");
+                &Warn("empty or negative iteration block: $begin2 $end2");
             }
             $i = $end2 + 1;     # point at %%END
             next;               # bump pointer and continue
@@ -462,7 +462,7 @@ do {
             push(@new_template, $line);
             next;
         }
-        &Warn("processing include: $line\n");
+        &Warn("processing include: $line");
         $include_flag++;
         $include_count++;
         my @include_body = &Slurp($line);
@@ -484,9 +484,9 @@ chomp(@dataset = <STDIN>);
 
 # ------------------------------------------------------------------
 
-&Warn("symbol dump:\n");
+&Warn("symbol dump:");
 foreach $v (sort keys %used) {
-    &Warn("$v\n");
+    &Warn("$v");
 }
 
 # ------------------------------------------------------------------

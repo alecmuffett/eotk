@@ -1,7 +1,7 @@
 #!/bin/sh
 # eotk (c) 2019 Alec Muffett
 
-if [ "x$1" == "x" ] ; then
+if [ "x$1" = "x" ] ; then
     echo "usage: $0 foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
     exit 1
 fi
@@ -33,7 +33,8 @@ for tld in "$@" ; do
 done > $dns # is used in mkcert, or lower down
 
 if [ x$SSL_MKCERT = x1 ] ; then # placeholder punting to mkcert
-    mkcert -cert-file $certfile -key-file $pemfile `cat $dns`
+    echo doing: mkcert -cert-file $certfile -key-file $pemfile `cat $dns` 1>&2
+    mkcert -cert-file $certfile -key-file $pemfile `cat $dns` || exit 1
     rm $dns
     exit 0
 fi
