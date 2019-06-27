@@ -65,8 +65,8 @@ strategy is follows:
   the successful matches, never throw anything away.
 
 * When you are approaching ship-date, get all the relevant parties
- together (or just yourself) and grab some beer/wine and use grep to
- go looking for the best ones.
+  together (or just yourself) and grab some beer/wine and use `grep`
+  to go looking for the best ones. Eyeball the whole list, if you can.
 
 * You will be surprised --- especially if you've invested fully into
   choosing as many meaningful prefixes as possible --- because you're
@@ -75,16 +75,18 @@ strategy is follows:
 
 * There is also a vast amount of noise --- huge, enormous quantities
   of gibberish --- but that's okay, because `storage+grep` is cheaper
-  than `encryption+wall-clock-time`.
+  than `encryption+wallclocktime`.
 
 * When we mined the Facebook onion address, the search-patterns were
   `^(facebook|fbcdn|fbsbx|...)` and a few others all in a single
-  pattern
+  pattern.  We drank beer and spent a few days deciding amongst the
+  good ones.
 
-* Similarly the nytimes was `^(nytimes|nytcdn|nytwww|graylady|...)`
-  and a few other potential prefixes, perhaps a dozen, all in one
-  pattern; and I mined onion addresses for other sites at the same
-  time, on the same hardware, in the same process.
+* Similarly the pattern for the nytimes was
+  `^(nytimes|nytcdn|nytwww|graylady|...)` and a few other potential
+  prefixes, perhaps a dozen, all in one pattern; and I mined onion
+  addresses for other sites at the same time, on the same hardware, in
+  the same process.
 
 * Why do it this way? In short, because encryption is relatively
   expensive, and string comparisons are really cheap. Every single
