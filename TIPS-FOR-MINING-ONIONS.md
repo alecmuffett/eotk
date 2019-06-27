@@ -23,7 +23,7 @@ Some people mine onion addresses on local hardware for safety, others
 are happy to rent a GPU-based compute-heavy instance from AWS, or
 similar.
 
-If you're setting up multiple onions for your site --- eg: if there is
+If you're setting up multiple onions for your site -- eg: if there is
 one/more CDNs associated with your site, it is nice to set up vanity
 onions for them, too; partly for "cute" but also to stop yourself
 going crazy during debugging.
@@ -68,13 +68,13 @@ strategy is follows:
   together (or just yourself) and grab some beer/wine and use `grep`
   to go looking for the best ones. Eyeball the whole list, if you can.
 
-* You will be surprised --- especially if you've invested fully into
-  choosing as many meaningful prefixes as possible --- because you're
+* You will be surprised -- especially if you've invested fully into
+  choosing as many meaningful prefixes as possible -- because you're
   dealing with randomness here, and raw entropy is more creative than
   you'd ever imagine.
 
-* There is also a vast amount of noise --- huge, enormous quantities
-  of gibberish --- but that's okay, because `storage+grep` is cheaper
+* There is also a vast amount of noise -- huge, enormous quantities
+  of gibberish -- but that's okay, because `storage+grep` is cheaper
   than `encryption+wallclocktime`.
 
 * When we mined the Facebook onion address, the search-patterns were
