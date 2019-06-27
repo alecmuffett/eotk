@@ -13,8 +13,8 @@ I'm not going to make strong software recommendations, because it's a
 matter of what you have at your disposal already, and what fits the
 hardware that you have access to.
 
-* for v2: Onions: Scallion (C# or Mono, GPU accelerated), Shallot, or
-  Eschalot; go for the latest versions of each.
+* for v2: Onions: `Scallion` (C# or Mono, GPU accelerated), `Shallot`,
+  or `Eschalot`; go for the latest versions of each.
 
 * for v3 Onions: I have no idea of the standout tools, please check
   back and/or suggest something in the comments
@@ -34,8 +34,8 @@ their CDN Onion is https://graylady3jvrrxbe.onion/
 Similarly there exist https://www.facebookcorewwwi.onion/ and
 https://fbcdn23dssr3jqnq.onion/
 
-Perhaps use your CDN Onion to reflect your own history and site/brand
-culture?
+* Perhaps use your CDN Onion to reflect your own history and
+site/brand culture?
 
 Onion mining is a matter of luck and resource, and
 (counterintuitively?)  the rarest resource that you have, is time, as
