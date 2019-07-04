@@ -328,5 +328,5 @@ represent real environment variables.
 
 * NEW_ONION
 
-Used only in template configs (`*.tconf` files) to show the point where
-a newly created onion and/or keyfile path should be inserted.
+Used only in template configs (`*.tconf` files) to show the point
+where a newly created onion address should be inserted.

@@ -1,0 +1,84 @@
+# -*- conf -*-
+# eotk (c) 2017 Alec Muffett
+
+# CSVs of canonical domains (eg: email) to preserve (todo: more here?)
+# nb: you must explicitly list all domains that are of preservation;
+# "foo.com" & "www.foo.com" are treated as separate, for this purpose
+set preserve_csv \
+    tld-wp,wikipedia\\.org,i,wikipedia.org \
+    tld-wm,wikimedia\\.org,i,wikimedia.org
+
+# FIX THIS TO USE A LOCAL RESOLVER, BECAUSE PERFORMANCE
+set nginx_resolver \
+    8.8.8.8 \
+    8.8.4.4 \
+    ipv6=off
+
+# cache persistence & size; sized for RaspberryPi (256m)
+set nginx_cache_seconds 60
+set nginx_cache_size 256m
+set nginx_tmpfile_size 64m
+
+# ARE YOU CONFIDENT IN THE COMPLETENESS OF YOUR 100% HTTPS SOLUTION?
+# let's assume so; if wrong you will see a lot of 307 redirects
+set force_https 1
+
+# proof-of-concept: let's make this read-only:
+set suppress_methods_except_get 1
+
+# proof-of-concept: block access to some hosts
+set block_host_re \
+    ^(login|donate)\\.
+
+# proof-of-concept: block access to some paths
+set block_path_re \
+    /User: \
+    /Special:(UserLogin|(Create|Merge)Account|RenameRequest)\\b
+
+# proof-of-concept: block requests where parameters have certain values
+set block_param_re \
+    title,^User: \
+    title,^Special:(UserLogin|(Create|Merge)Account|RenameRequest)\\b
+
+# proof-of-concept: blacklist requests to some paths
+set path_blacklist_re \
+    ^\\. \
+    ^\\w+\\.php$ \
+    \\.(sql|gz|tgz|zip|bz2)$ \
+    ^server-status$
+
+# proof-of-concept: whitelist reasonable user-agents (anything else => ded)
+set user_agent_whitelist_re \
+    ^Mozilla.*Gecko
+
+# suggestion: you might want to investigate "no_cache_content_type" or
+# "no_cache_host" if you want limitations on caching...
+
+# demo: CSV list to implement ownership proof URIs for EV SSL issuance
+# set hardcoded_endpoint_csv \
+#     ^/proof/foo/?$,"FOOPROOF" \
+#     ^/proof/bar/?$,"BARPROOF"
+
+# demo: magic cookie-issuing URL to restrict access until ready to launch
+# set cookie_lock /open-sesame
+
+# index of other onion sites ("what happens in onion, should stay in onion")
+foreignmap facebookcorewwwi facebook.com
+foreignmap nytimes3xbfgragh nytimes.com
+
+# the Wikimedia Foundation have lots of sites
+set project wikipedia
+hardmap %NEW_V3_ONION% mediawiki.org
+hardmap %NEW_V3_ONION% wikidata.org
+hardmap %NEW_V3_ONION% wikimedia.org
+hardmap %NEW_V3_ONION% wikimediafoundation.org
+# the following have an `m` subdomain
+hardmap %NEW_V3_ONION% wikibooks.org m
+hardmap %NEW_V3_ONION% wikinews.org m
+hardmap %NEW_V3_ONION% wikipedia.org m
+hardmap %NEW_V3_ONION% wikiquote.org m
+hardmap %NEW_V3_ONION% wikisource.org m
+hardmap %NEW_V3_ONION% wikiversity.org m
+hardmap %NEW_V3_ONION% wikivoyage.org m
+hardmap %NEW_V3_ONION% wiktionary.org m
+# nb: by subdomain we mean FOO in en.FOO.wikipedia.org, etc.

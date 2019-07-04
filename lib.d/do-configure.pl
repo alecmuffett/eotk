@@ -25,6 +25,11 @@ sub ValidOnion {
     return ( $onion =~ /^[a-z2-7]{16}(?:[a-z2-7]{40})?$/o );
 }
 
+sub ValidOnionV3 {
+    my $onion = shift;
+    return ( $onion =~ /^[a-z2-7]{56}$/o );
+}
+
 sub Nonce {
     my $want_bits = shift || 128;
     my $got_bits = 0;
@@ -200,7 +205,6 @@ sub DoForeign {
 # DNS_DOMAIN_RE
 # ONION_ADDRESS
 # ONION_ADDRESS_RE
-# KEYFILE
 # }
 
 # also, calling the templater will dynamically set:
@@ -228,44 +232,33 @@ sub DoMap {
         die "DoMap: you cannot add $what ($from/$to) to an existing $ptype project\n";
     }
 
-    my $keyfile = $unset_variable;
-    my $onion;
+    my $onion = $from;
 
     if ($what eq "hardmap") {
-        $keyfile = $from;
         # a little backwards compatibility: 'hardmap' originally was
         # just 'map' and expected a filename, and then 'softmap'
         # arrived and took just an onion address ... which is nicer;
         # but I don't want to change the code very much, so if you are
         # 'hardmap' and specify only an onion address, let's fill in
         # the filename and then continue by stripping it away again.
-        # le huge sigh, hindsight is 20-20.
 
-        # allow "foo" and "foo.onion", convert them to secrets.d/foo.(pem|key)
-        if ($keyfile =~ /^([a-z2-7]{16}(?:[a-z2-7]{40})?)(\.onion)?$/o) {
-            my $tmp = "secrets.d/$1.pem";
-            $tmp = "secrets.d/$1.key" if ! -f $tmp;
-            $keyfile = $tmp
-        }
+        # now we just clean it up and assume the key materials are in
+        # secrets.d; le huge sigh, hindsight is 20-20.
 
-        die "map: $keyfile: no such file\n" unless -f ($keyfile);
-        $onion = $keyfile;
-        $onion =~ s!^.*/!!;
-        $onion =~ s!\.(key|pem)!!;
-        $onion =~ s!\.(onion)!!; # cleanup dups
-        die "map: $onion: bad onion address\n" unless (&ValidOnion($onion));
+        $onion =~ s!^.*/!!; # legacy
+        $onion =~ s!\.(key|pem)!!; # legacy
+        $onion =~ s!\.(onion)!!; # cleanup dup ".onion" # legacy
+        die "map: $onion: bad hardmap onion address\n" unless (&ValidOnion($onion));
     }
     elsif ($what eq "softmap") {
-        $onion = $from;
-        $onion =~ s!\.(onion)!!; # cleanup dups
-        die "map: $onion: bad onion address\n" unless (&ValidOnion($onion));
+        $onion =~ s!\.(onion)!!; # cleanup dup ".onion"
+        die "map: $onion: bad softmap onion address\n" unless (&ValidOnion($onion));
     }
     else {
-        die "wtf?\n";
+        die "wtf is the directive: '$what' ?\n";
     }
-    $onion = "$onion.onion"; # restore trailing .onion
-
-    warn "$ptype $what($keyfile) from=$onion to=$to san=(@subdomains)\n";
+    $onion = "$onion.onion"; # restore trailing .onion again
+    warn "$ptype $what from=$onion to=$to san=(@subdomains)\n";
 
     if (!defined($projects{$project}{FIRST_ONION})) {
         $projects{$project}{FIRST_ONION} = $onion;
@@ -296,8 +289,6 @@ sub DoMap {
     $row{ONION_ADDRESS_RE6} = &PolySlash($onion, 6);
     $row{ONION_ADDRESS_RE8} = &PolySlash($onion, 8);
     $row{ONION_ADDRESS_RE12} = &PolySlash($onion, 12);
-
-    $row{KEYFILE} = $keyfile;
 
     warn Dumper(\%row);
 
@@ -404,7 +395,7 @@ sub DoProject {
 
             # install keyfile
             # TODO:
-            my $keyfile = ${$row}{KEYFILE};
+            my $keyfile = ${$row}{ONION_ADDRESS};
             &CopyFile($keyfile, "$hs_dir/private_key");
             # ...when using V3 onions, copy/restore these files instead
             # $hs_dir/hs_ed25519_public_key from $onion.v3pub.key

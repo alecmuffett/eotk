@@ -7,25 +7,25 @@ if (-t STDIN) { # stderr is already redirected...
     }
 }
 
-sub HardOnion { # DEPRECATED
-    chomp($onion = `eotk gen`);
-    return "secrets.d/$onion"; # DEPRECATED
-}
-
-sub SoftOnion {
-    chomp($onion = `eotk gen`);
-    $onion =~ s/\.key//;
-    return $onion; # THIS IS THE UNIFIED FORMAT
+sub GenOnion {
+    my $version = shift;
+    chomp($onion = `env ONION_VERSION=$version eotk gen`);
+    return $onion; # THIS IS NOW THE UNIFIED FORMAT
 }
 
 sub Lookup {
     my $var = shift;
-    if ($var =~ /^NEW_(HARD_)?ONION$/) { # NEW_HARD_ONION DEPRECATED
-        return &SoftOnion();
+
+    foreach $deprecated (qw(NEW_HARD_ONION NEW_SOFT_ONION)) {
+        die "Lookup: $deprecated is no longer supported syntax\n"
+            if $var =~ /$deprecated/;
     }
-    if ($var =~ /^NEW_SOFT_ONION$/) { # DEPRECATED
-        return &SoftOnion();
+
+    if ($var =~ /^NEW_(V3_)?ONION$/) {
+        my $version = $1 ? 3 : 2;
+        return &GenOnion($version);
     }
+
     if (defined($ENV{$var})) {
         return $ENV{$var};
     }
