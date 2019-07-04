@@ -1,8 +1,6 @@
 # Requirements
 
-EOTK requires Tor 0.3.5.7+
-
-EOTK requires recent `nginx` (1.15.8+) with the following modules/features enabled:
+EOTK requires recent `nginx` with the following modules/features enabled:
 
 * `headers_more`
 * `ngx_http_substitutions_filter_module`
@@ -10,25 +8,18 @@ EOTK requires recent `nginx` (1.15.8+) with the following modules/features enabl
 * `http_ssl`
 * Lua and/or LuaJIT (ideally from OpenResty)
 
-# After the Installation
+# Installation
 
-Once you have installed EOTK (below) and configured and tested it
-for your project, run:
+Per-platform:
 
-* `eotk make-scripts`
+## Ubuntu 18.04LTS (prebuilt via tor and canonical)
 
-This will create two files:
+Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; then:
 
-* `eotk-init.sh` - for installing on your system as a startup script
-* `eotk-housekeeping.sh` - for cronjob log rotation and other cleanup work
-
-Please read the individual files for installation instructions;
-local setup is intended to be pretty simple.
-
-# Per-Platform Installations
-
-Where you don't have Tor, NGINX or OnionBalance,
-or much other stuff currently installed:
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/install-everything-on-ubuntu-18.04.sh`
+  * this includes a full update
 
 ## macOS Mojave (prebuilt via homebrew)
 
@@ -37,25 +28,11 @@ or much other stuff currently installed:
 * `cd eotk`
 * `./opt.d/install-everything-on-macos.sh`
 
-## Ubuntu 18.04LTS (prebuilt via tor and canonical)
-
-Install a base Ubuntu 18.04LTS server image (or better) and then do:
-
-* `git clone https://github.com/alecmuffett/eotk.git`
-* `cd eotk`
-* `./opt.d/install-everything-on-ubuntu-18.04.sh`
-
-You can then do:
-
-* `./eotk config demo.d/wikipedia.tconf`
-* `./eotk start wikipedia`
-
 ## Raspbian (manual builds)
 
-Serially, this takes about 1h45m on a PiZero, or about 30m on a Pi3b.
-These figures should improve when recent Tor updates sediment into Raspbian.
-
-Scripts are supplied for stretch
+Serially, installation takes about 1h45m on a PiZero, or about 30m on
+a Pi3b.  These figures should improve when recent Tor updates sediment
+into Raspbian; scripts are supplied for Raspbian "Stretch".
 
 * `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
@@ -64,42 +41,259 @@ Scripts are supplied for stretch
 * `./opt.d/build-tor-on-raspbian-stretch.sh`
 * `./opt.d/install-onionbalance-on-raspbian-stretch.sh`
 
-# Piecemeal Installation Notes
+# Dealing With OnionBalance And Load-Balancing
 
-You only need this section if you have to do installation in bits
-because pre-existing software:
+*NEW FOR 2019:*
 
-## Ubuntu Tor Installation
+OnionBalance as-of June 2019 is an flaky piece of software which is
+hard to run on modern Linux because an stale python crypto library;
+more than 90% of Onion sites will not practically need it - or, not
+initially, anyway - so I am *deprecating OnionBalance in EOTK* until
+it is majorly overhauled and also supports v3 onion addressing.
 
-In a browser elsewhere, retreive the instructions for installing Tor
-from https://www.torproject.org/docs/debian.html.en
+So, I recommend people to avoid OnionBalance and use hardmap (local)
+for the moment, until Tor fix it.  Consider OB if and only if your
+system is under sustained high bandwidth and strongly demonstrates
+extended choking on throughput.
 
-* Set the menu options for:
-  * run *Ubuntu Xenial Xerus*
-  * and want *Tor*
-  * and version *stable*
-  * and read what is now on the page.
-* Configure the APT repositories for Tor
-  * I recommend that you add the tor repositories into a new file
-    * Use: `/etc/apt/sources.list.d/tor.list` or similar
-* Follow the instructions given:
-  * Do the documented `gpg` thing
-  * Do the documented `apt update` thing
-  * Do the documented `tor` installation thing
+# Dealing With HTTPS Certificates
 
-## Ubuntu NGINX Installation
+TBD
 
-Through `apt-get`; logfiles are tweaked to be writable by admin users.
+# Demonstration And Testing
 
-* `sudo apt-get install nginx-extras`
-* `sudo find /var/log/nginx/ -type f -perm -0200 -print0 | sudo xargs -0 chmod g+w`
+After installation, you can do:
 
-## Ubuntu OnionBalance Installation
+* `./eotk config demo.d/wikipedia.tconf`
+* `./eotk start wikipedia`
 
-Through `apt-get` and `pip`; using `pip` tends to mangle permissions,
-hence the find/xargs-chmod commands.
+# Configuring Start-On-Boot, And Logfile Compression
 
-* `sudo apt-get install socat python-pip`
-* `sudo pip install onionbalance`
-* `sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmod a+r`
-* `sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x`
+Once you have installed EOTK (below) and configured and tested it
+for your project, run:
+
+* `./eotk make-scripts`
+
+This will create two files:
+
+* `./eotk-init.sh` - for installing on your system as a startup script
+* `./eotk-housekeeping.sh` - for cronjob log rotation and other cleanup work
+
+Please read the individual files for installation instructions; local
+setup is intended to be pretty simple, let me know if anything is
+confusing.
+
+# LEGACY DOCUMENTATION IN NEED OF REVIEW, BELOW THIS POINT
+
+## I Want To Create My Own Project!
+
+Okay, there are two ways to create your own project:
+
+### Easy With Automatic Onions
+
+Create a config file with a `.tconf` suffix - we'll pretend it's
+`foo.tconf` - and use this kind of syntax:
+
+```
+set project myproject
+hardmap %NEW_ONION% foo.com
+hardmap %NEW_ONION% foo.co.uk
+hardmap %NEW_ONION% foo.de
+```
+
+...and then run
+
+`eotk config foo.tconf`
+
+...which will create the onions for you and will populate a `foo.conf`
+for you, and it will then configure EOTK from *that*.  You should
+probably *delete* `foo.tconf` afterwards, since forcibly reusing it
+would trash your existing onions.
+
+### Slightly Harder With Manually-Mined Onions
+
+* Do `eotk genkey` - it will print the name of the onion it generates
+  * Do this as many times as you wish/need.
+  * Alternately get a tool like `scallion` or `shallot` and use that to "mine" a desirable onion address.
+    * https://github.com/katmagic/Shallot - in C, for CPUs
+      * Seems okay on Linux, not sure about other platforms
+    * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
+      * Advertised as working on Windows, Linux; works well on OSX under "Mono"
+    * Be sure to store your mined private keys in `secrets.d` with a
+      filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is
+      the corresponding onion address.
+* Create a config file with a `.conf` suffix - we'll pretend it's
+  `foo.conf` - and use this kind of syntax, substituting
+  `a2s3c4d5e6f7g8h9` for the onion address that you generated.
+
+```
+set project myproject
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com
+```
+
+...and then (IMPORTANT) run:
+
+`eotk config foo.conf`
+
+...which will configure EOTK.
+
+### Then Start Your Project
+
+Like this:
+
+`eotk start myproject`
+
+## What If I Have Subdomains?
+
+When you are setting up the mappings in a config file, you may have to
+accomodate "subdomains"; the general form of a internet hostname is
+like this:
+
+* `hostname.domain.tld` # like: www.facebook.com or www.gov.uk
+  * or: `hostname.domain.sld.tld` # like: www.amazon.co.uk
+* `hostname.subdom.domain.tld` # like: www.prod.facebook.com
+* `hostname.subsubdom.subdom.domain.tld` # cdn.lhr.eu.foo.net
+* `hostname.subsubsubdom.subsubdom.subdom.domain.tld` # ...
+
+...and so on, where:
+
+* tld = [top level domain](https://en.wikipedia.org/wiki/Top-level_domain)
+  * sld = [second level domain](https://en.wikipedia.org/wiki/.uk#Second-level_domains)
+* domain = *generally the name of the organisation you are interested in*
+* subdomain = *some kind of internal structure*
+* hostname = *actual computer, or equivalent*
+
+When you are setting up mappings, generally the rules are:
+
+* you will **map one domain per onion**
+* you will **ignore all hostnames**
+* you will **append all possible subdomain stems**
+
+So if your browser tells you that you are fetching content from
+`cdn7.dublin.ireland.europe.foo.co.jp`, you should add a line like:
+
+```
+hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
+```
+
+...and EOTK should do the rest. All this is necessary purely for
+correctness of the self-signed SSL-Certificates - which are going to
+be weird, anyway - and the rest of the HTML-rewriting code in EOTK
+will be blind to subdomains.
+
+### Subdomain Summary
+
+Subdomains are supported like this, for `dev` as an example:
+
+```
+set project myproject
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev
+```
+
+...and if you have multiple subdomains:
+
+```
+hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com dev blogs dev.blogs [...]
+```
+
+## My Company Has A Lot Of Sites/Domains!
+
+Example:
+
+* `www.foo.com.au`
+* `www.syd.foo.com.au`
+* `www.per.foo.com.au`,
+* `www.cdn.foo.net`
+* `www.foo.aws.amazon.com`
+* ...
+
+Put them all in the same project as separate mappings, remembering to
+avoid the actual "hostnames" as described above:
+
+```
+set project fooproj
+hardmap %NEW_ONION% foo.com.au syd per
+hardmap %NEW_ONION% foo.net cdn
+hardmap %NEW_ONION% foo.aws.amazon.com
+```
+
+Onion mapping/translations will be applied for all sites in the same project.
+
+## Troubleshooting
+
+The logs for any given project will reside in
+`projects.d/<PROJECTNAME>.d/logs.d/`
+
+If something is problematic, first try:
+
+* `git pull` and...
+* `eotk config <filename>.conf` again, and then...
+* `eotk bounce -a`
+
+### Lots Of Broken Images, Missing Images, Missing CSS
+
+This is probably an SSL/HTTPS thing.
+
+Because of the nature of SSL self-signed certificates, you have to
+manually accept the certificate of each and every site for which a
+certificate has been created. See the second of the YouTube videos for
+some mention of this.
+
+In short: this is normal and expected behaviour.  You can temporarily
+fix this by:
+
+* right-clicking on the image for `Open In New Tab`, and accepting the
+  certificate
+* or using `Inspect Element > Network` to find broken resources, and
+  doing the same
+* or - if you know the list of domains in advance - visiting the
+  `/hello-onion/` URL for each of them, in advance, to accept
+  certificates.
+
+If you get an
+[official SSL certificate for your onion site](https://blog.digicert.com/ordering-a-onion-certificate-from-digicert/)
+then the problem will vanish. Until then, I am afraid that you will be
+stuck playing certificate "whack-a-mole".
+
+### NGINX: Bad Gateway
+
+Generally this means that NGINX cannot connect to the remote website,
+which usually happens because:
+
+* the site name in the config file, is wrong
+* the nginx daemon tries to do a DNS resolution, which fails
+
+Check the NGINX logfiles in the directory cited above, for
+confirmation.
+
+If DNS resolution is failing, *PROBABLY* the cause is probably lack
+of access to Google DNS / 8.8.8.8; therefore in your config file
+you should add a line like this - to use `localhost` as an example:
+
+```
+set nginx_resolver 127.0.0.1
+```
+
+...and then do:
+
+```
+eotk stop -a
+eotk config filename.conf
+eotk start -a
+```
+
+If you need a local DNS resolver, I recommend `dnsmasq`.
+
+### I Can't Connect, It's Just Hanging!
+
+If your onion project has just started, it can take up to a few
+minutes to connect for the first time; also sometimes TorBrowser
+caches stale descriptors for older onions.  Try restarting TorBrowser
+(or use the `New Identity` menu item) and have a cup of tea.  If it
+persists, check the logfiles.
+
+### OnionBalance Runs For A Few Days, And Then Just Stops Responding!
+
+Is the clock/time of day correct on all your machines?  Are you
+running NTP?  We are not sure but having an incorrect clock may be a
+contributory factor to this issue.
