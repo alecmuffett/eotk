@@ -37,49 +37,10 @@ The result is essentially a "man in the middle" proxy; you should set
 them up only for your own sites, or for sites which do not require
 login credentials of any kind.
 
-## EOTK and HTTPS
-
-When connecting to the resulting onions over HTTP/SSL, you will be
-using wildcard self-signed SSL certificates - you *will* encounter
-many "broken links" which are due to the SSL certificate not being
-valid.
-
-This is *expected* and *proper* behaviour; there are currently two
-ways to address this.
-
-## Install `mkcert`
-
-The *best* solution for development purposes is to [install `mkcert`
-onto the machine which will be running
-EOTK](https://github.com/FiloSottile/mkcert#installation) and
-configure your own personal Certificate Authority for the certificates
-that you will need.
-
-You can then add `set ssl_mkcert 1` to configurations, and your
-`mkcert` root certificate will be used to sign the resulting onion
-certificates. You can [install that certificate into your local copy
-of Tor Browser](docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
-of course it will not work for anyone else.
-
-## Visit `/hello-onion/` URLs
-
-The old solution was/is much more manual: for any onion - eg:
-www.a2s3c4d5e6f7g8h9.onion - EOTK provides a fixed url:
-
-* `https://www.a2s3c4d5e6f7g8h9.onion/hello-onion/`
-
-...which (`/hello-onion/`) is internally served by the NGINX proxy and
-provides a stable, fixed URL for SSL certificate acceptance; inside
-TorBrowser another effective solution is to open all the broken links,
-images and resources "in a new Tab" and accept the certificate there.
-
-In production, of course, one would expect to use an SSL EV
-certificate to provide identity and assurance to an onion site,
-rendering these issues moot.
-
 ## Installation
 
-Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide
+Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide,
+and the other documents in [that folder](docs.d/).
 
 ## Help I'm Stuck!
 
