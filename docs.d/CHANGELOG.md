@@ -1,6 +1,18 @@
 # Changelog
 
-## HEAD (will become v1.4 after soak-testing)
+
+## HEAD (to become v1.5)
+* new features
+* `eotk-site.conf`
+  * "global" configuration rules to prefix into every configuration
+  * auto-created it if it does not exist
+  * used it to solve NGINX installation on Ubuntu 18.04LTS
+* OnionBalance to be deprecated until overhauled by Tor
+  * see notes in [docs.d/HOW-TO-INSTALL.md](docs.d/HOW-TO-INSTALL.md)
+* Ubuntu 18.04LTS becomes mainline for Ubuntu
+  * Ubuntu 16.04LTS becomes deprecated
+
+## v1.4
 * new features
   * auto-generate (`eotk make-scripts`) wrapper scripts for:
     * installation into "init" startup `eotk-init.sh`
