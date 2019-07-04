@@ -11,7 +11,8 @@ Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; then:
 
 ## macOS Mojave (prebuilt via homebrew)
 
-* install Homebrew: http://brew.sh
+Install Homebrew: http://brew.sh; then:
+
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/install-everything-on-macos.sh`
