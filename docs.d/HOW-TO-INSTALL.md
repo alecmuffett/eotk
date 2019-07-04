@@ -103,6 +103,7 @@ rendering these issues moot.
 After installation, you can do:
 
 * `./eotk config demo.d/wikipedia.tconf`
+  * or: `./eotk config demo.d/wikipedia-v3.tconf`
 * `./eotk start wikipedia`
 * `./eotk maps -a` # and connect to one of the onions you've created
 
