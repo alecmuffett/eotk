@@ -25,9 +25,51 @@ sub ValidOnion {
     return ( $onion =~ /^[a-z2-7]{16}(?:[a-z2-7]{40})?$/o );
 }
 
+sub ValidOnionV2 {
+    my $onion = shift;
+    return ( $onion =~ /^[a-z2-7]{16}$/o );
+}
+
 sub ValidOnionV3 {
     my $onion = shift;
     return ( $onion =~ /^[a-z2-7]{56}$/o );
+}
+
+sub ExtractOnion {
+    my $onion = shift;
+    $onion =~ s!^.*/!!o;
+    $onion =~ s!\.onion$!!o;
+    die "ExtractOnion: was not given a valid onion: $onion\n" unless (&ValidOnion($onion));
+    return $onion;
+}
+
+sub CanonOnion {
+    my $onion = shift;
+    $onion = &ExtractOnion($onion);
+    return "$onion.onion";
+}
+
+sub OnionVersion {
+    my $onion = shift;
+    $onion = &ExtractOnion($onion);
+    return 3 if (&ValidOnionV3($onion));
+    return 2 if (&ValidOnionV2($onion));
+    die "OnionVersion: was not given a valid onion: $onion\n";
+}
+
+# there are limits on how long a unix domain socket path can be under
+# most Unixes, and NGINX surfaces this issue.
+# https://gitlab.com/gitlab-org/gitlab-development-kit/issues/55
+
+sub TruncDir {
+    my $onion = shift;
+    $onion = &ExtractOnion($onion);
+    if (&ValidOnionV3($onion)) {
+        my $suffix = "-v3";
+        $onion = substr($onion, 0, 30 - length($suffix));
+        $onion = "$onion$suffix";
+    }
+    return "$onion.d";
 }
 
 sub Nonce {
@@ -178,18 +220,27 @@ sub PolySlash { # dotify a regexp
     return $arg;
 }
 
+sub WriteFile {
+    warn "WriteFile @_\n";
+    my $file = shift;
+    open(WF, ">$file") || die "WriteFile: open: $file: $!\n";
+    foreach $line (@_) {
+        print WF "$line\n";
+    }
+    close(WF) || die "WriteFile: close: $file: $!\n";
+}
+
 ##################################################################
 
 sub DoForeign {
     warn "DoForeign @_\n";
-    my ($what, $onion, $domain, @crap) = @_;
-    $onion =~ s!\.(onion)!!; # cleanup dups
-    $onion = "$onion.onion"; # restore trailing .onion
+    my ($what, $onion_input, $domain, @crap) = @_;
+    my $onion_doto = &CanonOnion($onion_input);
     die "DoForeign: wtf?\n" if ($what ne "foreignmap");
-    die "DoForeign: duplicate onion $onion\n" if ($foreign_by_onion{$onion});
+    die "DoForeign: duplicate onion $onion_doto\n" if ($foreign_by_onion{$onion_doto});
     die "DoForeign: duplicate domain $domain\n" if ($foreign_by_domain{$domain});
-    $foreign_by_onion{$onion} = $domain;
-    $foreign_by_domain{$domain} = $onion;
+    $foreign_by_onion{$onion_doto} = $domain;
+    $foreign_by_domain{$domain} = $onion_doto;
 }
 
 ##################################################################
@@ -232,7 +283,7 @@ sub DoMap {
         die "DoMap: you cannot add $what ($from/$to) to an existing $ptype project\n";
     }
 
-    my $onion = $from;
+    my $onion_input = $from;
 
     if ($what eq "hardmap") {
         # a little backwards compatibility: 'hardmap' originally was
@@ -245,29 +296,27 @@ sub DoMap {
         # now we just clean it up and assume the key materials are in
         # secrets.d; le huge sigh, hindsight is 20-20.
 
-        $onion =~ s!^.*/!!; # legacy
-        $onion =~ s!\.(key|pem)!!; # legacy
-        $onion =~ s!\.(onion)!!; # cleanup dup ".onion" # legacy
-        die "map: $onion: bad hardmap onion address\n" unless (&ValidOnion($onion));
+        $onion_input =~ s!\.(key|pem)!!; # legacy
+        $onion_input =~ &ExtractOnion($onion_input); # also validates
     }
     elsif ($what eq "softmap") {
-        $onion =~ s!\.(onion)!!; # cleanup dup ".onion"
-        die "map: $onion: bad softmap onion address\n" unless (&ValidOnion($onion));
+        $onion_input =~ &ExtractOnion($onion_input); # also validates
     }
     else {
         die "wtf is the directive: '$what' ?\n";
     }
-    $onion = "$onion.onion"; # restore trailing .onion again
-    warn "$ptype $what from=$onion to=$to san=(@subdomains)\n";
+
+    $onion_doto = &CanonOnion($onion_input);
+    warn "$ptype $what from=$onion_doto to=$to san=(@subdomains)\n";
 
     if (!defined($projects{$project}{FIRST_ONION})) {
-        $projects{$project}{FIRST_ONION} = $onion;
+        $projects{$project}{FIRST_ONION} = $onion_doto;
     }
 
     # populate the subdomains
-    $projects{$project}{SUBDOMAINS}{$onion} = 1;
+    $projects{$project}{SUBDOMAINS}{$onion_doto} = 1;
     foreach my $sd (@subdomains) {
-        $projects{$project}{SUBDOMAINS}{"$sd.$onion"} = 1;
+        $projects{$project}{SUBDOMAINS}{"$sd.$onion_doto"} = 1;
     }
 
     # create the row
@@ -281,14 +330,17 @@ sub DoMap {
     $row{DNS_DOMAIN_RE8} = &PolySlash($to, 8);
     $row{DNS_DOMAIN_RE12} = &PolySlash($to, 12);
 
-    $row{ONION_ADDRESS} = $onion;
-    $row{ONION_ADDRESS_RE}  = &PolySlash($onion, 1);
-    $row{ONION_ADDRESS_RE2} = &PolySlash($onion, 2);
-    $row{ONION_ADDRESS_RE3} = &PolySlash($onion, 3);
-    $row{ONION_ADDRESS_RE4} = &PolySlash($onion, 4);
-    $row{ONION_ADDRESS_RE6} = &PolySlash($onion, 6);
-    $row{ONION_ADDRESS_RE8} = &PolySlash($onion, 8);
-    $row{ONION_ADDRESS_RE12} = &PolySlash($onion, 12);
+    $row{ONION_ADDRESS} = $onion_doto;
+    $row{ONION_ADDRESS_RE}  = &PolySlash($onion_doto, 1);
+    $row{ONION_ADDRESS_RE2} = &PolySlash($onion_doto, 2);
+    $row{ONION_ADDRESS_RE3} = &PolySlash($onion_doto, 3);
+    $row{ONION_ADDRESS_RE4} = &PolySlash($onion_doto, 4);
+    $row{ONION_ADDRESS_RE6} = &PolySlash($onion_doto, 6);
+    $row{ONION_ADDRESS_RE8} = &PolySlash($onion_doto, 8);
+    $row{ONION_ADDRESS_RE12} = &PolySlash($onion_doto, 12);
+
+    $row{ONION_DIRNAME} = &TruncDir($onion_doto);
+    $row{ONION_VERSION} = &OnionVersion($onion_doto);
 
     warn Dumper(\%row);
 
@@ -368,6 +420,8 @@ sub DoProject {
 
             # no keys to install, no poisoning to deal with
 
+            # need to work out how to install a v3 hostname file here, somehow
+
             # tor config using TOR_DIR to drop everything in there
             &SetEnv("tor_dir", $hs_dir, "softmap");
             my $cmd = "$ENV{TEMPLATE_TOOL} $ENV{TOR_TEMPLATE} >$hs_dir/tor.conf";
@@ -387,19 +441,30 @@ sub DoProject {
             my $dns = ${$row}{DNS_DOMAIN};
 
             # which onion?
-            my $onion = ${$row}{ONION_ADDRESS};
+            my $onion_doto = ${$row}{ONION_ADDRESS};
+            my $onion_dirname = ${$row}{ONION_DIRNAME};
 
             # make hs directory
-            my $hs_dir = "$ENV{PROJECT_DIR}/$onion.d";
+            my $hs_dir = "$ENV{PROJECT_DIR}/$onion_dirname";
             &MakeDir($hs_dir);
 
             # install keyfile
             # TODO:
-            my $keyfile = ${$row}{ONION_ADDRESS};
-            &CopyFile($keyfile, "$hs_dir/private_key");
-            # ...when using V3 onions, copy/restore these files instead
-            # $hs_dir/hs_ed25519_public_key from $onion.v3pub.key
-            # $hs_dir/hs_ed25519_secret_key from $onion.v3sec.key
+            my $onion = &ExtractOnion($onion_doto);
+            my $secrets_dir = "secrets.d";
+            if (&ValidOnionV2($onion)) {
+                $key = "$secrets_dir/$onion.key";
+                &CopyFile($key, "$hs_dir/private_key");
+            }
+            elsif (&ValidOnionV3($onion)) {
+                $pub = "$secrets_dir/$onion.v3pub.key";
+                $sec = "$secrets_dir/$onion.v3sec.key";
+                &CopyFile($pub, "$hs_dir/hs_ed25519_public_key");
+                &CopyFile($sec, "$hs_dir/hs_ed25519_secret_key");
+            }
+            else {
+                die "wtf this can't happen: $onion\n";
+            }
 
             # bypass key-poisoning obscurity hassle
             $poison = "$hs_dir/onion_service_non_anonymous";
@@ -409,6 +474,9 @@ sub DoProject {
             else {
                 unlink($poison) if (-f $poison);
             }
+
+            # need a hostname file
+            &WriteFile("$hs_dir/hostname", $onion_doto);
         }
 
         # tor config

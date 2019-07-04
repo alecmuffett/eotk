@@ -38,6 +38,7 @@ events {
 http {
   # nginx fails without large enough buckets (sigh)
   map_hash_bucket_size %NGINX_HASH_BUCKET_SIZE%;
+  server_names_hash_bucket_size %NGINX_HASH_BUCKET_SIZE%;
 
   # dns for proxy (sigh)
   resolver %NGINX_RESOLVER% valid=%NGINX_TIMEOUT%s;
@@ -481,7 +482,7 @@ http {
     listen unix:%PROJECT_DIR%/%TOR_WORKER_PREFIX%-%I%.d/port-80.sock;
     %%ENDRANGE
     %%ELSE
-    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
@@ -525,9 +526,9 @@ http {
     # unix sockets; use <ONION_ADDRESS>.d as a naming convention
     %%IF not %FORCE_HTTPS%
     # FORCE_HTTPS is not in use, cleartext data may traverse the internet
-    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock;
+    listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
-    listen unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock ssl;
+    listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock ssl;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"

@@ -35,16 +35,16 @@ HiddenServiceDir %TOR_DIR%
 HiddenServicePort 80 unix:%TOR_DIR%/port-80.sock
 HiddenServicePort 443 unix:%TOR_DIR%/port-443.sock
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
-HiddenServiceVersion 2
+HiddenServiceVersion %ONION_VERSION%
 
 %%ELSE
 %%BEGIN
 # hardmap for: %DNS_DOMAIN% -> %ONION_ADDRESS%
-HiddenServiceDir %PROJECT_DIR%/%ONION_ADDRESS%.d
-HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-80.sock
-HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_ADDRESS%.d/port-443.sock
+HiddenServiceDir %PROJECT_DIR%/%ONION_DIRNAME%
+HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock
+HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
-HiddenServiceVersion 2
+HiddenServiceVersion %ONION_VERSION%
 
 %%END
 %%ENDIF
