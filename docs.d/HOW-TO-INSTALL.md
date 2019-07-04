@@ -2,7 +2,7 @@
 
 ## Ubuntu 18.04LTS (prebuilt via tor and canonical)
 
-Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; then:
+Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
@@ -11,7 +11,7 @@ Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; then:
 
 ## macOS Mojave (prebuilt via homebrew)
 
-Install Homebrew: `http://brew.sh`; then:
+Install [Homebrew](https://brew.sh); and then:
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
