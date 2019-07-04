@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## HEAD (to become v1.5)
 * new features
 * `eotk-site.conf`
@@ -11,6 +10,9 @@
   * see notes in [docs.d/HOW-TO-INSTALL.md](docs.d/HOW-TO-INSTALL.md)
 * Ubuntu 18.04LTS becomes mainline for Ubuntu
   * Ubuntu 16.04LTS becomes deprecated
+* Support for v3 Onion Addresses
+  * use `%NEW_V3_ONION%` in template configs (`.tconf`) to autogenerate
+  * see `demo.d/wikipedia-v3.tconf` for examples
 
 ## v1.4
 * new features
