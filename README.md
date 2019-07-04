@@ -47,7 +47,7 @@ valid.
 This is *expected* and *proper* behaviour; there are currently two
 ways to address this.
 
-## install `mkcert`
+## Install `mkcert`
 
 The *best* solution for development purposes is to [install `mkcert`
 onto the machine which will be running
@@ -57,10 +57,11 @@ that you will need.
 
 You can then add `set ssl_mkcert 1` to configurations, and your
 `mkcert` root certificate will be used to sign the resulting onion
-certificates.
+certificates. You can [install that certificate into your local copy
+of Tor Browser](docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
+of course it will not work for anyone else.
 
-
-## visit `/hello-onion/` URLs
+## Visit `/hello-onion/` URLs
 
 The old solution was/is much more manual: for any onion - eg:
 www.a2s3c4d5e6f7g8h9.onion - EOTK provides a fixed url:
