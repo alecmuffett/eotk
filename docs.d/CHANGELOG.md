@@ -7,7 +7,7 @@
   * auto-created it if it does not exist
   * used it to solve NGINX installation on Ubuntu 18.04LTS
 * OnionBalance to be deprecated until overhauled by Tor
-  * see notes in [docs.d/HOW-TO-INSTALL.md](docs.d/HOW-TO-INSTALL.md)
+  * see notes in [HOW-TO-INSTALL.md](HOW-TO-INSTALL.md)
 * Ubuntu 18.04LTS becomes mainline for Ubuntu
   * Ubuntu 16.04LTS becomes deprecated
 * Support for v3 Onion Addresses
