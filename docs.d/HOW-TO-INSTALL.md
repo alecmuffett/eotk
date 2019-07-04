@@ -104,6 +104,7 @@ After installation, you can do:
 
 * `./eotk config demo.d/wikipedia.tconf`
 * `./eotk start wikipedia`
+* `./eotk maps -a` # and connect to one of the onions you've created
 
 # Configuring Start-On-Boot, And Logfile Compression
 
