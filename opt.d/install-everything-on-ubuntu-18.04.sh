@@ -9,20 +9,23 @@ socat
 tor
 "
 
+TORSIG=A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
+
+EOTK="eotkinst"
+
 cat <<EOF | sudo dd of=/etc/apt/sources.list.d/tor.list
 deb https://deb.torproject.org/torproject.org bionic main
 deb-src https://deb.torproject.org/torproject.org bionic main
 EOF
 
 # gpg keyservers are no more, alas
-TORSIG=A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
-curl https://deb.torproject.org/torproject.org/$TORSIG.asc | gpg --import
-gpg --export $TORSIG | sudo apt-key add -
+curl https://deb.torproject.org/torproject.org/$TORSIG.asc | gpg --import || exit 1
+gpg --export $TORSIG | sudo apt-key add - || exit 1
 
 # install everything in one go
 echo ""
-echo "$0: if you are already running a webserver, nginx may complain about port80"
-echo "$0: if such happens, do not worry, because we will soon disable nginx..."
+echo "$EOTK: if you are already running a webserver, nginx may complain about port80"
+echo "$EOTK: if such happens, do not worry, because we will soon disable nginx..."
 sudo apt install -y apt-transport-https || exit 1
 sudo apt update || exit 1
 sudo apt upgrade -y || exit 1
@@ -32,7 +35,7 @@ sudo systemctl disable tor nginx || exit 1
 
 # install python stuff
 echo ""
-echo $0: this command may complain about pip versions, do not worry about it.
+echo $EOTK: this command may complain about pip versions, do not worry about it.
 sudo pip install onionbalance || exit 1
 
 # fix files and directories
@@ -41,13 +44,13 @@ sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmo
 sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x || exit 1
 
 echo ""
-echo "$0: NOTE: Some versions of Ubuntu packages are old; because of this,"
-echo "$0: when starting projects you may see messages like:"
+echo "$EOTK: NOTE: Some versions of Ubuntu packages are old; because of this,"
+echo "$EOTK: when starting projects you may see messages like:"
 echo ""
-echo "$0: > could not open error log file: open /var/log/nginx/error.log failed"
+echo "$EOTK: > could not open error log file: open /var/log/nginx/error.log failed"
 echo ""
-echo "$0: ...when using EOTK; these specific messages may be safely ignored."
+echo "$EOTK: ...when using EOTK; these specific messages may be safely ignored."
 echo ""
-echo "$0: done"
+echo "$EOTK: done"
 
 exit 0
