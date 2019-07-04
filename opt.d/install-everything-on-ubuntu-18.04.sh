@@ -14,9 +14,10 @@ deb https://deb.torproject.org/torproject.org bionic main
 deb-src https://deb.torproject.org/torproject.org bionic main
 EOF
 
+# gpg keyservers are no more, alas
 TORSIG=A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
-gpg --keyserver keys.gnupg.net --recv $TORSIG || exit 1
-gpg --export $TORSIG | sudo apt-key add - || exit 1
+curl https://deb.torproject.org/torproject.org/$TORSIG.asc | gpg --import
+gpg --export $TORSIG | sudo apt-key add -
 
 # install everything in one go
 echo ""
