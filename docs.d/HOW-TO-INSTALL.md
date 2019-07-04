@@ -1,16 +1,4 @@
-# Requirements
-
-EOTK requires recent `nginx` with the following modules/features enabled:
-
-* `headers_more`
-* `ngx_http_substitutions_filter_module`
-* `http_sub`
-* `http_ssl`
-* Lua and/or LuaJIT (ideally from OpenResty)
-
-# Installation
-
-Per-platform:
+# Per-platform Installation
 
 ## Ubuntu 18.04LTS (prebuilt via tor and canonical)
 
@@ -40,6 +28,18 @@ into Raspbian; scripts are supplied for Raspbian "Stretch".
 * `./opt.d/build-nginx-on-raspbian-stretch.sh`
 * `./opt.d/build-tor-on-raspbian-stretch.sh`
 * `./opt.d/install-onionbalance-on-raspbian-stretch.sh`
+
+## Other Platform Outline Requirements
+
+EOTK requires recent `tor` and also `nginx` with the following modules
+enabled; EOTK may need to be told about the modules via
+`set nginx_modules_dirs ...`
+
+* `headers_more`
+* `ngx_http_substitutions_filter_module`
+* `http_sub`
+* `http_ssl`
+* Lua and/or LuaJIT (ideally from OpenResty)
 
 # Dealing With OnionBalance And Load-Balancing
 
@@ -83,7 +83,9 @@ Please read the individual files for installation instructions; local
 setup is intended to be pretty simple, let me know if anything is
 confusing.
 
+----
 # LEGACY DOCUMENTATION IN NEED OF REVIEW, BELOW THIS POINT
+----
 
 ## I Want To Create My Own Project!
 
@@ -297,3 +299,19 @@ persists, check the logfiles.
 Is the clock/time of day correct on all your machines?  Are you
 running NTP?  We are not sure but having an incorrect clock may be a
 contributory factor to this issue.
+
+## Video Demonstrations
+
+**These videos are instructive, but dated.**
+
+Commands have changed - but not very much - but please check the
+documentation rather than trust the videos; consider the videos to be
+advisory rather than correct.
+
+* [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
+* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
+* [Using OnionBalance](https://www.youtube.com/watch?v=HNJaMNVCb-U)
+
+[![Basic Introduction to EOTK](http://img.youtube.com/vi/ti_VkVmE3J4/0.jpg)](http://www.youtube.com/watch?v=ti_VkVmE3J4)
+[![Rough Edges: SSL Certificates & Strange Behaviour](http://img.youtube.com/vi/UieLTllLPlQ/0.jpg)](http://www.youtube.com/watch?v=UieLTllLPlQ)
+[![Using OnionBalance](http://img.youtube.com/vi/HNJaMNVCb-U/0.jpg)](http://www.youtube.com/watch?v=HNJaMNVCb-U)

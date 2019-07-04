@@ -87,28 +87,11 @@ In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
 
-
 ## Installation
 
 Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide
 
-## Video Demonstrations
-
-**These videos are instructive, but dated.**
-
-Commands have changed - but not very much - but please check the
-documentation rather than trust the videos; consider the videos to be
-advisory rather than correct.
-
-* [Basic Introduction to EOTK](https://www.youtube.com/watch?v=ti_VkVmE3J4)
-* [Rough Edges: SSL Certificates & Strange Behaviour](https://www.youtube.com/watch?v=UieLTllLPlQ)
-* [Using OnionBalance](https://www.youtube.com/watch?v=HNJaMNVCb-U)
-
-[![Basic Introduction to EOTK](http://img.youtube.com/vi/ti_VkVmE3J4/0.jpg)](http://www.youtube.com/watch?v=ti_VkVmE3J4)
-[![Rough Edges: SSL Certificates & Strange Behaviour](http://img.youtube.com/vi/UieLTllLPlQ/0.jpg)](http://www.youtube.com/watch?v=UieLTllLPlQ)
-[![Using OnionBalance](http://img.youtube.com/vi/HNJaMNVCb-U/0.jpg)](http://www.youtube.com/watch?v=HNJaMNVCb-U)
-
-### Help I'm Stuck!
+## Help I'm Stuck!
 
 Ping @alecmuffett on Twitter, or log an `Issue`, above.
 
@@ -131,32 +114,3 @@ Also, thanks go to Christopher Weatherhead for acting as a local NGINX
 
 And back in history: Michal Nánási, Matt Jones, Trevor Pottinger and
 the rest of the FB-over-Tor team.  Hugs.
-
-## Architectures
-
-### hardmap 1
-
-![hardmap 1](docs.d/hardmap-1.png)
-
-### hardmap 2
-
-![hardmap 2](docs.d/hardmap-2.png)
-
-### softmap 1
-
-![softmap 1](docs.d/softmap-1.png)
-
-### softmap 2
-
-![softmap 2](docs.d/softmap-2.png)
-
-### softmap 3
-
-![softmap 3](docs.d/softmap-3.png)
-
-### softmap 4
-
-![softmap 4](docs.d/softmap-4.png)
-
-----
-*eotk (c) 2017 Alec Muffett*
