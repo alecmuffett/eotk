@@ -37,6 +37,53 @@ The result is essentially a "man in the middle" proxy; you should set
 them up only for your own sites, or for sites which do not require
 login credentials of any kind.
 
+## EOTK and HTTPS
+
+When connecting to the resulting onions over HTTP/SSL, you will be
+using wildcard self-signed SSL certificates - you *will* encounter
+many "broken links" which are due to the SSL certificate not being
+valid.
+
+This is *expected* and *proper* behaviour; there are currently two
+ways to address this.
+
+## install `mkcert`
+
+The *best* solution for development purposes is to [install `mkcert`
+onto the machine which will be running
+EOTK](https://github.com/FiloSottile/mkcert#installation) and
+configure your own personal Certificate Authority for the certificates
+that you will need.
+
+You can then add `set ssl_mkcert 1` to configurations, and your
+`mkcert` root certificate will be used to sign the resulting onion
+certificates.
+
+
+## visit `/hello-onion/` URLs
+
+The old solution was/is much more manual: for any onion - eg:
+www.a2s3c4d5e6f7g8h9.onion - EOTK provides a fixed url:
+
+* `https://www.a2s3c4d5e6f7g8h9.onion/hello-onion/`
+
+...which (`/hello-onion/`) is internally served by the NGINX proxy and
+provides a stable, fixed URL for SSL certificate acceptance; inside
+TorBrowser another effective solution is to open all the broken links,
+images and resources "in a new Tab" and accept the certificate there.
+
+In production, of course, one would expect to use an SSL EV
+certificate to provide identity and assurance to an onion site,
+rendering these issues moot.
+
+## Installation
+
+Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide
+
+## Help I'm Stuck!
+
+Ping @alecmuffett on Twitter, or log an `Issue`, above.
+
 ## Important Note About Anonymity
 
 The presumed use-case of EOTK is that you have an already-public
@@ -63,37 +110,9 @@ almost certainly not going to be anonymous; for one thing your brand
 name (etc) will likely be plastered all over it.
 
 If you want to set up a server which includes anonymity **as well as**
-all of the aforementioned qualities, you
-[want to be reading an entirely different document, instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
-
-## EOTK and HTTPS
-
-When connecting to the resulting onions over HTTP/SSL, you will be
-using wildcard self-signed SSL certificates - you *will* encounter
-many "broken links" which are due to the SSL certificate not being
-valid.  This is *expected* and *proper* behaviour.
-
-To help cope with this, for any domain (eg:
-www.a2s3c4d5e6f7g8h9.onion) the EOTK provides a fixed url:
-
-* `https://www.a2s3c4d5e6f7g8h9.onion/hello-onion/`
-
-...which (`/hello-onion/`) is internally served by the NGINX proxy and
-provides a stable, fixed URL for SSL certificate acceptance; inside
-TorBrowser another effective solution is to open all the broken links,
-images and resources "in a new Tab" and accept the certificate there.
-
-In production, of course, one would expect to use an SSL EV
-certificate to provide identity and assurance to an onion site,
-rendering these issues moot.
-
-## Installation
-
-Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide
-
-## Help I'm Stuck!
-
-Ping @alecmuffett on Twitter, or log an `Issue`, above.
+all of the aforementioned qualities, you [want to be reading an
+entirely different document,
+instead](https://github.com/alecmuffett/the-onion-diaries/blob/master/basic-production-onion-server.md).
 
 ## Acknowledgements
 
@@ -101,10 +120,10 @@ EOTK stands largely on the experience of work I led at Facebook to
 create `www.facebookcorewwwi.onion`, but it owes a *huge* debt to
 [Mike Tigas](https://github.com/mtigas)'s work at ProPublica to put
 their site into Onionspace through using NGINX as a rewriting proxy --
-and that
-[he wrote the whole experience up in great detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services)
-including
-[sample config files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
+and that [he wrote the whole experience up in great
+detail](https://www.propublica.org/nerds/item/a-more-secure-and-anonymous-propublica-using-tor-hidden-services)
+including [sample config
+files](https://gist.github.com/mtigas/9a7425dfdacda15790b2).
 
 Reading this prodded me to learn about NGINX and then aim to shrink &
 genericise the solution; so thanks, Mike!
