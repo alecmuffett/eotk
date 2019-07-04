@@ -12,22 +12,22 @@ EOTK requires recent `nginx` (1.15.8+) with the following modules/features enabl
 
 # After the Installation
 
-Once you have installed EOTK (below) and configured and tested it 
+Once you have installed EOTK (below) and configured and tested it
 for your project, run:
 
 * `eotk make-scripts`
 
-This will create two files: 
+This will create two files:
 
 * `eotk-init.sh` - for installing on your system as a startup script
 * `eotk-housekeeping.sh` - for cronjob log rotation and other cleanup work
 
-Please read the individual files for installation instructions; 
+Please read the individual files for installation instructions;
 local setup is intended to be pretty simple.
 
 # Per-Platform Installations
 
-Where you don't have Tor, NGINX or OnionBalance, 
+Where you don't have Tor, NGINX or OnionBalance,
 or much other stuff currently installed:
 
 ## macOS Mojave (prebuilt via homebrew)
@@ -37,11 +37,18 @@ or much other stuff currently installed:
 * `cd eotk`
 * `./opt.d/install-everything-on-macos.sh`
 
-## Ubuntu 16.04 (prebuilt via tor and canonical)
+## Ubuntu 18.04LTS (prebuilt via tor and canonical)
+
+Install a base Ubuntu 18.04LTS server image (or better) and then do:
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/install-everything-on-ubuntu-16.04.sh`
+* `./opt.d/install-everything-on-ubuntu-18.04.sh`
+
+You can then do:
+
+* `./eotk config demo.d/wikipedia.tconf`
+* `./eotk start wikipedia`
 
 ## Raspbian (manual builds)
 

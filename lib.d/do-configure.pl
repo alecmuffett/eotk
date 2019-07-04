@@ -6,6 +6,8 @@ use Data::Dumper;
 die "$0: needs EOTK_HOME environment variable to be set\n"
     unless (defined($ENV{EOTK_HOME}));
 
+$site_conf = 'eotk-site.conf';
+
 # state
 
 my %projects = ();
@@ -527,6 +529,7 @@ my @set_blank = qw(
     host_blacklist_re
     host_whitelist
     host_whitelist_re
+    nginx_modules_dirs
     no_cache_content_type
     no_cache_host
     origin_blacklist
@@ -583,9 +586,18 @@ else {
 
 die "$config: no such file / missing configuration: $config\n" unless (-f $config);
 
+@config = ();
+
+if (-f $site_conf) {
+    open(SITE_CONF, $site_conf) or die "$site_conf: $!\n";
+    push(@config, <SITE_CONF>);
+    close(SITE_CONF);
+}
+
 open(CONFIG, $config) or die "$config: $!\n";
-@config = <CONFIG>;
+push(@config, <CONFIG>);
 close(CONFIG);
+
 @config = &JoinLines(@config);
 @config = grep(!/^\s*(#.*)?$/, @config);
 chomp(@config);

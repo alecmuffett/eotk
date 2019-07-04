@@ -12,6 +12,13 @@
 # logs and pids
 pid %PROJECT_DIR%/nginx.pid;
 error_log %LOG_DIR%/nginx-error.log %NGINX_SYSLOG%;
+%%IF %NGINX_MODULES_DIRS%
+%%CSV %NGINX_MODULES_DIRS%
+include %1%/*.conf;
+%%ENDCSV
+%%ELSE
+# no nginx_modules_dirs specified
+%%ENDIF
 
 # TODO: notes for custom 403 error-handling pages:
 # https://www.cyberciti.biz/faq/unix-linux-nginx-custom-error-403-page-configuration/

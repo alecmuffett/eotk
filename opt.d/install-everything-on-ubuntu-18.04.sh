@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OPT_DIR=`dirname $0`
+EOTK_HOME=`( cd $OPT_DIR/.. ; pwd )` # glib assumption
+
 PACKAGES="
 deb.torproject.org-keyring
 nginx-extras
@@ -10,7 +13,6 @@ tor
 "
 
 TORSIG=A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
-
 EOTK="eotkinst"
 
 cat <<EOF | sudo dd of=/etc/apt/sources.list.d/tor.list
@@ -43,14 +45,11 @@ sudo find /var/log/nginx/ -perm -0200 -print0 | sudo xargs -0 chmod g+w || exit 
 sudo find /usr/local/bin /usr/local/lib -perm -0400 -print0 | sudo xargs -0 chmod a+r || exit 1
 sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmod a+x || exit 1
 
+site_conf=$EOTK_HOME/eotk-site.conf
 echo ""
-echo "$EOTK: NOTE: Some versions of Ubuntu packages are old; because of this,"
-echo "$EOTK: when starting projects you may see messages like:"
-echo ""
-echo "$EOTK: > could not open error log file: open /var/log/nginx/error.log failed"
-echo ""
-echo "$EOTK: ...when using EOTK; these specific messages may be safely ignored."
+echo "$EOTK: Adding site-specific configuration to: $site_conf"
+echo set nginx_modules_dirs /etc/nginx/modules-enabled >> $site_conf
+
 echo ""
 echo "$EOTK: done"
-
 exit 0

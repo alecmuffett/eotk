@@ -37,6 +37,9 @@ ob_tor_control_sock=$ob_dir/tor-control.sock
 # what are the hostnames of the remote workers?
 host_list=$EOTK_HOME/eotk-workers.conf # <--------------------------- HOST FILE
 
+# where we put the persistent, shared config
+site_conf=$EOTK_HOME/eotk-site.conf
+
 # init script name
 init=eotk-init.sh
 housekeeping=eotk-housekeeping.sh
@@ -330,6 +333,9 @@ InvokeRemotely() {
 # get a config file and re/populate the projects directory with it
 Configure() {
     log=configure$$.log
+
+    # make the siteconf if it does not already exist
+    test -f $site_conf || touch $site_conf || exit 1
 
     for file in "$@" ; do
         echo :::: configure $file ::::
