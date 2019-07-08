@@ -48,7 +48,11 @@ sudo find /usr/local/bin /usr/local/lib -perm -0100 -print0 | sudo xargs -0 chmo
 site_conf=$EOTK_HOME/eotk-site.conf
 echo ""
 echo "$EOTK: Adding site-specific configuration to: $site_conf"
-echo set nginx_modules_dirs /etc/nginx/modules-enabled >> $site_conf
+(
+    echo "# setting nginx_modules_dirs is essential for use on Ubuntu 18.04"
+    echo "set nginx_modules_dirs /etc/nginx/modules-enabled"
+    echo ""
+) >> $site_conf
 
 echo ""
 echo "$EOTK: done"
