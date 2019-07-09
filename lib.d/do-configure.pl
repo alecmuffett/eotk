@@ -544,7 +544,7 @@ sub DoProject {
 &SetEnv("suppress_methods_except_get", 0); # 1 = GET/HEAD Only
 &SetEnv("suppress_tor2web", 1); # 1 = block access by tor2web sites
 &SetEnv("template_tool", "$here/lib.d/expand-template.pl");
-&SetEnv("tor_intros_per_daemon", 3);
+&SetEnv("tor_intros_per_daemon", 5);
 &SetEnv("tor_single_onion", 1);
 &SetEnv("tor_syslog", "notice"); # https://www.torproject.org/docs/tor-manual.html.en
 &SetEnv("tor_template", "$here/templates.d/tor.conf.txt");
