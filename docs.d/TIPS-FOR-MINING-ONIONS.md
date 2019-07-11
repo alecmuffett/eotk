@@ -102,3 +102,52 @@ strategy is follows:
   receives a copy of the Onion address key.
 
 Best of luck to you. :-)
+
+## War Stories and Problems When Mining Onions
+
+A long time ago I mined a bunch of test onion addresses for the New
+York Times, and I put a few into test deployment; and one of them did
+not work, like, at all.
+
+I had mined them all using Shallot on Raspbian/Debian, and I had
+hundreds to pick from, but one of the nice ones was something like
+`foofoofoofoofoo.onion`
+
+Or, at least, Shallot had told me that the key *was* `foofoofoofoofoo`
+-- but when I checked the `hostname` file in the relevant Tor config,
+it said that the respective onion address was something else entirely
+(eg: `barbarbarbarbar.onion`).
+
+I thought: this is crazy, but I tracked it all the way back to the
+miner, and (in short) the contents of the file did not match what
+Shallot said it was.  Shallot had lied.
+
+So if you mine Onion Addresses, beware, and always test them
+thoroughly, especially **before** buying SSL Certificates which cite
+them.
+
+### The Technical Bit
+
+For technical reasons[1] EOTK now manually recreates the expected,
+rather than actual, `hostname` file during install; so it might not
+reflect reality if your V2 onion keys are thusly afflicted - for
+instance if your Onion site is 100% unreachable.
+
+The way to test a V2 Onion address for this syndrome is to cd into
+`projects.d/.../foofoofoofoofoo.d/` and then **remove** the `hostname`
+file in that directory.  Then do:
+
+* `eotk shutdown && eotk start -a`
+
+...which will regenerate that file.  Check that it matches your
+expectation, and if not, discard that vanity address and start over.
+
+----
+
+[1] Interestingly it appears that this behaviour (contents of
+regenerated `hostname` does not necessarily match expectation) is the
+norm for V3 onions, because elliptic curve cryptography, hence why I
+manually generate the hostname files in recent versions of EOTK.
+
+I need to talk to Tor more, to find out if I am misapprehending
+regarding this latter.
