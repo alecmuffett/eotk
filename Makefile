@@ -39,3 +39,13 @@ docker-clean:
 	docker system prune --volumes
 	docker image prune -a
 	make docker-status
+
+##################################################################
+
+std-perms:
+	find . -type d | xargs chmod 755
+	find . -type f | xargs chmod 644
+	find . -type f -name "*.sh" | xargs chmod 755
+	find . -type f -name "*.pl" | xargs chmod 755
+	find . -type f -name "*.py" | xargs chmod 755
+	chmod 755 eotk
