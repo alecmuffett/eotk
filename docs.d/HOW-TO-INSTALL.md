@@ -123,9 +123,7 @@ Please read the individual files for installation instructions; local
 setup is intended to be pretty simple, let me know if anything is
 confusing.
 
-----
-# LEGACY DOCUMENTATION IN NEED OF REVIEW, BELOW THIS POINT
-----
+# Using EOTK
 
 ## I Want To Create My Own Project!
 
@@ -156,11 +154,13 @@ would trash your existing onions.
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
-  * Alternately get a tool like `scallion` or `shallot` and use that to "mine" a desirable onion address.
+  * Alternately get a tool like `scallion`, `shallot`, or `eschalot` and use that to "mine" a desirable onion address.
     * https://github.com/katmagic/Shallot - in C, for CPUs
       * Seems okay on Linux, not sure about other platforms
     * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
       * Advertised as working on Windows, Linux; works well on OSX under "Mono"
+    * https://github.com/ReclaimYourPrivacy/eschalot - in C, for CPUs
+      * Works well under Linux, and BSD systems. Uses multiple threads. Can use a wordlist to generate onion addresses
     * Be sure to store your mined private keys in `secrets.d` with a
       filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is
       the corresponding onion address.
