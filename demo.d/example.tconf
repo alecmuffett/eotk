@@ -35,9 +35,9 @@
 # set x_from_onion_value 1
 
 # When you're proving SSL ownership, you may want arbitrary text
-# strings to be returned for a GET upon an arbitrary "/path"
+# strings to be returned for a GET upon an arbitrary "/path" regexp
 #
-# set hardcoded_endpoint_csv /path,stringvalue ...
+# set hardcoded_endpoint_csv ^/regexp/pattern/?$,stringvalue ...
 
 # ---- PRESERVE_CSV ----
 
