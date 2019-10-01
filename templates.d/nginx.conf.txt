@@ -552,7 +552,7 @@ http {
 
     %%IF %NGINX_HELLO_ONION%
     # for test & to help SSL certificate acceptance
-    location ~* ^/hello[-_]onion/?$ {
+    location ~ "^/hello[-_]onion/?$" {
       return 200 "Hello, Onion User!";
     }
     %%ELSE
@@ -562,7 +562,7 @@ http {
     %%IF %HARDCODED_ENDPOINT_CSV%
     # hardcoded_endpoints: 1=path_re,2=response
     %%CSV %HARDCODED_ENDPOINT_CSV%
-    location "%1%" {
+    location ~ "%1%" {
       return 200 %2%;
     }
     %%ENDCSV
