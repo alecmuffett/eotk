@@ -98,6 +98,23 @@ In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
 
+# Proving Your Ownership To A Certificate Authority / Hardcoded Content
+
+Small amounts of plain-text page content may be embedded using
+regular-expressions for pathnames; this is done using
+`hardcoded_endpoint_csv` and the following example will emit
+`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` (or
+`bar`) respectively, ignoring trailing slashes.  Note the use of
+double-backslash to escape "dots" in the regular expression, and use
+of backslash-indent to continue/enable several such paths.
+
+```
+# demo: CSV list to implement ownership proof URIs for EV SSL issuance
+set hardcoded_endpoint_csv \
+    ^/www/\\.well_known/foo/?$,"FOOPROOF" \
+    ^/www/\\.well_known/bar/?$,"BARPROOF"
+```
+
 # Demonstration And Testing
 
 After installation, you can do:
