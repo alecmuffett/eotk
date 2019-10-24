@@ -16,8 +16,13 @@ General discussion mailllist: deployment, tweaks and tuning:
 
 NB: bugs should be reported through `Issues`, above.
 
-### In the News
+### EOTK In the News
 
+* Oct 2019 [BBC News launches 'dark web' Tor mirror](https://www.bbc.co.uk/news/technology-50150981)
+* Oct 2019 [BBC launches dark web news site in bid to dodge censors](https://www.cityam.com/bbc-launches-dark-web-news-site-in-bid-to-dodge-censors/)
+* Oct 2019 [Tor blimey, Auntie! BBC launches dedicated dark web mirror site](https://www.theregister.co.uk/2019/10/24/beeb_launches_dedicated_dark_web_site/)
+* Oct 2019 [BBC News heads to the dark web with new Tor mirror
+](https://www.theverge.com/2019/10/24/20930085/bbc-news-dark-web-tor-the-onion-browser-secure-censorship)
 * Jan 2018 [Volunteer Spotlight: Alec Helps Companies Activate Onion Services
 ](https://blog.torproject.org/volunteer-spotlight-alec-helps-companies-activate-onion-services)
 * Nov 2017 [Un service Wikipedia pour le Dark Web a été lancé par un ingénieur en sécurité](https://www.developpez.com/actu/175523/Un-service-Wikipedia-pour-le-Dark-Web-a-ete-lance-par-un-ingenieur-en-securite-afin-de-contourner-la-censure-dans-certains-pays/)
