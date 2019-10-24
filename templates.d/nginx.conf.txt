@@ -326,7 +326,8 @@ http {
       %%ENDIF
       "Link",
       "Location",
-      "Set-Cookie"
+      "Set-Cookie",
+      "Timing-Allow-Origin"
     }
 
     local i, k
