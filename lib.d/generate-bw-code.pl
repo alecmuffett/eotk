@@ -96,6 +96,17 @@ while (<DATA>) {
         push(@redirect, "# no $lc_what\n");
         push(@redirect, "%%ENDIF\n");
     }
+    elsif ($how eq "fixed-redirect") {
+        my $uc_what = uc($lc_what);
+        push(@redirect, "%%IF %$uc_what%\n");
+        push(@redirect, "# fixed_redirect $lc_what: 1=regexp,2=code,3=dest (NO REQUEST_URI APPENDED) $warning\n");
+        push(@redirect, "%%CSV %$uc_what%\n");
+        push(@redirect, "$condition { return %2% %3%; }\n");
+        push(@redirect, "%%ENDCSV\n");
+        push(@redirect, "%%ELSE\n");
+        push(@redirect, "# no $lc_what\n");
+        push(@redirect, "%%ENDIF\n");
+    }
     elsif ($how eq "legacy-redirect") {
         my $uc_what = uc($lc_what);
         push(@redirect, "%%IF %$uc_what%\n");
@@ -197,6 +208,9 @@ block block_param_re if ( $arg_%1% ~* "%2%" )
 # redirects
 redirect redirect_host if ( $host ~* "%1%" )
 redirect redirect_path if ( $uri ~* "%1%" )
+# redirects to a fixed url
+fixed-redirect redirect_fixed_host if ( $host ~* "%1%" )
+fixed-redirect redirect_fixed_path if ( $uri ~* "%1%" )
 ## legacy - different/silly argument order
 legacy-redirect redirect_host_csv if ( $host ~* "%1%" )
 legacy-redirect redirect_path_csv if ( $uri ~* "%1%" )
