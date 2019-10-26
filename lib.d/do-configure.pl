@@ -604,6 +604,8 @@ my @set_blank = qw(
     path_whitelist
     path_whitelist_re
     preserve_csv
+    redirect_fixed_host
+    redirect_fixed_path
     redirect_host
     redirect_host_csv
     redirect_location_csv
