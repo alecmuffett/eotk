@@ -392,15 +392,11 @@ case "$cmd" in
         ListProjects
         ;;
 
-    populate|pop) ## todo
-        Populate "$@"
-        ;;
-
-    configure|config|conf) ## todo
+    configure|config|conf) ## file ... | use config file to rebuild project directories
         Configure "$@"
         ;;
 
-    genkey|gen) ## todo
+    genkey|gen) ## generate an onion certificate and print its address
         secrets_dir=secrets.d
         test -d $secrets_dir || mkdir -p $secrets_dir || exit 1
         chmod 700 $secrets_dir || exit 1
@@ -412,58 +408,58 @@ case "$cmd" in
 
     # ACTIONS
 
-    start) ## projects ... | start projects, or "-a"
+    start) ## project ... | start project*
         $flag_boot && OnBootCleanup
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
-    stop) ## todo
+    stop) ## project ... | stop project*
         $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
-    restart|bounce|reload) ## todo
+    restart|bounce|reload) ## project ... | restart project*
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload|ob-nxreload) ## todo
+    nxreload|nx-reload|ob-nxreload) ## project ... | reload nginx configs for project*
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    torreload|tor-reload) ## todo
+    torreload|tor-reload) ## project ... | reload tor configs for project*
         $need_to_run_locally && RunLocallyOverProjects torreload "$@"
         InvokeRemotely torreload "$@"
         ;;
 
-    debugon|debug-on) ## todo
+    debugon|debug-on) ## project ... | enable service debugging for project*
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff|debug-off) ## todo
+    debugoff|debug-off) ## project ... | disable service debugging for project*
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) ## todo
+    cleanup) ## project ... | stop and remove trash files for project* (eg: after crash)
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
 
-    syntax) ## todo
+    syntax) ## project ... | perform nginx syntax check for project*
         $need_to_run_locally && RunLocallyOverProjects syntax "$@"
         InvokeRemotely syntax "$@"
         ;;
 
-    harvest|onions) ## todo
+    harvest|onions) ## project ... | fetch onion mappings for project* (used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
-    status) ## todo
+    status) ## project ... | print status for project*
         $self ob-ps # because common
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
@@ -474,7 +470,7 @@ case "$cmd" in
         InvokeRemotely maps "$@"
         ;;
 
-    delete) ## todo
+    delete)
         Print $cmd not yet implemented, sorry.
         ;;
 
@@ -772,7 +768,7 @@ case "$cmd" in
         ;;
 
     *)
-        Print switches and commands
+        Print "switches and commands (project* => supports '-a' for all)"
         exec ./lib.d/explain.pl $0
         exit 1
         ;;
