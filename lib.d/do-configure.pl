@@ -625,7 +625,7 @@ foreach my $var (@set_blank) {
     &SetEnv($var, "");
 }
 
-&SetEnv("SCRIPT_NAMES", "bounce.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
+&SetEnv("SCRIPT_NAMES", "bounce.sh cleanup.sh debugoff.sh debugon.sh harvest.sh maps.sh nxreload.sh start.sh status.sh stop.sh syntax.sh torreload.sh");
 &SetEnv("SCRIPT_PAUSE", 5);
 
 # dynamic settings: overridable / may be given a global setting
