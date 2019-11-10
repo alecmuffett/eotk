@@ -448,6 +448,11 @@ case "$cmd" in
         InvokeRemotely debugoff "$@"
         ;;
 
+    cleanup) # project ..., or "-a"
+        $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
+        InvokeRemotely cleanup "$@"
+        ;;
+
     syntax) # project ..., or "-a"
         $need_to_run_locally && RunLocallyOverProjects syntax "$@"
         InvokeRemotely syntax "$@"

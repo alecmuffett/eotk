@@ -1,0 +1,29 @@
+#!/bin/sh
+# eotk (c) 2017 Alec Muffett
+cd %PROJECT_DIR% || exit 1
+
+# stop everything to be sure
+
+sh %PROJECT_DIR%/stop.sh || exit 1
+
+# remove pidfiles
+
+%%IF %IS_SOFTMAP%
+torpidfiles=`echo %PROJECT_DIR%/%TOR_WORKER_PREFIX%*.d/tor.pid`
+%%ELSE
+torpidfiles=%PROJECT_DIR%/tor.pid
+%%ENDIF
+
+ngxpidfile=%PROJECT_DIR%/nginx.pid
+
+# remove sockets
+
+sockets=`find %PROJECT_DIR% -name '*.sock'`
+
+# do it
+
+rm -f $torpidfiles $ngxpidfile $sockets
+
+# done
+
+exit 0
