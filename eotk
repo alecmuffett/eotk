@@ -408,64 +408,64 @@ case "$cmd" in
 
     # ACTIONS
 
-    start) ## project ... | start project*
+    start) ## project ... | start the cited projects*
         $flag_boot && OnBootCleanup
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
-    stop) ## project ... | stop project*
+    stop) ## project ... | stop the cited projects*
         $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
-    restart|bounce|reload) ## project ... | restart project*
+    restart|bounce|reload) ## project ... | restart the cited projects*
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload|ob-nxreload) ## project ... | reload nginx configs for project*
+    nxreload|nx-reload|ob-nxreload) ## project ... | live-reload nginx configs for projects*
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    torreload|tor-reload) ## project ... | reload tor configs for project*
+    torreload|tor-reload) ## project ... | live-reload tor configs for projects*
         $need_to_run_locally && RunLocallyOverProjects torreload "$@"
         InvokeRemotely torreload "$@"
         ;;
 
-    debugon|debug-on) ## project ... | enable service debugging for project*
+    debugon|debug-on) ## project ... | enable service debugging for projects*
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff|debug-off) ## project ... | disable service debugging for project*
+    debugoff|debug-off) ## project ... | disable service debugging for projects*
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) ## project ... | stop and remove trash files for project* (eg: after crash, "nginx.pid exists!", etc)
+    cleanup) ## project ... | stop and remove trash files for projects* (eg: after crash, "nginx.pid exists!" and ".sock exists!" errors, etc)
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
 
-    syntax) ## project ... | perform nginx syntax check for project*
+    syntax) ## project ... | perform nginx syntax check for projects*
         $need_to_run_locally && RunLocallyOverProjects syntax "$@"
         InvokeRemotely syntax "$@"
         ;;
 
-    harvest|onions) ## project ... | list onions used for project* (incl: used by onionbalance)
+    harvest|onions) ## project ... | list onions used for projects* (including: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
-    status) ## project ... | print status for project*
+    status) ## project ... | print eotk process status (known processes) for projects*
         $self ob-ps # because common
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
-    maps|map) ## project ... | print onion mappings for project* (incl: used by onionbalance)
+    maps|map) ## project ... | print onion mappings for projects* (including: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
@@ -476,14 +476,14 @@ case "$cmd" in
 
     # DIAGS
 
-    ps) ## list all [probable] eotk processes on all workers
+    ps) ## list all (probable) eotk processes on all workers
         $flag_remote || echo :::: eotk processes ::::
         ps auxww | egrep '\b(eotk|onionbalance|nginx)\b'
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely ps
         ;;
 
-    df) ## print filestore usage on all workers
+    df) ## print filestore usage of eotk directory on all workers
         $flag_remote || echo :::: eotk filesystem space ::::
         df -akh $EOTK_HOME
         # InvokeRemotely prints remote-ness banner diags
@@ -510,7 +510,7 @@ case "$cmd" in
 
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
-    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers; NO SAFETY CHECKS, do not use on live system
+    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers; THERE ARE NO SAFETY CHECKS, do not use on live system.
         $self stop -a
         DestructivePush
         ;;
@@ -708,7 +708,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-maps|obmaps) ## project ... | print onionbalance mappings for project*
+    ob-maps|obmaps) ## project ... | print onionbalance mappings for projects*
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
@@ -766,8 +766,8 @@ case "$cmd" in
         env PS1='eotk-env$ ' bash -i
         ;;
 
-    help|*) ## this text
-        Print "switches and commands (project* => supports '-a' for all)"
+    help|*) ## prints this text
+        Print "switches and commands (projects* => supports '-a' for all)"
         exec ./lib.d/explain.pl $0
         exit 1
         ;;
