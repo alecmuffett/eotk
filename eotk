@@ -535,7 +535,7 @@ case "$cmd" in
         Print please skip forward to: $prog ob-start project ...
         ;;
 
-    ob-gather|obgather) ## onionbalance: gather all remote worker mappings, and build onionbalance configs
+    ob-gather|obgather) ## onionbalance: gather all remote worker mappings, and build onionbalance configs; is automatically called by ob-start if needed
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
