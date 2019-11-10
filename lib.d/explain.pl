@@ -20,4 +20,4 @@ if ($docs =~ /\|/) {
     $args = '';
 }
 
-print "    $ARGV $opts$args\n\t$docs\n";
+print "  $ARGV $opts$args\n    $docs\n";
