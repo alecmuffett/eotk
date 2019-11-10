@@ -510,7 +510,7 @@ case "$cmd" in
 
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
-    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers, without safety checks
+    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers; NO SAFETY CHECKS, do not use on live system
         $self stop -a
         DestructivePush
         ;;
