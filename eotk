@@ -408,64 +408,64 @@ case "$cmd" in
 
     # ACTIONS
 
-    start) ## project ... | start the cited projects*
+    start) ## project* ... | start the cited projects
         $flag_boot && OnBootCleanup
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
-    stop) ## project ... | stop the cited projects*
+    stop) ## project* ... | stop the cited projects
         $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
-    restart|bounce|reload) ## project ... | restart the cited projects*
+    restart|bounce|reload) ## project* ... | restart the cited projects
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload|ob-nxreload) ## project ... | live-reload nginx configs for projects*
+    nxreload|nx-reload|ob-nxreload) ## project* ... | live-reload nginx configs for projects
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    torreload|tor-reload) ## project ... | live-reload tor configs for projects*
+    torreload|tor-reload) ## project* ... | live-reload tor configs for projects
         $need_to_run_locally && RunLocallyOverProjects torreload "$@"
         InvokeRemotely torreload "$@"
         ;;
 
-    debugon|debug-on) ## project ... | enable service debugging for projects*
+    debugon|debug-on) ## project* ... | enable service debugging for projects
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff|debug-off) ## project ... | disable service debugging for projects*
+    debugoff|debug-off) ## project* ... | disable service debugging for projects
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) ## project ... | stop and remove trash files for projects* (eg: after crash, "nginx.pid exists!" and ".sock exists!" errors, etc)
+    cleanup) ## project* ... | stop and remove trash files for projects (eg: after crash, "nginx.pid exists!" and ".sock exists!" errors, etc)
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
 
-    syntax) ## project ... | perform nginx syntax check for projects*
+    syntax) ## project* ... | perform nginx syntax check for projects
         $need_to_run_locally && RunLocallyOverProjects syntax "$@"
         InvokeRemotely syntax "$@"
         ;;
 
-    harvest|onions) ## project ... | list onions used for projects* (including: used by onionbalance)
+    harvest|onions) ## project* ... | list onions used for projects (including: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
-    status) ## project ... | print eotk process status (known processes) for projects*
+    status) ## project* ... | print eotk process status (known processes) for projects
         $self ob-ps # because common
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
-    maps|map) ## project ... | print onion mappings for projects* (including: used by onionbalance)
+    maps|map) ## project* ... | print onion mappings for projects (including: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
@@ -708,7 +708,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-maps|obmaps) ## project ... | print onionbalance mappings for projects*
+    ob-maps|obmaps) ## project* ... | print onionbalance mappings for projects
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
@@ -753,7 +753,7 @@ case "$cmd" in
         LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
-    script*|make-script*|make-init-script*) ## create 'boot' and 'cron' housekeeping scripts
+    script|scripts|make-script|make-scripts) ## create 'boot' and 'cron' housekeeping scripts
         for t in $init $housekeeping ; do
             lib.d/expand-template.pl templates.d/$t.txt </dev/null >$t 2>/dev/null
             chmod 755 $t
@@ -767,7 +767,7 @@ case "$cmd" in
         ;;
 
     help|*) ## prints this text
-        Print "switches and commands (projects* => supports '-a' for all)"
+        Print "switches and commands (project* => supports '-a' for all)"
         exec ./lib.d/explain.pl $0
         exit 1
         ;;
