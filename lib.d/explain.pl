@@ -10,12 +10,6 @@ $opts =~ s/x--/--/g;
 $opts =~ s/\|\*//;
 $opts =~ s/\)$//;
 
-$key = $opts;
-
-if ($opts =~ /\|/) {
-    $opts = "<$opts>";
-}
-
 if ($docs =~ /\|/) {
     ($args, $docs) = split(/\s*\|\s*/, $docs);
     $args = " $args";
@@ -23,10 +17,27 @@ if ($docs =~ /\|/) {
     $args = '';
 }
 
-$foo{$key} = "  $ARGV $opts$args\n    $docs\n\n";
+$foo{$opts} = [$args, $docs];
 
 END {
-    foreach $key (sort keys %foo) {
-        print $foo{$key};
+    $target_width = 60;
+    foreach $opts (sort keys %foo) {
+        ($args, $docs) = @{$foo{$opts}};
+        $opts = "<$opts>" if ($opts =~ /\|/);
+        print "  $ARGV $opts$args\n";
+        @stack = ([]);
+        @words = split(" ", $docs);
+
+        while ($word = shift(@words)) {
+            $render = "@{$stack[$#stack]}";
+            if (length $render >= $target_width) {
+                push(@stack, []);
+            }
+            push(@{$stack[$#stack]}, $word);
+        }
+        foreach $line (@stack) {
+            print "    @{$line}\n";
+        }
+        print "\n";
     }
 }
