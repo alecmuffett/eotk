@@ -53,7 +53,7 @@ hostname=`uname -n`
 # set path
 export PATH=$EOTK_HOME/opt.d:$EOTK_HOME/lib.d:$EOTK_HOME:$PATH
 
-##################################################################
+# ------------------------------------------------------------------
 
 # argument stripping
 flag_remote=false
@@ -62,22 +62,22 @@ flag_boot=false
 propagate_flags=""
 while : ; do
     case "x$1" in
-        x--remote)
+        x--remote) ## todo
             flag_remote=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--local)
+        x--local) ## todo
             flag_local=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--boot) # `smart` --local, + override some PID checks
+        x--boot) ## smart version of --local command, which overrides some PID checks
             flag_boot=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--debug)
+        x--debug) ## todo
             set -x
             shift
             ;;
@@ -140,7 +140,7 @@ OnBootCleanup() {
     done
 }
 
-##################################################################
+# ------------------------------------------------------------------
 
 # print a formatted message to stdout
 Print() {
@@ -379,7 +379,7 @@ cmd="$1" # we may need the remaining args
 test $# = 0 || shift # if no cmd-arg skip shifting, fall-thru
 
 case "$cmd" in
-    version|test)
+    version|test) ## print version information for all tools
         test -d .git && git show -s --oneline
         tor --version || Warn cannot find tor executable
         nginx -v || Warn cannot find nginx executable
@@ -388,19 +388,19 @@ case "$cmd" in
         InvokeRemotely version
         ;;
 
-    projects|proj)
+    projects|proj) ## lists projects
         ListProjects
         ;;
 
-    populate|pop)
+    populate|pop) ## todo
         Populate "$@"
         ;;
 
-    configure|config|conf)
+    configure|config|conf) ## todo
         Configure "$@"
         ;;
 
-    genkey|gen)
+    genkey|gen) ## todo
         secrets_dir=secrets.d
         test -d $secrets_dir || mkdir -p $secrets_dir || exit 1
         chmod 700 $secrets_dir || exit 1
@@ -410,136 +410,136 @@ case "$cmd" in
         )
         ;;
 
-    ## ACTIONS
+    # ACTIONS
 
-    start) # project ..., or "-a"
+    start) ## projects ... | start projects, or "-a"
         $flag_boot && OnBootCleanup
         $need_to_run_locally && RunLocallyOverProjects start "$@"
         InvokeRemotely start "$@"
         ;;
 
-    stop) # project ..., or "-a"
+    stop) ## todo
         $need_to_run_locally && RunLocallyOverProjects stop "$@"
         InvokeRemotely stop "$@"
         ;;
 
-    restart|bounce|reload) # project ..., or "-a"
+    restart|bounce|reload) ## todo
         $need_to_run_locally && RunLocallyOverProjects bounce "$@"
         InvokeRemotely bounce "$@"
         ;;
 
-    nxreload|nx-reload|ob-nxreload) # project ..., or "-a"
+    nxreload|nx-reload|ob-nxreload) ## todo
         $need_to_run_locally && RunLocallyOverProjects nxreload "$@"
         InvokeRemotely nxreload "$@"
         ;;
 
-    torreload|tor-reload) # project ..., or "-a"
+    torreload|tor-reload) ## todo
         $need_to_run_locally && RunLocallyOverProjects torreload "$@"
         InvokeRemotely torreload "$@"
         ;;
 
-    debugon|debug-on) # project ..., or "-a"
+    debugon|debug-on) ## todo
         $need_to_run_locally && RunLocallyOverProjects debugon "$@"
         InvokeRemotely debugon "$@"
         ;;
 
-    debugoff|debug-off) # project ..., or "-a"
+    debugoff|debug-off) ## todo
         $need_to_run_locally && RunLocallyOverProjects debugoff "$@"
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) # project ..., or "-a"
+    cleanup) ## todo
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
 
-    syntax) # project ..., or "-a"
+    syntax) ## todo
         $need_to_run_locally && RunLocallyOverProjects syntax "$@"
         InvokeRemotely syntax "$@"
         ;;
 
-    harvest|onions) # project ..., or "-a"
+    harvest|onions) ## todo
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
 
-    status) # project ..., or "-a"
+    status) ## todo
         $self ob-ps # because common
         $need_to_run_locally && RunLocallyOverProjects status "$@"
         InvokeRemotely status "$@"
         ;;
 
-    maps|map) # project ..., or "-a"
+    maps|map) ## todo
         $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
 
-    delete) # project ..., or "-a"
+    delete) ## todo
         Print $cmd not yet implemented, sorry.
         ;;
 
-    ## DIAGS
+    # DIAGS
 
-    ps)
+    ps) ## todo
         $flag_remote || echo :::: eotk processes ::::
         ps auxww | egrep '\b(eotk|onionbalance|nginx)\b'
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely ps
         ;;
 
-    df)
+    df) ## todo
         $flag_remote || echo :::: eotk filesystem space ::::
         df -akh $EOTK_HOME
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely df
         ;;
 
-    logsize|logsizes)
+    logsize|logsizes) ## todo
         $flag_remote || echo :::: eotk log sizes ::::
         find $EOTK_HOME -name "*.log" -o -name "*.log.*" -ls
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely logsize
         ;;
 
-    ## ---- ONIONBALANCE ----
+    # ---- ONIONBALANCE ----
 
-    push)
+    push) ## todo
         Print push is destructive and has been renamed, see the documentation
         ;;
 
-    shutdown)
+    shutdown) ## todo
         $self $propagate_flags ob-stop
         $self $propagate_flags stop -a
         ;;
 
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
-    ob-remote-nuke-and-push|rnap)
+    ob-remote-nuke-and-push|rnap) ## todo
         $self stop -a
         DestructivePush
         ;;
 
-    ob-nxpush|nxpush)
+    ob-nxpush|nxpush) ## todo
         # gently push only the nginx configs to the workers
         SpotPush nginx.conf
         ;;
 
-    ob-torpush|torpush)
+    ob-torpush|torpush) ## todo
         # gently push only the tor configs to the workers
         SpotPush tor.conf
         ;;
 
-    ob-spotpush|spotpush)
+    ob-spotpush|spotpush) ## todo
         # gently push only the tor configs to the workers
         SpotPush "$@"
         ;;
 
-    ob-config|obconfig|ob-configure|obconfigure)
+    ob-config|obconfig|ob-configure|obconfigure) ## todo
         Print ob-configure had been rolled into ob-start
         Print please skip forward to: $prog ob-start project ...
         ;;
 
-    ob-gather|obgather) # project ..., or "-a"
+    ob-gather|obgather) ## todo
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
@@ -646,7 +646,7 @@ case "$cmd" in
         ) > $ob_tor_conf
         ;;
 
-    ob-start|obstart) # project ..., or "-a"
+    ob-start|obstart) ## todo
         # do not test for ob_dir here, it is okay to not exist
 
         if [ -f $ob_dir/ob.pid ] ; then
@@ -675,7 +675,7 @@ case "$cmd" in
         echo $ob_pid >$ob_dir/ob.pid
         ;;
 
-    ob-stop|obstop)
+    ob-stop|obstop) ## todo
         for pidfile in $ob_dir/ob.pid $ob_dir/tor.pid ; do
             test -s $pidfile || continue
             pid=`cat $pidfile`
@@ -685,7 +685,7 @@ case "$cmd" in
         rm -f $ob_dir/ob.pid
         ;;
 
-    ob-restart) # project ..., or "-a" : TODO: should these propagate flags?
+    ob-restart) ## todo
         # ob-stop takes no args, but ob-start requires them; try to be consistent, therefore:
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
@@ -695,7 +695,7 @@ case "$cmd" in
         $self ob-start "$@"
         ;;
 
-    ob-ps)
+    ob-ps) ## todo
         test -d $ob_dir || exit 0
         echo :::: onionbalance processes ::::
         pidfiles=`find $ob_dir -name "*.pid"`
@@ -704,7 +704,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-status|obstatus)
+    ob-status|obstatus) ## todo
         $self ob-ps
         if [ -S $ob_status_sock ] ; then
             echo ""
@@ -712,7 +712,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-maps|obmaps) # project ..., or "-a"
+    ob-maps|obmaps) ## todo
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
@@ -722,17 +722,17 @@ case "$cmd" in
             sort -k 2 -u
         ;;
 
-    ob-watch|obwatch)
+    ob-watch|obwatch) ## todo
         watch -n 5 $self ob-status
         ;;
 
-    ## FREEZE/BACKUP
+    # FREEZE/BACKUP
 
-    mirror|pull)
+    mirror|pull) ## todo
         Mirror
         ;;
 
-    backup|freeze)
+    backup|freeze) ## todo
         Mirror
         (
             ds=`date "+%Y%m%d%H%M%S"`
@@ -746,7 +746,7 @@ case "$cmd" in
         )
         ;;
 
-    logrotate)
+    logrotate) ## todo
         # compress and restart the remotes, first
         InvokeRemotely logrotate
         # do we need to do onionbalance logs?
@@ -758,7 +758,7 @@ case "$cmd" in
         LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
-    script*|make-script*|make-init-script*)
+    script*|make-script*|make-init-script*) ## todo
         for t in $init $housekeeping ; do
             lib.d/expand-template.pl templates.d/$t.txt </dev/null >$t 2>/dev/null
             chmod 755 $t
@@ -767,12 +767,13 @@ case "$cmd" in
         Print please read those files for installation instructions.
         ;;
 
-    shell)
+    shell) ## todo
         env PS1='eotk-env$ ' bash -i
         ;;
 
     *)
-        Print usage: see README.md for documentation
+        Print switches and commands
+        exec ./lib.d/explain.pl $0
         exit 1
         ;;
 esac
