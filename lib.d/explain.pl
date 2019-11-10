@@ -7,6 +7,7 @@ s/\s$//;
 
 ($opts, $docs) = split(/\s*##\s*/);
 $opts =~ s/x--/--/g;
+$opts =~ s/\|\*//;
 $opts =~ s/\)$//;
 
 $key = $opts;

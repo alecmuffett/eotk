@@ -444,7 +444,7 @@ case "$cmd" in
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) ## project ... | stop and remove trash files for project* (eg: after crash)
+    cleanup) ## project ... | stop and remove trash files for project* (eg: after crash, "nginx.pid exists!", etc)
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
@@ -510,7 +510,7 @@ case "$cmd" in
 
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
-    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers, without safety checks
+    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers; NO SAFETY CHECKS, do not use on live system
         $self stop -a
         DestructivePush
         ;;
