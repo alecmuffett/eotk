@@ -20,10 +20,24 @@ if ($docs =~ /\|/) {
 $foo{$opts} = [$args, $docs];
 
 END {
+    $target_width = 60;
     foreach $opts (sort keys %foo) {
         ($args, $docs) = @{$foo{$opts}};
         $opts = "<$opts>" if ($opts =~ /\|/);
         print "  $ARGV $opts$args\n";
-        print "    $docs\n\n";
+        @stack = ([]);
+        @words = split(" ", $docs);
+
+        while ($word = shift(@words)) {
+            $render = "@{$stack[$#stack]}";
+            if (length $render >= $target_width) {
+                push(@stack, []);
+            }
+            push(@{$stack[$#stack]}, $word);
+        }
+        foreach $line (@stack) {
+            print "    @{$line}\n";
+        }
+        print "\n";
     }
 }
