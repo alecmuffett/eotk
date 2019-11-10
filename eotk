@@ -62,22 +62,22 @@ flag_boot=false
 propagate_flags=""
 while : ; do
     case "x$1" in
-        x--local) ## runs commands locally, ignoring onionbalance if configured
+        x--local) ## [command] ... | runs commands locally, ignoring onionbalance if configured
             flag_local=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--boot) ## used by startup scripts
+        x--boot) ## [command] ... | used by startup scripts
             flag_boot=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--remote) ## used during remote execution on workers
+        x--remote) ## [command] ... | used during remote execution on workers
             flag_remote=true
             propagate_flags="$propagate_flags $1"
             shift
             ;;
-        x--debug) ## enables execution tracing
+        x--debug) ## [command] ... | enables execution tracing
             set -x
             shift
             ;;
