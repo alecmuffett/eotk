@@ -388,7 +388,7 @@ case "$cmd" in
         InvokeRemotely version
         ;;
 
-    projects|proj) ## lists projects
+    projects|proj) ## lists all projects
         ListProjects
         ;;
 
@@ -454,7 +454,7 @@ case "$cmd" in
         InvokeRemotely syntax "$@"
         ;;
 
-    harvest|onions) ## project ... | fetch onion mappings for project* (used by onionbalance)
+    harvest|onions) ## project ... | list onions used for project* (incl: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects harvest "$@"
         InvokeRemotely harvest "$@"
         ;;
@@ -465,7 +465,7 @@ case "$cmd" in
         InvokeRemotely status "$@"
         ;;
 
-    maps|map) ## todo
+    maps|map) ## project ... | print onion mappings for project* (incl: used by onionbalance)
         $need_to_run_locally && RunLocallyOverProjects maps "$@"
         InvokeRemotely maps "$@"
         ;;
@@ -476,21 +476,21 @@ case "$cmd" in
 
     # DIAGS
 
-    ps) ## todo
+    ps) ## list all [probable] eotk processes on all workers
         $flag_remote || echo :::: eotk processes ::::
         ps auxww | egrep '\b(eotk|onionbalance|nginx)\b'
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely ps
         ;;
 
-    df) ## todo
+    df) ## print filestore usage on all workers
         $flag_remote || echo :::: eotk filesystem space ::::
         df -akh $EOTK_HOME
         # InvokeRemotely prints remote-ness banner diags
         InvokeRemotely df
         ;;
 
-    logsize|logsizes) ## todo
+    logsize|logsizes) ## list logfile sizes on all workers
         $flag_remote || echo :::: eotk log sizes ::::
         find $EOTK_HOME -name "*.log" -o -name "*.log.*" -ls
         # InvokeRemotely prints remote-ness banner diags
@@ -499,43 +499,43 @@ case "$cmd" in
 
     # ---- ONIONBALANCE ----
 
-    push) ## todo
+    push)
         Print push is destructive and has been renamed, see the documentation
         ;;
 
-    shutdown) ## todo
+    shutdown) ## shutdown all projects on all workers (and onionbalance)
         $self $propagate_flags ob-stop
         $self $propagate_flags stop -a
         ;;
 
     # this used to be called 'push' but got renamed because oops.
     # ---- DO NOT USE THIS CASUALLY, LEARN FROM MY MISTAKES ----
-    ob-remote-nuke-and-push|rnap) ## todo
+    ob-remote-nuke-and-push|rnap) ## DESTRUCTIVE PUSH of local project configuration to workers, without safety checks
         $self stop -a
         DestructivePush
         ;;
 
-    ob-nxpush|nxpush) ## todo
+    ob-nxpush|nxpush) ## push nginx config files to all workers
         # gently push only the nginx configs to the workers
         SpotPush nginx.conf
         ;;
 
-    ob-torpush|torpush) ## todo
+    ob-torpush|torpush) ## push tor config files to all workers
         # gently push only the tor configs to the workers
         SpotPush tor.conf
         ;;
 
-    ob-spotpush|spotpush) ## todo
+    ob-spotpush|spotpush) ## file ... | push instances of files named <file> to all workers
         # gently push only the tor configs to the workers
         SpotPush "$@"
         ;;
 
-    ob-config|obconfig|ob-configure|obconfigure) ## todo
+    ob-config|obconfig|ob-configure|obconfigure)
         Print ob-configure had been rolled into ob-start
         Print please skip forward to: $prog ob-start project ...
         ;;
 
-    ob-gather|obgather) ## todo
+    ob-gather|obgather) ## onionbalance: gather all remote worker mappings, and build onionbalance configs
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
@@ -642,7 +642,7 @@ case "$cmd" in
         ) > $ob_tor_conf
         ;;
 
-    ob-start|obstart) ## todo
+    ob-start|obstart) ## start onionbalance (will gather and build configs if needed)
         # do not test for ob_dir here, it is okay to not exist
 
         if [ -f $ob_dir/ob.pid ] ; then
@@ -671,7 +671,7 @@ case "$cmd" in
         echo $ob_pid >$ob_dir/ob.pid
         ;;
 
-    ob-stop|obstop) ## todo
+    ob-stop|obstop) ## stop onionbalance
         for pidfile in $ob_dir/ob.pid $ob_dir/tor.pid ; do
             test -s $pidfile || continue
             pid=`cat $pidfile`
@@ -681,7 +681,7 @@ case "$cmd" in
         rm -f $ob_dir/ob.pid
         ;;
 
-    ob-restart) ## todo
+    ob-restart) ## restart onionbalance
         # ob-stop takes no args, but ob-start requires them; try to be consistent, therefore:
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
@@ -691,7 +691,7 @@ case "$cmd" in
         $self ob-start "$@"
         ;;
 
-    ob-ps) ## todo
+    ob-ps) ## print list of onionbalance processes
         test -d $ob_dir || exit 0
         echo :::: onionbalance processes ::::
         pidfiles=`find $ob_dir -name "*.pid"`
@@ -700,7 +700,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-status|obstatus) ## todo
+    ob-status|obstatus) ## query onionbalance for its status
         $self ob-ps
         if [ -S $ob_status_sock ] ; then
             echo ""
@@ -708,7 +708,7 @@ case "$cmd" in
         fi
         ;;
 
-    ob-maps|obmaps) ## todo
+    ob-maps|obmaps) ## project ... | print onionbalance mappings for project*
         if [ "x$1" = "x" ] ; then # test for no args
             Print error: missing project name, try: $prog projects for a list, or -a for all "(if applicable)"
             exit 1
@@ -718,17 +718,17 @@ case "$cmd" in
             sort -k 2 -u
         ;;
 
-    ob-watch|obwatch) ## todo
+    ob-watch|obwatch) ## use 'watch' to iterate 'ob-status'
         watch -n 5 $self ob-status
         ;;
 
     # FREEZE/BACKUP
 
-    mirror|pull) ## todo
+    mirror|pull) ## pull a copy (rsync) of all workers to local 'mirrors.d' directory
         Mirror
         ;;
 
-    backup|freeze) ## todo
+    backup|freeze) ## as 'mirror' but also create a datestamped compressed tarball once mirrored
         Mirror
         (
             ds=`date "+%Y%m%d%H%M%S"`
@@ -742,8 +742,7 @@ case "$cmd" in
         )
         ;;
 
-    logrotate) ## todo
-        # compress and restart the remotes, first
+    logrotate) ## compress logs and reload configurations on all workers
         InvokeRemotely logrotate
         # do we need to do onionbalance logs?
         if [ -d $ob_dir ] ; then
@@ -754,7 +753,7 @@ case "$cmd" in
         LogRotate $need_to_run_locally $need_to_do_ob_logs
         ;;
 
-    script*|make-script*|make-init-script*) ## todo
+    script*|make-script*|make-init-script*) ## create 'boot' and 'cron' housekeeping scripts
         for t in $init $housekeeping ; do
             lib.d/expand-template.pl templates.d/$t.txt </dev/null >$t 2>/dev/null
             chmod 755 $t
@@ -763,11 +762,11 @@ case "$cmd" in
         Print please read those files for installation instructions.
         ;;
 
-    shell) ## todo
+    shell) ## run a shell in the eotk PATH environment
         env PS1='eotk-env$ ' bash -i
         ;;
 
-    *)
+    help|*) ## this text
         Print "switches and commands (project* => supports '-a' for all)"
         exec ./lib.d/explain.pl $0
         exit 1
