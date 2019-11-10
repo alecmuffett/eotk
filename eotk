@@ -515,18 +515,18 @@ case "$cmd" in
         DestructivePush
         ;;
 
-    ob-nxpush|nxpush) ## push nginx config files to all workers
-        # gently push only the nginx configs to the workers
+    nxpush|ob-nxpush) ## push nginx config files to all workers
+        # gently push all the nginx configs to the onionbalance workers; same as "spotpush nginx.conf"
         SpotPush nginx.conf
         ;;
 
-    ob-torpush|torpush) ## push tor config files to all workers
-        # gently push only the tor configs to the workers
+    torpush|ob-torpush) ## push tor config files to all workers
+        # gently push all the tor configs to the onionbalance workers; same as "spotpush tor.conf"
         SpotPush tor.conf
         ;;
 
-    ob-spotpush|spotpush) ## file ... | push instances of files named <file> to all workers
-        # gently push only the tor configs to the workers
+    spotpush|ob-spotpush) ## file ... | push instances of files named <file> to all workers
+        # gently push all instances of given filename, to onionbalance workers
         SpotPush "$@"
         ;;
 
@@ -535,7 +535,7 @@ case "$cmd" in
         Print please skip forward to: $prog ob-start project ...
         ;;
 
-    ob-gather|obgather) ## onionbalance: gather all remote worker mappings, and build onionbalance configs; is automatically called by ob-start if needed
+    ob-gather|obgather) ## onionbalance: gather all worker mappings, and build onionbalance configs; is automatically called by ob-start if needed
         # ob storage
         test -d $ob_dir || mkdir -p $ob_dir || exit 1
         chmod 700 $ob_dir # otherwise tor complains
@@ -728,7 +728,7 @@ case "$cmd" in
         Mirror
         ;;
 
-    backup|freeze) ## as 'mirror' but also create a datestamped compressed tarball once mirrored
+    backup|freeze) ## as 'mirror' but also create a datestamped compressed tarball once mirror is complete
         Mirror
         (
             ds=`date "+%Y%m%d%H%M%S"`
@@ -767,7 +767,10 @@ case "$cmd" in
         ;;
 
     help|*) ## prints this text
-        Print "switches and commands (project* => supports '-a' for all)"
+        Print "switches and commands:"
+        echo "  * project* => supports '-a' for all"
+        echo "  * synonyms are in <angle-brackets|diamond-brackets>"
+        echo ""
         exec ./lib.d/explain.pl $0
         exit 1
         ;;
