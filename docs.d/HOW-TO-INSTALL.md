@@ -118,7 +118,7 @@ set hardcoded_endpoint_csv \
     ^/www/\\.well_known/bar/?$,"BARPROOF"
 ```
 
-## IMPORTANT: if all your "well known" URLs have THE SAME pathname?
+## IMPORTANT: if all your "proof" URLs have THE SAME pathname?
 
 The `hardcoded_endpoint_csv` hack works okay if all the proof URLs are
 different; but if Digicert (or whomever) give you the same pathname
