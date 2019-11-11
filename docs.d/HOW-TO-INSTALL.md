@@ -131,8 +131,8 @@ Answer: you use "splicing".  If you have onion addresses named
 * `templates.d/nginx-site-xxxxxxxxxxxxxxxx.onion.conf`
 * `templates.d/nginx-site-yyyyyyyyyyyyyyyy.onion.conf`
 
-...and into each put something similar to the following incantation
-- customise as necessary:
+...and into each put something similar to the following incantation;
+customise as necessary:
 
 ```
     location ~ "^/\\.well-known/pki-validation/fileauth\\.txt$" {
