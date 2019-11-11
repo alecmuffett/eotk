@@ -100,13 +100,16 @@ rendering these issues moot.
 
 # Proving Your Ownership To A Certificate Authority / Hardcoded Content
 
+## IMPORTANT: if all of your "proof" URLs have DIFFERENT pathnames?
+
 Small amounts of plain-text page content may be embedded using
 regular-expressions for pathnames; this is done using
 `hardcoded_endpoint_csv` and the following example will emit
-`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` (or
-`bar`) respectively, ignoring trailing slashes.  Note the use of
-double-backslash to escape "dots" in the regular expression, and use
-of backslash-indent to continue/enable several such paths.
+`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` or
+`../.well_known/bar` respectively, ignoring trailing slashes.  Note
+the use of double-backslash to escape "dots" in the regular
+expression, and use of backslash-indent to continue/enable several
+such paths.
 
 ```
 # demo: CSV list to implement ownership proof URIs for EV SSL issuance
@@ -114,6 +117,31 @@ set hardcoded_endpoint_csv \
     ^/www/\\.well_known/foo/?$,"FOOPROOF" \
     ^/www/\\.well_known/bar/?$,"BARPROOF"
 ```
+
+## IMPORTANT: if all your "well known" URLs have THE SAME pathname?
+
+The `hardcoded_endpoint_csv` hack works okay if all the proof URLs are
+different; but if Digicert (or whomever) give you the same pathname
+(e.g. `/.well-known/pki-validation/fileauth.txt`) for all of the
+onions, what do you do?
+
+Answer: you use "splicing".  If you have onion addresses named
+`xxxxxxxxxxxxxxxx` and `yyyyyyyyyyyyyyyy`, then you can create files:
+
+* `templates.d/nginx-site-xxxxxxxxxxxxxxxx.onion.conf`
+* `templates.d/nginx-site-yyyyyyyyyyyyyyyy.onion.conf`
+
+...and into each put something similar to the following incantation
+- customise as necessary:
+
+```
+    location ~ "^/\\.well-known/pki-validation/fileauth\\.txt$" {
+      return 200 "RESPECTIVE-XXX-OR-YYY-PROOF-STRING-GOES-HERE";
+    }
+```
+
+...then when you next `eotk config` and `eotk nxreload`, that code
+should be spliced into the correct configuration for each onion.
 
 # Demonstration And Testing
 
