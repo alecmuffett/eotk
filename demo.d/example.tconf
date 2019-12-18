@@ -57,11 +57,12 @@
 
 # ---- REDIRECTS BY HOST OR URL-PATH ----
 
+# ...redirects which preserve the trailing request URI
 # set redirect_host regexp,code,destination ...
 # set redirect_path regexp,code,destination ...
-# set redirect_host_csv # DEPRECATED DO NOT USE
-# set redirect_location_csv # DEPRECATED DO NOT USE
-# set redirect_path_csv # DEPRECATED DO NOT USE
+# ...redirects which DO NOT preserve the trailing request URI
+# set redirect_fixed_host regexp,code,destination ...
+# set redirect_fixed_path regexp,code,destination ...
 
 # ---- BLOCKING SITES BY NAME OR REGEXP ----
 
