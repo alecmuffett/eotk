@@ -144,26 +144,26 @@ http {
   %%BEGIN
   # map: %DNS_DOMAIN% -> %ONION_ADDRESS%
   subs_filter
-  \\b%DNS_DOMAIN_RE2%\\b
+  %LH_ONION_RE%%DNS_DOMAIN_RE2%\\b
   %ONION_ADDRESS%
   gir
   ;
   # map: %DNS_DOMAIN_RE% -> %ONION_ADDRESS_RE%
   subs_filter
-  \\b%DNS_DOMAIN_RE4%\\b
+  %LH_ONION_RE%%DNS_DOMAIN_RE4%\\b
   %ONION_ADDRESS_RE2%
   gir
   ;
   %%IF %HARD_MODE% > 1
   # hard2 map: %DNS_DOMAIN_RE2% -> %ONION_ADDRESS_RE2%
   subs_filter
-  \\b%DNS_DOMAIN_RE8%\\b
+  %LH_ONION_RE%%DNS_DOMAIN_RE8%\\b
   %ONION_ADDRESS_RE4%
   gir
   ;
   # hard2 map: %DNS_DOMAIN_RE3% -> %ONION_ADDRESS_RE3%
   subs_filter
-  \\b%DNS_DOMAIN_RE12%\\b
+  %LH_ONION_RE%%DNS_DOMAIN_RE12%\\b
   %ONION_ADDRESS_RE6%
   gir
   ;
@@ -176,7 +176,7 @@ http {
   %%CSV %FOREIGNMAP_CSV%
   # for %4% -> %1%
   subs_filter
-  \\b%6%\\b
+  %LH_ONION_RE%%6%\\b
   %1%
   gir
   ;
@@ -258,7 +258,7 @@ http {
         end
         return result
       end
-      local o, num, errs = ngx.re.gsub(i, "\\b([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o_to_d_lookup, "io")
+      local o, num, errs = ngx.re.gsub(i, "%LH_ONION_RE%([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o_to_d_lookup, "io")
       return o
     end
 
@@ -288,7 +288,7 @@ http {
       end
       local num, errs
       %%BEGIN
-      i, num, errs = ngx.re.gsub(i, "\\b%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
+      i, num, errs = ngx.re.gsub(i, "%LH_ONION_RE%%DNS_DOMAIN_RE2%\\b", "%ONION_ADDRESS%", "io")
       %%END
       return i
     end
@@ -609,7 +609,7 @@ http {
       set_by_lua_block $request_uri2 {
         local old = ngx.var.request_uri or ""
         -- onion_to_dns is potentially expensive at scale, so do a cheap test
-        local m, err = ngx.re.match(old, "\\b[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "o")
+        local m, err = ngx.re.match(old, "%LH_ONION_RE%[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "io")
         if not m then -- nothing to attempt to rewrite, quick return
           return old
         end
