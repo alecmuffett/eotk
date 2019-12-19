@@ -635,7 +635,7 @@ http {
           ngx.req.read_body()
           local old = ngx.req.get_body_data()
           local new = onion_to_dns(old)
-          if new != old -- hopefully fast, thank you lua
+          if new != old then -- hopefully fast, thank you lua
             ngx.req.set_body_data(new)
           end
         end
