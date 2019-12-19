@@ -274,6 +274,9 @@ http {
         return result
       end
       local o, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o_to_d_lookup, "io")
+      if errs == nil and num == 0 then
+        return i -- nothing was changed, so return the original
+      end
       return o
     end
 
@@ -622,14 +625,24 @@ http {
 
       # deonionify the request_uri for forwarding (both path and args)
       set_by_lua_block $request_uri2 {
-        local old = ngx.var.request_uri or ""
-        -- onion_to_dns is potentially expensive at scale, so do a cheap test
-        local m, err = ngx.re.match(old, "(?:%LEFT_TLD_RE%)[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "io")
-        if not m then -- nothing to attempt to rewrite, quick return
-          return old
-        end
-        return onion_to_dns(old)
+        return onion_to_dns(ngx.var.request_uri)
       }
+
+      %%IF %DEONIONIFY_POST_BODIES%
+      # deonionify_post_bodies (specifically the body; path and args come as standard)
+      access_by_lua_block {
+        if ngx.req.get_method() == "POST" then
+          ngx.req.read_body()
+          local old = ngx.req.get_body_data()
+          local new = onion_to_dns(old)
+          if new ~= old then
+            ngx.req.set_body_data(new)
+          end
+        end
+      }
+      %%ELSE
+      # no deonionify_post_bodies
+      %%ENDIF
 
       # note use of both $scheme and the deonionified uri (both path and args)
       set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
