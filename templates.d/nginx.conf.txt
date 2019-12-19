@@ -631,6 +631,22 @@ http {
         return onion_to_dns(old)
       }
 
+      %%IF %DEONIONIFY_REQUESTS%
+      # deonionify_requests
+      access_by_lua_block {
+          ngx.req.read_body()
+          local oldbody = ngx.req.get_body_data()
+          -- onion_to_dns is potentially expensive at scale, so do a cheap test
+          local m, err = ngx.re.match(oldbody, "(?:%LEFT_TLD_RE%)[a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion\\b", "io")
+          if m then -- we may have work to do
+            local newbody = onion_to_dns(oldbody)
+            ngx.req.set_body_data(newbody)
+          end
+      }
+      %%ELSE
+      # no deonionify_requests
+      %%ENDIF
+
       # note use of both $scheme and the deonionified uri (both path and args)
       set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
       proxy_pass $new_url;

@@ -509,6 +509,7 @@ sub DoProject {
 &SetEnv("block_err", "This action is not supported over Onion yet, sorry.");
 &SetEnv("debug_csp_sandbox", 0);
 &SetEnv("debug_origin_headers", 0);
+&SetEnv("deonionify_requests", 0);
 &SetEnv("drop_unrewritable_content", 1);
 &SetEnv("force_https", 1);
 &SetEnv("hard_mode", 1);
