@@ -241,9 +241,13 @@ http {
     o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
+    -- 1st argument is the TLD boundary, probably an empty string OR '2f'
+    -- 2nd argument is the onion
     o_to_d_lookup = function (m)
-      local k = m[1] -- see note above re: array syntax
-      return ( o_to_d_mappings[k] or k )
+      local prefix = m[1]
+      local k = m[2]
+      local v = ( o_to_d_mappings[k] or k )
+      return prefix .. v
     end
 
     onion_to_dns = function (i)
