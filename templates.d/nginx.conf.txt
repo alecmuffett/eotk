@@ -628,8 +628,8 @@ http {
         return onion_to_dns(ngx.var.request_uri)
       }
 
-      %%IF %DEONIONIFY_REQUESTS%
-      # deonionify_requests (specifically, the body; path and args come as standard)
+      %%IF %DEONIONIFY_POST_BODIES%
+      # deonionify_post_bodies (specifically the body; path and args come as standard)
       access_by_lua_block {
         if ngx.req.get_method() == "POST" then
           ngx.req.read_body()
@@ -641,7 +641,7 @@ http {
         end
       }
       %%ELSE
-      # no deonionify_requests
+      # no deonionify_post_bodies
       %%ENDIF
 
       # note use of both $scheme and the deonionified uri (both path and args)
