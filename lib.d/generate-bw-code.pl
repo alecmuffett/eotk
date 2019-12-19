@@ -205,16 +205,12 @@ block block_location_re location ~* "%0%"
 block block_param if ( $arg_%1% = "%2%" )
 block block_param_re if ( $arg_%1% ~* "%2%" )
 
-# redirects
+# redirects preserving the request_uri path
 redirect redirect_host if ( $host ~* "%1%" )
 redirect redirect_path if ( $uri ~* "%1%" )
-# redirects to a fixed url
+# redirects to a fixed url/path
 fixed-redirect redirect_fixed_host if ( $host ~* "%1%" )
 fixed-redirect redirect_fixed_path if ( $uri ~* "%1%" )
-## legacy - different/silly argument order
-legacy-redirect redirect_host_csv if ( $host ~* "%1%" )
-legacy-redirect redirect_path_csv if ( $uri ~* "%1%" )
-legacy-redirect redirect_location_csv location ~* "%1%"
 
 # blacklists and whitelists: issue a 500
 # nb: second argument gets interpolated into variablenames

@@ -607,10 +607,7 @@ my @set_blank = qw(
     redirect_fixed_host
     redirect_fixed_path
     redirect_host
-    redirect_host_csv
-    redirect_location_csv
     redirect_path
-    redirect_path_csv
     referer_blacklist
     referer_blacklist_re
     referer_whitelist
