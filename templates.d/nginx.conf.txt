@@ -133,7 +133,7 @@ http {
   # saving regexp '%2%' as '%1%' for replacement with '%4%' (%3%)
   subs_filter
   (%PRESERVE_PREAMBLE_RE%)(%2%)\\b
-  $1%PRESERVE_BEFORE%%1%%PRESERVE_AFTER%
+  ${1}%PRESERVE_BEFORE%%1%%PRESERVE_AFTER%
   g%3%r
   ;
   %%ENDCSV
@@ -145,26 +145,26 @@ http {
   # map: %DNS_DOMAIN% -> %ONION_ADDRESS%
   subs_filter
   (%LEFT_TLD_RE%)%DNS_DOMAIN_RE2%\\b
-  $1%ONION_ADDRESS%
+  ${1}%ONION_ADDRESS%
   gir
   ;
   # map: %DNS_DOMAIN_RE% -> %ONION_ADDRESS_RE%
   subs_filter
   (%LEFT_TLD_RE%)%DNS_DOMAIN_RE4%\\b
-  $1%ONION_ADDRESS_RE2%
+  ${1}%ONION_ADDRESS_RE2%
   gir
   ;
   %%IF %HARD_MODE% > 1
   # hard2 map: %DNS_DOMAIN_RE2% -> %ONION_ADDRESS_RE2%
   subs_filter
   (%LEFT_TLD_RE%)%DNS_DOMAIN_RE8%\\b
-  $1%ONION_ADDRESS_RE4%
+  ${1}%ONION_ADDRESS_RE4%
   gir
   ;
   # hard2 map: %DNS_DOMAIN_RE3% -> %ONION_ADDRESS_RE3%
   subs_filter
   (%LEFT_TLD_RE%)%DNS_DOMAIN_RE12%\\b
-  $1%ONION_ADDRESS_RE6%
+  ${1}%ONION_ADDRESS_RE6%
   gir
   ;
   %%ENDIF
@@ -177,7 +177,7 @@ http {
   # for %4% -> %1%
   subs_filter
   (%LEFT_TLD_RE%)%6%\\b
-  $1%1%
+  ${1}%1%
   gir
   ;
   %%ENDCSV
