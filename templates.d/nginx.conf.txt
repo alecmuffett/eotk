@@ -127,6 +127,14 @@ http {
   %%ENDIF
   ;
 
+  # Frankly, I am horrified at the use of "$1" to drive the
+  # subs_filter replacement string for the preamble capture, in case
+  # the onion address is "2bcdef..." and the resulting replacement
+  # string is "$12bcdef..." - which you would expect to be capture
+  # group "$12"; however it seems that subs_filter source code
+  # hard-limits capture groups to 9, and attempts to use "${1}" and
+  # "\\g{1}" so far have all failed, therefore we stick with it...
+
   %%IF %PRESERVE_CSV%
   # preserve subs (save-phase): 1=description,2=re,3=i_or_empty,4=replacement
   %%CSV %PRESERVE_CSV%
