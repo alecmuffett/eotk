@@ -692,10 +692,13 @@ http {
   # origin headers not debugged
   %%ENDIF
 
+  %%BEGIN
   # Set custom log status
-  log_format compression '$remote_user [$time_local] %DNS_DOMAIN%'
+  log_format compression '$remote_user [$time_local] "%DNS_DOMAIN%"'
                            '"$request" $status $body_bytes_sent '
                            '"$http_referer" "$http_user_agent" ';
+  %%END
+  
   # header purge
   more_clear_headers "Age";
   more_clear_headers "Server";
