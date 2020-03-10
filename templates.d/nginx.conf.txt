@@ -694,7 +694,7 @@ http {
 
   %%BEGIN
   # Set custom log status
-  log_format compression '$remote_user [$time_local] "%DNS_DOMAIN%"'
+  log_format compression '$remote_user [$time_local] %DNS_DOMAIN%'
                            '"$request" $status $body_bytes_sent '
                            '"$http_referer" "$http_user_agent" ';
   %%END
