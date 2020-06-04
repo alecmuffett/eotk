@@ -90,7 +90,7 @@ while (<DATA>) {
         push(@redirect, "# redirect $lc_what: 1=regexp,2=code,3=dest (REQUEST_URI will be appended) $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
         push(@redirect, "$condition {\n");
-        push(@redirect, "  set \$onionify_response_headers 0;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
+        push(@redirect, "  set \$dont_onionify_response_headers 1;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
         push(@redirect, "  return %2% %3%\$request_uri;\n");
         push(@redirect, "}\n");
         push(@redirect, "%%ENDCSV\n");
@@ -104,7 +104,7 @@ while (<DATA>) {
         push(@redirect, "# fixed_redirect $lc_what: 1=regexp,2=code,3=dest (REQUEST_URI will NOT be appended) $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
         push(@redirect, "$condition {\n");
-        push(@redirect, "  set \$onionify_response_headers 0;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
+        push(@redirect, "  set \$dont_onionify_response_headers 1;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
         push(@redirect, "  return %2% %3%;\n");
         push(@redirect, "}\n");
         push(@redirect, "%%ENDCSV\n");
