@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 keyserver=keyserver.ubuntu.com
-ngxversion=1.15.8
+ngxversion=1.16.1
 ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
 
 # docs: https://github.com/openresty/lua-nginx-module#installation
@@ -96,7 +96,7 @@ ln -sf sbin/nginx || exit 1
 
 # cleanup
 
-rm -rf $ngxfile $ngxsig $ngxdir
+: rm -rf $ngxfile $ngxsig $ngxdir
 
 # done
 
