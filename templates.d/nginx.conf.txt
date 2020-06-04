@@ -348,11 +348,15 @@ http {
       "Timing-Allow-Origin"
     }
 
-    local i, k
-    for i, k in ipairs(origin_rewrites) do
-      local v = ngx.header[k]
-      if v then
-        ngx.header[k] = dns_to_onion(v)
+    -- shall we onionify the response headers? probably "yes"
+    -- but we need to doublecheck because of REDIRECT_HOST, etc...
+    if ngx.var.onionify_response_headers do
+      local i, k
+      for i, k in ipairs(origin_rewrites) do
+        local v = ngx.header[k]
+        if v then
+          ngx.header[k] = dns_to_onion(v)
+        end
       end
     end
 
@@ -653,6 +657,11 @@ http {
       %%ELSE
       # no deonionify_post_bodies
       %%ENDIF
+
+      # onionify response headers; this should is default for 99%+ of
+      # requests, however you may in some circumstances want users to
+      # (eg:) escape or be redirected to the non-onionified site.
+      set $onionify_response_headers 1;
 
       # note use of both $scheme and the deonionified uri (both path and args)
       set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
