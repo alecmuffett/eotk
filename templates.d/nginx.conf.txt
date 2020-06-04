@@ -101,7 +101,7 @@ http {
   # nginx caching disabled
   %%ENDIF
 
-  # logs
+  # logs (default)
   access_log %LOG_DIR%/nginx-access.log;
 
   # global settings
@@ -504,6 +504,12 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
 
+    %%IF %LOG_SEPARATE%
+    access_log %LOG_DIR%/nginx-rdr443-%DNS_DOMAIN%.log;
+    %%ELSE
+    access_log %LOG_DIR%/nginx-rdr443.log;
+    %%ENDIF
+
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
     # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
     server_name
@@ -548,6 +554,10 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock ssl;
+    %%ENDIF
+
+    %%IF %LOG_SEPARATE%
+    access_log %LOG_DIR%/nginx-access-%DNS_DOMAIN%.log;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
