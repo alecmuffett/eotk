@@ -1,7 +1,21 @@
 # -*- awk -*-
 # EMACS awk mode works quite well for nginx configs
 
-# eotk (c) 2019 Alec Muffett
+# TODO LIST:
+
+# 1/ purge the TE request header being sent upstream; trailers and encodings are bad karma
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/TE
+
+# 2/ force the Transfer Encoding response header to `identity`?
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+
+# 3/ These...
+# X-Forwarded-Host request ?
+# X-XSS-Protection - response ?
+# X-DNS-Prefetch-Control - response security risk?
+# Via - request/response?
+
+# eotk (c) 2019-2020 Alec Muffett
 
 # SECURITY NOTE: the contents of this file, when actualised, should
 # not be made world-readable nor published without redaction;
@@ -333,15 +347,16 @@ http {
     end
 
     local k, v
-
-    local origin_rewrites = {
-      "Access-Control-Allow-Origin",
+    local response_rewrites = {
       %%IF %SUPPRESS_HEADER_CSP%
       -- CSP headers are suppressed via SUPPRESS_HEADER_CSP
       %%ELSE
       "Content-Security-Policy",
       "Content-Security-Policy-Report-Only",
       %%ENDIF
+      "Access-Control-Allow-Origin",
+      "Content-Location",
+      "Feature-Policy",
       "Link",
       "Location",
       "Set-Cookie",
@@ -360,7 +375,7 @@ http {
     -- but that might break future work, below...
     if tonumber(ngx.var.dont_onionify_response_headers) ~= 1 then
       local i, k
-      for i, k in ipairs(origin_rewrites) do
+      for i, k in ipairs(response_rewrites) do
         local v = ngx.header[k]
         if v then
           ngx.header[k] = dns_to_onion(v)
@@ -392,7 +407,7 @@ http {
   # it got there.
   # config usage: set debug_trap foo\\.regex\\.tld [...]
   body_filter_by_lua_block {
-    -- change auxh to Content-Encoding or Set-Cookie or whatever, if needed
+    -- change `auxh` to "Content-Encoding" or "Set-Cookie" or whatever you want to log...
     local auxh = "Access-Control-Allow-Origin"
 
     local i = ngx.arg[1]
@@ -671,7 +686,9 @@ http {
       proxy_pass $new_url;
       proxy_http_version 1.1;
 
-      # a note on proxy_set_header, add_header, similar methods, etc;
+      # request_rewrites follow:
+
+      # a note re: proxy_set_header, add_header, similar methods, etc;
       # if you override *any* header then you will lose the other
       # headers inherited from the parent contexts:
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
@@ -683,11 +700,11 @@ http {
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
 
-      # rewrite request referer
+      # rewrite/inject request referer TODO
       set_by_lua_block $referer2 { return onion_to_dns(ngx.var.http_referer) }
       proxy_set_header Referer $referer2;
 
-      # rewrite request origin
+      # rewrite/inject request origin TODO
       set_by_lua_block $origin2 { return onion_to_dns(ngx.var.http_origin) }
       proxy_set_header Origin $origin2;
 
@@ -714,14 +731,16 @@ http {
   # origin headers not debugged
   %%ENDIF
 
-  # header purge
+  # header purge: TODO: THIS NEEDS REVIEW
   more_clear_headers "Age";
   more_clear_headers "Server";
+  more_clear_headers "SourceMap"; # rewrites will break SourceMaps
   more_clear_headers "Via";
   more_clear_headers "X-From-Nginx";
   more_clear_headers "X-NA";
   more_clear_headers "X-Powered-By";
   more_clear_headers "X-Request-Id";
   more_clear_headers "X-Runtime";
+  more_clear_headers "X-SourceMap"; # rewrites will break SourceMaps
   more_clear_headers "X-Varnish";
 }
