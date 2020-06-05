@@ -11,6 +11,8 @@ $indent = "  ";
 @white = ();
 @tail = ();
 
+$dont_onion = "set \$dont_onionify_response_headers 1; # dest URL must not be rewritten, prevent loops; cookies may migrate.";
+
 sub blackwhite {
     my ($operator, $lc_what, $a, $b) = @_;
     my $uc_what = uc($lc_what);
@@ -90,7 +92,7 @@ while (<DATA>) {
         push(@redirect, "# redirect $lc_what: 1=regexp,2=code,3=dest (REQUEST_URI will be appended) $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
         push(@redirect, "$condition {\n");
-        push(@redirect, "  set \$dont_onionify_response_headers 1;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
+        push(@redirect, "  $dont_onion\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
         push(@redirect, "  return %2% %3%\$request_uri;\n");
         push(@redirect, "}\n");
         push(@redirect, "%%ENDCSV\n");
@@ -104,7 +106,7 @@ while (<DATA>) {
         push(@redirect, "# fixed_redirect $lc_what: 1=regexp,2=code,3=dest (REQUEST_URI will NOT be appended) $warning\n");
         push(@redirect, "%%CSV %$uc_what%\n");
         push(@redirect, "$condition {\n");
-        push(@redirect, "  set \$dont_onionify_response_headers 1;\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
+        push(@redirect, "  $dont_onion\n") if ($uc_what =~ /_HOST/); # this is a horrible kludge
         push(@redirect, "  return %2% %3%;\n");
         push(@redirect, "}\n");
         push(@redirect, "%%ENDCSV\n");
