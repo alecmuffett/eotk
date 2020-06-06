@@ -284,6 +284,26 @@ http {
     -- d2o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
     %%END
 
+    -- injected origins
+    origin_replacement = {}
+    %%IF %INJECT_ORIGIN%
+    %%CSV %INJECT_ORIGIN%
+    origin_replacement["%1%"] = "%2%"
+    %%ENDCSV
+    %%ELSE
+    -- no origin replacements
+    %%ENDIF
+
+    -- injected referers
+    referer_replacement = {}
+    %%IF %INJECT_REFERER%
+    %%CSV %INJECT_REFERER%
+    referer_replacement["%1%"] = "%2%"
+    %%ENDCSV
+    %%ELSE
+    -- no referer replacements
+    %%ENDIF
+
     -- EDITING FUNCTIONS
 
     -- 1st element is the LEFT_TLD_RE boundary prefix, probably an empty string, maybe '2f'
@@ -318,14 +338,14 @@ http {
 
     -- SHIMS
 
-    -- shim for referer rewrite, permitting injection
-    rewrite_referer_o2d = function (i, ctx)
-      return ApplyReplacement(i, o2d_search_and_replace)
-    end
-
     -- shim for origin rewrite, permitting injection
     rewrite_origin_o2d = function (i, ctx)
-      return ApplyReplacement(i, o2d_search_and_replace)
+      return origin_replacement[ctx] or ApplyReplacement(i, o2d_search_and_replace)
+    end
+
+    -- shim for referer rewrite, permitting injection
+    rewrite_referer_o2d = function (i, ctx)
+      return referer_replacement[ctx] or ApplyReplacement(i, o2d_search_and_replace)
     end
 
     -- shim for cookie rewrite, permitting injection
@@ -719,13 +739,22 @@ http {
       proxy_set_header Upgrade $http_upgrade; # SSL
       proxy_ssl_server_name on; # SSL
 
-      # rewrite/inject request referer TODO
-      set_by_lua_block $referer2 { return rewrite_referer_o2d(ngx.var.http_referer, "%DNS_DOMAIN%") }
-      proxy_set_header Referer $referer2;
+      # NB: it's very tempting to use `$http_host` / ngx.var.http_host
+      # (or similar per-request information) as the context for the
+      # call to `rewrite_origin_o2d` and its friends; my thinking at
+      # the moment is that that would be "too narrow" / "too easy to
+      # break" because wildcards/CDN-hosts would need to be matched,
+      # and that sort of thing.  Switching on the TLD of upstream
+      # currently seems cognitively easier to deal with; plus: Lua
+      # interns short strings, so it should be fast.
 
       # rewrite/inject request origin TODO
       set_by_lua_block $origin2 { return rewrite_origin_o2d(ngx.var.http_origin, "%DNS_DOMAIN%") }
       proxy_set_header Origin $origin2;
+
+      # rewrite/inject request referer TODO
+      set_by_lua_block $referer2 { return rewrite_referer_o2d(ngx.var.http_referer, "%DNS_DOMAIN%") }
+      proxy_set_header Referer $referer2;
 
       # rewrite request cookies
       set_by_lua_block $cookie2 { return rewrite_cookie_o2d(ngx.var.http_cookie, "%DNS_DOMAIN%") }
