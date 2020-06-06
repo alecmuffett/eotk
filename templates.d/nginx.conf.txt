@@ -319,17 +319,17 @@ http {
     -- SHIMS
 
     -- shim for referer rewrite, permitting injection
-    rewrite_referer_o2d = function (i)
+    rewrite_referer_o2d = function (i, ctx)
       return ApplyReplacement(i, o2d_search_and_replace)
     end
 
     -- shim for origin rewrite, permitting injection
-    rewrite_origin_o2d = function (i)
+    rewrite_origin_o2d = function (i, ctx)
       return ApplyReplacement(i, o2d_search_and_replace)
     end
 
     -- shim for cookie rewrite, permitting injection
-    rewrite_cookie_o2d = function (i)
+    rewrite_cookie_o2d = function (i, ctx)
       return ApplyReplacement(i, o2d_search_and_replace)
     end
 
@@ -720,15 +720,15 @@ http {
       proxy_ssl_server_name on; # SSL
 
       # rewrite/inject request referer TODO
-      set_by_lua_block $referer2 { return rewrite_referer_o2d(ngx.var.http_referer) }
+      set_by_lua_block $referer2 { return rewrite_referer_o2d(ngx.var.http_referer, "%DNS_DOMAIN%") }
       proxy_set_header Referer $referer2;
 
       # rewrite/inject request origin TODO
-      set_by_lua_block $origin2 { return rewrite_origin_o2d(ngx.var.http_origin) }
+      set_by_lua_block $origin2 { return rewrite_origin_o2d(ngx.var.http_origin, "%DNS_DOMAIN%") }
       proxy_set_header Origin $origin2;
 
       # rewrite request cookies
-      set_by_lua_block $cookie2 { return rewrite_cookie_o2d(ngx.var.http_cookie) }
+      set_by_lua_block $cookie2 { return rewrite_cookie_o2d(ngx.var.http_cookie, "%DNS_DOMAIN%") }
       proxy_set_header Cookie $cookie2;
 
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%
