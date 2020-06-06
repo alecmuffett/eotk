@@ -221,8 +221,8 @@ http {
   # no preserve subs (restore-phase)
   %%ENDIF
 
-  # o_to_d_lookup -> if cannot remap, return input.  note: old versions
-  # of lua-plugin cannot cope with code like o_to_d_mappings[o[1]]
+  # o2d_re_helper -> if cannot remap, return input. NB: old versions
+  # of lua-plugin cannot cope with code like o2d_mappings[o[1]]
   # because of `long bracket syntax`; the `[o[` freaks it out.
   # See: https://github.com/openresty/lua-nginx-module/issues/748
   init_by_lua_block {
@@ -256,73 +256,94 @@ http {
       return string.sub(s, -string.len(x)) == x
     end
 
-    -- mapping onions to dns
+    -- useful shim for rewriting "scalar-or-table" values
+    ApplyReplacement = function (i, f)
+      if i == nil or i == "" then
+        return i
+      end
+      if (type(i) == "table") then
+        local k, v, result
+        result = {}
+        for k, v in ipairs(i) do
+          table.insert(result, ApplyReplacement(v, f)) -- recurse
+        end
+        return result
+      end
+      return f(i)
+    end
 
-    o_to_d_mappings = {}
+    -- MAPPING TABLES
+
+    o2d_mappings = {}
     %%BEGIN
-    o_to_d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
+    o2d_mappings["%ONION_ADDRESS%"] = "%DNS_DOMAIN%"
     %%END
 
-    -- 1st element is the TLD boundary prefix, probably an empty string, maybe '2f'
-    -- 2nd element is the onion
-    o_to_d_lookup = function (m)
+    -- d2o_mappings = {}
+    %%BEGIN
+    -- d2o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
+    %%END
+
+    -- EDITING FUNCTIONS
+
+    -- 1st element is the LEFT_TLD_RE boundary prefix, probably an empty string, maybe '2f'
+    -- 2nd element is the onion address
+    o2d_re_helper = function (m)
       local prefix = m[1]
       local k = m[2]
-      local v = ( o_to_d_mappings[k] or k )
+      local v = (o2d_mappings[k] or k)
       if (prefix == "") then -- fast happy-path response
         return v
       end
       return prefix .. v
     end
 
-    onion_to_dns = function (i)
-      if i == nil or i == "" then
-        return i
-      end
-      if (type(i) == "table") then
-        local j, k, result
-        result = {}
-        for j, k in ipairs(i) do
-          table.insert(result, onion_to_dns(k))
-        end
-        return result
-      end
-      local o, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o_to_d_lookup, "io")
+    o2d_search_and_replace = function (i)
+      -- because onion addresses are matchable, this can be done in one pass...
+      local o, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o2d_re_helper, "io")
       if errs == nil and num == 0 then
         return i -- nothing was changed, so return the original
       end
       return o
     end
 
-    -- mapping dns to onions, for experimentation
-
-    d_to_o_mappings = {}
-    %%BEGIN
-    d_to_o_mappings["%DNS_DOMAIN%"] = "%ONION_ADDRESS%"
-    %%END
-
-    d_to_o_lookup = function (m)
-      local k = m[1] -- see note above re: array syntax
-      return ( d_to_o_mappings[k] or k )
-    end
-
-    dns_to_onion = function (i)
-      if i == nil or i == "" or i == "*" then
-        return i
-      end
-      if (type(i) == "table") then
-        local j, k, result
-        result = {}
-        for j, k in ipairs(i) do
-          table.insert(result, dns_to_onion(k))
-        end
-        return result
-      end
+    d2o_search_and_replace = function (i)
       local num, errs
+      -- do a brute-force list of substitutions, because no systematic pattern to match
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)%DNS_DOMAIN_RE2%\\b", "${1}%ONION_ADDRESS%", "io")
       %%END
       return i
+    end
+
+    -- SHIMS
+
+    -- shim for referer rewrite, permitting injection
+    rewrite_referer_o2d = function (i)
+      return ApplyReplacement(i, o2d_search_and_replace)
+    end
+
+    -- shim for origin rewrite, permitting injection
+    rewrite_origin_o2d = function (i)
+      return ApplyReplacement(i, o2d_search_and_replace)
+    end
+
+    -- shim for cookie rewrite, permitting injection
+    rewrite_cookie_o2d = function (i)
+      return ApplyReplacement(i, o2d_search_and_replace)
+    end
+
+    -- shim for arbitrary rewrites
+    rewrite_o2d = function (i)
+      return ApplyReplacement(i, o2d_search_and_replace)
+    end
+
+    -- shim for scalar rewrites
+    rewrite_header_d2o = function (i)
+      if i == "*" then -- other special cases are in `ApplyReplacement`
+        return i
+      end
+      return ApplyReplacement(i, d2o_search_and_replace)
     end
   }
 
@@ -378,7 +399,7 @@ http {
       for i, k in ipairs(response_rewrites) do
         local v = ngx.header[k]
         if v then
-          ngx.header[k] = dns_to_onion(v)
+          ngx.header[k] = rewrite_header_d2o(v)
         end
       end
     end
@@ -546,7 +567,7 @@ http {
 
     %%IF %SUPPRESS_TOR2WEB%
     # suppress tor2web traffic; "let them use clearnet"
-    if ( $http_x_tor2web ) {
+    if ($http_x_tor2web) {
       return 403 "%BLOCK_ERR%";
     }
     %%ELSE
@@ -655,14 +676,14 @@ http {
 
       %%IF %COOKIE_LOCK%
       # check for cookie-lock
-      if ( $cookie_eotk_lock != "%COOKIE_LOCK%" ) { %NGINX_ACTION_ABORT%; }
+      if ($cookie_eotk_lock != "%COOKIE_LOCK%") { %NGINX_ACTION_ABORT%; }
       %%ELSE
       # no cookie-lock checks
       %%ENDIF
 
       # deonionify the request_uri for forwarding (both path and args)
       set_by_lua_block $request_uri2 {
-        return onion_to_dns(ngx.var.request_uri)
+        return rewrite_o2d(ngx.var.request_uri)
       }
 
       %%IF %DEONIONIFY_POST_BODIES%
@@ -671,7 +692,7 @@ http {
         if ngx.req.get_method() == "POST" then
           ngx.req.read_body()
           local old = ngx.req.get_body_data()
-          local new = onion_to_dns(old)
+          local new = rewrite_o2d(old)
           if new ~= old then
             ngx.req.set_body_data(new)
           end
@@ -682,17 +703,15 @@ http {
       %%ENDIF
 
       # note use of both $scheme and the deonionified uri (both path and args)
-      set $new_url "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
-      proxy_pass $new_url;
+      proxy_pass "$scheme://${servernamesubdomain}%DNS_DOMAIN%$request_uri2";
       proxy_http_version 1.1;
-
-      # request_rewrites follow:
 
       # a note re: proxy_set_header, add_header, similar methods, etc;
       # if you override *any* header then you will lose the other
       # headers inherited from the parent contexts:
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
 
+      # request_rewrites and injections:
       proxy_set_header X-From-Onion %X_FROM_ONION_VALUE%;
       proxy_set_header Host "${servernamesubdomain}%DNS_DOMAIN%";
       proxy_set_header Accept-Encoding "identity";
@@ -701,15 +720,15 @@ http {
       proxy_ssl_server_name on; # SSL
 
       # rewrite/inject request referer TODO
-      set_by_lua_block $referer2 { return onion_to_dns(ngx.var.http_referer) }
+      set_by_lua_block $referer2 { return rewrite_referer_o2d(ngx.var.http_referer) }
       proxy_set_header Referer $referer2;
 
       # rewrite/inject request origin TODO
-      set_by_lua_block $origin2 { return onion_to_dns(ngx.var.http_origin) }
+      set_by_lua_block $origin2 { return rewrite_origin_o2d(ngx.var.http_origin) }
       proxy_set_header Origin $origin2;
 
       # rewrite request cookies
-      set_by_lua_block $cookie2 { return onion_to_dns(ngx.var.http_cookie) }
+      set_by_lua_block $cookie2 { return rewrite_cookie_o2d(ngx.var.http_cookie) }
       proxy_set_header Cookie $cookie2;
 
       %%IF %SUPPRESS_METHODS_EXCEPT_GET%

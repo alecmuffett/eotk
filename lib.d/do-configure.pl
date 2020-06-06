@@ -615,6 +615,8 @@ my @set_blank = qw(
     referer_blacklist_re
     referer_whitelist
     referer_whitelist_re
+    synthetic_origin
+    synthetic_referer
     user_agent_blacklist
     user_agent_blacklist_re
     user_agent_whitelist
