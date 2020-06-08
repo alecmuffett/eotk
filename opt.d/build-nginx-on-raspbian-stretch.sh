@@ -43,6 +43,7 @@ for modurl in $MODS ; do
 done
 
 # configure and build
+echo "$0: info: you can ignore any 'unrecognized command line -msse4.2' error"
 env ./configure --prefix=$install_dir $OPTS $MODADD || exit 1
 # --with-cc-opt="-fPIE -fstack-protector-strong -fexceptions -D_FORTIFY_SOURCE=2" \
 # --with-ld-opt="-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now -Wl,-rpath,$LUAJIT_LIB" \
