@@ -43,7 +43,7 @@ for modurl in $MODS ; do
     else
         git clone $modurl || exit 1
     fi
-    MODADD="$MODADD --add-module=$tool_dir/$moddir"
+    MODADD="$MODADD --add-module=$moddir"
 done
 
 # stale ARM options from old LuaJIT, in case they are needed ever again
