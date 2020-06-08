@@ -1,12 +1,12 @@
 #!/bin/sh -x
-tool=openresty # "All the releases are signed by the public PGP key A0E98066 of Yichun Zhang."
-tool_version=1.15.8.3
-tool_signing_key=25451EB088460026195BD62CB550E09EA0E98066 # this is the full key signature
-tool_url=https://openresty.org/download/openresty-$tool_version.tar.gz
-tool_sig_url=https://openresty.org/download/openresty-1.15.8.3.tar.gz.asc
+tool="openresty" # "All the releases are signed by the public PGP key A0E98066 of Yichun Zhang."
+tool_version="1.15.8.3"
+tool_signing_key="25451EB088460026195BD62CB550E09EA0E98066" # this is the full key signature
+tool_url="https://openresty.org/download/$tool-$tool_version.tar.gz"
+tool_sig_url="https://openresty.org/download/$tool-$tool_version.tar.gz.asc"
 apt_deps="libpcre3-dev zlib1g-dev libssl1.0.2 libssl1.0-dev dirmngr"
 sub_path="nginx/sbin/nginx"
-keyserver=keyserver.ubuntu.com
+keyserver="keyserver.ubuntu.com"
 
 MODS="https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git"
 OPTS="--with-http_sub_module"
@@ -16,6 +16,7 @@ opt_dir=`dirname $0`
 cd $opt_dir || exit 1
 opt_dir=`pwd`
 install_dir=$opt_dir/$tool.d
+mkdir -m 0700 -p $install_dir || exit 1
 
 # dependencies
 sudo aptitude install -y $apt_deps || exit 1

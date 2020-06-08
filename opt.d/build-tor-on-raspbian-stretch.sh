@@ -1,18 +1,19 @@
 #!/bin/sh -x
-tool=tor
-tool_version=0.4.3.5
+tool="tor"
+tool_version="0.4.3.5"
 tool_signing_key="6AFEE6D49E92B601 C218525819F78451"
-tool_url=https://dist.torproject.org/tor-$tool_version.tar.gz
-tool_sig_url=https://dist.torproject.org/tor-$tool_version.tar.gz.asc
+tool_url="https://dist.torproject.org/$tool-$tool_version.tar.gz"
+tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.asc"
 apt_deps="libevent-dev zlib1g-dev libssl1.0.2 libssl1.0-dev dirmngr"
 sub_path="bin/$tool"
-keyserver=keyserver.ubuntu.com
+keyserver="keyserver.ubuntu.com"
 
 # install dir
 opt_dir=`dirname $0`
 cd $opt_dir || exit 1
 opt_dir=`pwd`
 install_dir=$opt_dir/$tool.d
+mkdir -m 0700 -p $install_dir || exit 1
 
 # dependencies
 sudo aptitude install -y $apt_deps || exit 1
