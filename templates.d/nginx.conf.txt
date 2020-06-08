@@ -101,7 +101,7 @@ http {
   # nginx caching disabled
   %%ENDIF
 
-  # logs
+  # logs (default)
   access_log %LOG_DIR%/nginx-access.log;
 
   # global settings
@@ -348,11 +348,23 @@ http {
       "Timing-Allow-Origin"
     }
 
-    local i, k
-    for i, k in ipairs(origin_rewrites) do
-      local v = ngx.header[k]
-      if v then
-        ngx.header[k] = dns_to_onion(v)
+    -- if REDIRECT_HOST (etc) is active we will set[1] $dont_onionify_response_headers
+    -- to `1`, which Lua will import[2] as string-or-nil and which requires manual[3]
+    -- type-conversion for comparison; simple not-nil tests are empirically prone to
+    -- misbehave, so it seems safest to simply test for an explicit value.
+    -- [1] see `generate-bw-code.pl` in two places
+    -- [2] https://github.com/openresty/lua-nginx-module#ngxvarvariable
+    -- [3] https://developer.roblox.com/en-us/articles/Type-Coercion-in-Lua#during-comparisons
+
+    -- it would be nice to reduce indentation and do a fastpath-return on `... == 1`
+    -- but that might break future work, below...
+    if tonumber(ngx.var.dont_onionify_response_headers) ~= 1 then
+      local i, k
+      for i, k in ipairs(origin_rewrites) do
+        local v = ngx.header[k]
+        if v then
+          ngx.header[k] = dns_to_onion(v)
+        end
       end
     end
 
@@ -504,6 +516,12 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
 
+    %%IF %LOG_SEPARATE%
+    access_log %LOG_DIR%/nginx-rdr443-%DNS_DOMAIN%.log;
+    %%ELSE
+    access_log %LOG_DIR%/nginx-rdr443.log;
+    %%ENDIF
+
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"
     # NB: this regexp should be kept in-sync with the other FORCE_HTTPS copy
     server_name
@@ -548,6 +566,10 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock;
     %%ENDIF
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock ssl;
+    %%ENDIF
+
+    %%IF %LOG_SEPARATE%
+    access_log %LOG_DIR%/nginx-access-%DNS_DOMAIN%.log;
     %%ENDIF
 
     # subdomain regexp captures trailing dot, use carefully; does not need "~*"

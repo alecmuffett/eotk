@@ -53,6 +53,7 @@ my %known =
      'IS_SOFTMAP' => 1,
      'LEFT_TLD_RE' => 1,
      'LOG_DIR' => 1, # where logs for the current project live
+     'LOG_SEPARATE' => 1,
      'NGINX_ACTION_ABORT' => 1,
      'NGINX_BLOCK_BUSY_SIZE' => 1,
      'NGINX_BLOCK_COUNT' => 1,
