@@ -13,7 +13,6 @@ OPTS="
 
 # install dir
 opt_dir=`dirname $0`
-opt_dir=/tmp/foo # CHANGE THIS !!!!!!
 cd $opt_dir || exit 1
 opt_dir=`pwd`
 
