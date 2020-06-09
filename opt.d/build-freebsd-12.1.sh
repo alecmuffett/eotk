@@ -8,15 +8,19 @@ opt_dir=`pwd`
 # FreeBSD users: note: you may want to install libzstd to make
 # compression go faster; apparently the way that you do this is to do
 # something like:
-#
+
 #  portsnap fetch && portsnap extract
 #  cd /usr/ports/archivers/zstd && make install
-#
+
 # If you want to do that before re-running this script, go right
 # ahead. Portsnap seems to involve a lot of work, and it complains
 # about the `pkg` version of `gmake`, plus it is optional / it is
 # possible to carry on without libzstd if you are just experimenting
-# with EOTK.  Hence I have not bothered.
+# with EOTK.  Hence I have not yet bothered, but if there is
+# sufficient feedback from the FreeBSD community, I might amend the
+# `build tor` section to optionally build the `portsnap` version of
+# Tor and use that, instead.  So long as recent/latest `tor` is
+# accessible in $PATH, then EOTK will be happy.
 
 # platform dependencies
 shared_deps="gmake libevent"
