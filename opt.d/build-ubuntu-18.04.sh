@@ -10,8 +10,8 @@ shared_deps="
 dirmngr
 libevent-dev
 libpcre3-dev
-libssl1.0-dev
-libssl1.0.2
+libssl-dev
+libssl1.1
 zlib1g-dev
 "
 sudo aptitude install -y $shared_deps || exit 1
