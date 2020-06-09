@@ -6,7 +6,6 @@ opt_dir=`pwd`
 . $opt_dir/lib.sh
 
 # platform dependencies
-# https://openresty.org/en/installation.html
 shared_deps="
 curl
 pcre
