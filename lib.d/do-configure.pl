@@ -589,6 +589,8 @@ my @set_blank = qw(
     host_blacklist_re
     host_whitelist
     host_whitelist_re
+    inject_origin
+    inject_referer
     log_separate
     nginx_modules_dirs
     no_cache_content_type
