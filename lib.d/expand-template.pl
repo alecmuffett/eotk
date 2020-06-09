@@ -1,6 +1,6 @@
 #!/bin/sh
 exec perl -wx $0 "$@";
-#!perl -w
+#!perl
 # eotk (c) 2017-2020 Alec Muffett
 
 use Data::Dumper;
