@@ -1,5 +1,6 @@
 #!/bin/sh -x
 
+MAKE=make
 keyserver="keyserver.ubuntu.com" # standard
 
 CustomiseVars() {
@@ -19,8 +20,8 @@ SetupForBuild() {
 }
 
 BuildAndCleanup() {
-    gmake || exit 1
-    gmake install || exit 1
+    $MAKE || exit 1
+    $MAKE install || exit 1
     cd $opt_dir || exit 1
     for x in $tool_link_paths ; do ln -sf "$install_dir/$x" || exit 1 ; done
     rm -rf "$tool_tarball" "$tool_sig" "$tool_dir" || exit 1

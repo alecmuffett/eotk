@@ -1,5 +1,7 @@
-#!/usr/bin/perl -w
-# eotk (c) 2017 Alec Muffett
+#!/bin/sh
+exec perl -wx $0 "$@";
+#!perl -w
+# eotk (c) 2017-2020 Alec Muffett
 
 if (-t STDIN) { # stderr is already redirected...
     if (open(DOTS, ">/dev/tty")) {

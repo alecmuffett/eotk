@@ -1,4 +1,7 @@
-#!/usr/bin/perl
+#!/bin/sh
+exec perl -x $0 "$@";
+#!perl
+# eotk (c) 2017-2020 Alec Muffett
 
 # data structures
 

@@ -1,4 +1,7 @@
-#!/usr/bin/perl -n
+#!/bin/sh
+exec perl -nx $0 "$@";
+#!perl -n
+# eotk (c) 2017-2020 Alec Muffett
 
 if (/^\s*%\w+(?=[^\w%])/) {  # catch "%IF" and similar single-percent typos
     print "suspicious expression at $ARGV line $.: $_";
