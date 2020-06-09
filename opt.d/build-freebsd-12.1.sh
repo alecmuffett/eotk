@@ -19,8 +19,12 @@ opt_dir=`pwd`
 # with EOTK.  Hence I have not yet bothered, but if there is
 # sufficient feedback from the FreeBSD community, I might amend the
 # `build tor` section to optionally build the `portsnap` version of
-# Tor and use that, instead.  So long as recent/latest `tor` is
-# accessible in $PATH, then EOTK will be happy.
+# Tor and use that, instead.  I have NOT done that so far, because
+# when I tried, the port decided to start compiling `docbook` as a
+# dependency, and I literally can't even.
+
+# Anyway: so long as recent/latest `tor` is accessible in $PATH, then
+# EOTK will be happy.
 
 # platform dependencies
 shared_deps="gmake libevent"
