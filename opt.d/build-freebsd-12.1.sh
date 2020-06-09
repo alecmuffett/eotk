@@ -1,17 +1,15 @@
 #!/bin/sh -x
 
 # platform-independent lib.sh
-opt_dir=`dirname $0`
+cd `dirname $0` || exit 1
 opt_dir=`pwd`
-. $opt_dir/lib.sh
+. lib.sh || exit 1
 
 # platform dependencies
 shared_deps="gmake libevent"
 echo $0: calling su to satisfy package dependencies
 su root -c "pkg install $shared_deps" || exit 1
-
-# use GNU make
-MAKE=gmake
+MAKE=gmake # use GNU make
 
 # build openresty
 SetupOpenRestyVars || exit 1
