@@ -34,7 +34,9 @@ SocksPort 0 # frankly we don't want SOCKS anyway
 HiddenServiceDir %TOR_DIR%
 HiddenServicePort 80 unix:%TOR_DIR%/port-80.sock
 HiddenServicePort 443 unix:%TOR_DIR%/port-443.sock
+%%IF %TOR_INTROS_PER_DAEMON%
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+%%ENDIF
 HiddenServiceVersion %ONION_VERSION%
 
 %%ELSE
@@ -43,7 +45,9 @@ HiddenServiceVersion %ONION_VERSION%
 HiddenServiceDir %PROJECT_DIR%/%ONION_DIRNAME%
 HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock
 HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock
+%%IF %TOR_INTROS_PER_DAEMON%
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
+%%ENDIF
 HiddenServiceVersion %ONION_VERSION%
 
 %%END

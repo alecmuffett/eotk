@@ -1,68 +1,41 @@
 #!/bin/sh -x
+tool="openresty" # "All the releases are signed by the public PGP key A0E98066 of Yichun Zhang."
+tool_version="1.15.8.3"
+tool_signing_key="25451EB088460026195BD62CB550E09EA0E98066" # this is the full key signature
+tool_url="https://openresty.org/download/$tool-$tool_version.tar.gz"
+tool_sig_url="https://openresty.org/download/$tool-$tool_version.tar.gz.asc"
+apt_deps="libpcre3-dev zlib1g-dev libssl1.0.2 libssl1.0-dev dirmngr"
+sub_path="nginx/sbin/nginx"
+keyserver="keyserver.ubuntu.com"
 
-keyserver=keyserver.ubuntu.com
-ngxversion=1.15.8
-ngxsigningkey=B0F4253373F8F6F510D42178520A9993A1C052F8
+MODS="https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git"
+OPTS="--with-http_sub_module"
 
-# docs: https://github.com/openresty/lua-nginx-module#installation
-luaurl="https://github.com/openresty/luajit2.git"
-
-MODS="
-https://github.com/openresty/headers-more-nginx-module.git
-https://github.com/openresty/lua-nginx-module.git
-https://github.com/simpl/ngx_devel_kit.git
-https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
-"
-
-OPTS="
---with-http_sub_module
---with-http_ssl_module
-"
-
+# install dir
 opt_dir=`dirname $0`
 cd $opt_dir || exit 1
 opt_dir=`pwd`
+install_dir=$opt_dir/$tool.d
+mkdir -m 0700 -p $install_dir || exit 1
 
 # dependencies
+sudo aptitude install -y $apt_deps || exit 1
 
-sudo aptitude install -y libpcre3-dev zlib1g-dev libssl1.0.2 libssl1.0-dev dirmngr || exit 1
+# get $tool and cd into it
+tool_tarball=`basename "$tool_url"`
+tool_sig=`basename "$tool_sig_url"`
+tool_dir=`basename "$tool_tarball" .tar.gz`
+test -f "$tool_tarball" || curl -o "$tool_tarball" "$tool_url" || exit 1
+test -f "$tool_sig" || curl -o "$tool_sig" "$tool_sig_url" || exit 1
+gpg --keyserver hkp://$keyserver:80 --recv-keys $tool_signing_key || exit 1
+gpg --verify $tool_sig || exit 1
+test -d "$tool_dir" || tar zxf "$tool_tarball" || exit 1
 
-# get NGINX and cd into it
+# build dir
+cd $tool_dir || exit 1
 
-ngxurl=http://nginx.org/download/nginx-$ngxversion.tar.gz
-ngxsigurl=http://nginx.org/download/nginx-$ngxversion.tar.gz.asc
-ngxfile=`basename "$ngxurl"`
-ngxsig=`basename "$ngxsigurl"`
-ngxdir=`basename "$ngxfile" .tar.gz`
-
-test -f "$ngxfile" || curl -o "$ngxfile" "$ngxurl" || exit 1
-test -f $ngxsig || curl -o $ngxsig $ngxsigurl || exit 1
-gpg --keyserver hkp://$keyserver:80 --recv-keys $ngxsigningkey || exit 1
-gpg --verify $ngxsig || exit 1
-test -d "$ngxdir" || tar zxf "$ngxfile" || exit 1
-
-cd $ngxdir || exit 1
-
-src_dir=`pwd`
-
-# make luajit
-luadir=`basename $luaurl .git`
-if [ -d $luadir ] ; then
-    ( cd $luadir ; exec git pull ) || exit 1
-else
-    git clone $luaurl || exit 1
-fi
-
-cd $luadir || exit 1
-
-make DESTDIR=$opt_dir install || exit 1
-
-cd $src_dir || exit 1
-
-# get mods
-
+# get the mods
 MODADD=""
-
 for modurl in $MODS ; do
     moddir=`basename $modurl .git`
     if [ -d $moddir ] ; then
@@ -70,34 +43,25 @@ for modurl in $MODS ; do
     else
         git clone $modurl || exit 1
     fi
-    MODADD="$MODADD --add-module=$src_dir/$moddir"
+    MODADD="$MODADD --add-module=$moddir"
 done
 
-# make NGINX
+# stale ARM options from old LuaJIT, in case they are needed ever again
+# --with-cc-opt="-fPIE -fstack-protector-strong -fexceptions -D_FORTIFY_SOURCE=2" \
+# --with-ld-opt="-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now -Wl,-rpath,$LUAJIT_LIB" \
 
-export LUAJIT_LIB=$opt_dir/usr/local/lib
-export LUAJIT_INC=$opt_dir/usr/local/include/luajit-2.1
-
-env \
-    ./configure \
-    --with-cc-opt="-fPIE -fstack-protector-strong -fexceptions -D_FORTIFY_SOURCE=2" \
-    --with-ld-opt="-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now -Wl,-rpath,$LUAJIT_LIB" \
-    --prefix=$opt_dir \
-    $OPTS \
-    $MODADD || exit 1
-
+# configure and build
+echo "$0: info: you can ignore any 'unrecognized command line -msse4.2' error"
+env ./configure --prefix=$install_dir $OPTS $MODADD || exit 1
 make || exit 1
-
 make install || exit 1
 
+# link the binary for EOTK access ($opt_dir is in $PATH)
 cd $opt_dir || exit 1
-
-ln -sf sbin/nginx || exit 1
+ln -sf $install_dir/$sub_path || exit 1
 
 # cleanup
-
-rm -rf $ngxfile $ngxsig $ngxdir
+rm -rf $tool_tarball $tool_sig $tool_dir
 
 # done
-
 exit 0
