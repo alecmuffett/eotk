@@ -1,5 +1,7 @@
-#!/usr/bin/perl -w
-# eotk (c) 2017 Alec Muffett
+#!/bin/sh
+exec perl -wx $0 "$@";
+#!perl
+# eotk (c) 2017-2020 Alec Muffett
 
 use Data::Dumper;
 

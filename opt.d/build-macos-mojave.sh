@@ -1,12 +1,11 @@
 #!/bin/sh -x
 
 # platform-independent lib.sh
-opt_dir=`dirname $0`
+cd `dirname $0` || exit 1
 opt_dir=`pwd`
-. $opt_dir/lib.sh
+. lib.sh || exit 1
 
 # platform dependencies
-# https://openresty.org/en/installation.html
 shared_deps="
 curl
 pcre
