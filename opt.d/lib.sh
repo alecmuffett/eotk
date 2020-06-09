@@ -53,13 +53,20 @@ ConfigureOpenResty() {
     done
 
     echo "$0: note: you can ignore any 'unrecognized command line -msse4.2' error"
-    env ./configure --prefix=$install_dir $or_opts $or_mod_list || exit 1
+    ./configure --prefix=$install_dir $or_opts $or_mod_list || exit 1
 }
 
 # ------------------------------------------------------------------
 
 SetupTorVars() {
+    tool="tor"
+    tool_version="0.4.3.5"
+    tool_signing_key="6AFEE6D49E92B601 C218525819F78451"
+    tool_url="https://dist.torproject.org/$tool-$tool_version.tar.gz"
+    tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.asc"
+    tool_link_path="bin/$tool"
 }
 
 ConfigureTor() {
+    ./configure --prefix=$install_dir || exit 1
 }
