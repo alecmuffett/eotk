@@ -5,7 +5,7 @@ tool_signing_key="6AFEE6D49E92B601 C218525819F78451"
 tool_url="https://dist.torproject.org/$tool-$tool_version.tar.gz"
 tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.asc"
 apt_deps="libevent-dev zlib1g-dev libssl1.0.2 libssl1.0-dev dirmngr"
-sub_path="bin/$tool"
+tool_link_path="bin/$tool"
 keyserver="keyserver.ubuntu.com"
 
 # install dir
@@ -38,7 +38,7 @@ make install || exit 1
 
 # link the binary for EOTK access ($opt_dir is in $PATH)
 cd $opt_dir || exit 1
-ln -sf $install_dir/$sub_path || exit 1
+ln -sf $install_dir/$tool_link_path || exit 1
 
 # cleanup
 rm -rf $tool_tarball $tool_sig $tool_dir
