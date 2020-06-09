@@ -6,8 +6,7 @@ Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/install-everything-on-ubuntu-18.04.sh`
-  * this includes a full update
+* `./opt.d/build-ubuntu-18.04.sh`
 
 ## macOS Mojave (prebuilt via homebrew)
 
@@ -15,7 +14,7 @@ Install [Homebrew](https://brew.sh); and then:
 
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/install-everything-on-macos.sh`
+* `./opt.d/build-macos-mojave.sh`
 
 ## Raspbian (manual builds)
 
@@ -26,21 +25,12 @@ into Raspbian; scripts are supplied for Raspbian "Stretch".
 * `sudo apt-get install -y git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
-* `./opt.d/build-nginx-on-raspbian-stretch.sh`
-* `./opt.d/build-tor-on-raspbian-stretch.sh`
-* `./opt.d/install-onionbalance-on-raspbian-stretch.sh`
+* `./opt.d/build-raspbian-stretch.sh`
 
 ## Other Platform Outline Requirements
 
-EOTK requires recent `tor` and also `nginx` with the following modules
-enabled; EOTK may need to be told about the modules via
-`set nginx_modules_dirs ...`
-
-* `headers_more`
-* `ngx_http_substitutions_filter_module`
-* `http_sub`
-* `http_ssl`
-* Lua and/or LuaJIT (ideally from OpenResty)
+EOTK requires recent `tor` and also `openresty` with the
+`ngx_http_substitutions_filter_module` NGINX modules enabled.
 
 # Dealing With OnionBalance And Load-Balancing
 
