@@ -22,7 +22,7 @@ BuildAndCleanup() {
     make || exit 1
     make install || exit 1
     cd $opt_dir || exit 1
-    ln -sf $install_dir/$tool_link_paths || exit 1
+    for x in $tool_link_paths ; do ln -sf $install_dir/$x || exit 1 ; done
     rm -rf $tool_tarball $tool_sig $tool_dir || exit 1
 }
 
@@ -70,3 +70,5 @@ SetupTorVars() {
 ConfigureTor() {
     ./configure --prefix=$install_dir || exit 1
 }
+
+# ------------------------------------------------------------------
