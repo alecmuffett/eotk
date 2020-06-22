@@ -1,0 +1,31 @@
+# -*- conf -*-
+# sample EOTK configuration for torproject.org
+
+# proof-of-concept: let's make this service read-only for the moment
+set suppress_methods_except_get 1
+
+# preserve foo@torproject.org email addresses, etc
+set preserve_csv tld-tpo,torproject\\.org,i,torproject.org
+
+# where to get DNS from
+set nginx_resolver 8.8.8.8 8.8.4.4 ipv6=off
+
+# uncomment this if you use / have `mkcert` installed and it is in the
+# standard $PATH; otherwise EOTK will use `openssl` to generate
+# self-signed certificates...
+# set ssl_mkcert 1
+
+# use EOTK internally to uplift port80 to port443 so that cleartext
+# never crosses the network; this assumes that any http://foo/bar.html
+# will have an identical URL on the HTTPS site
+set force_https 1
+
+# separate logfiles per onion
+set log_separate 1
+
+set project tpo
+# a note: torproject.org has this weird thing where "www" is both a
+# HOSTNAME (e.g. "www.torproject.org") and also a DOMAINNAME or TIER
+# (e.g. "2019.www.torproject.org") - so we need to cite "www" for that
+# latter case..
+hardmap %NEW_V3_ONION% torproject.org www
