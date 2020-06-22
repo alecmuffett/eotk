@@ -10,6 +10,11 @@ set preserve_csv tld-tpo,torproject\\.org,i,torproject.org
 # where to get DNS from
 set nginx_resolver 8.8.8.8 8.8.4.4 ipv6=off
 
+# uncomment this if you use / have `mkcert` installed and it is in the
+# standard $PATH; otherwise EOTK will use `openssl` to generate
+# self-signed certificates...
+# set ssl_mkcert 1
+
 # use EOTK internally to uplift port80 to port443 so that cleartext
 # never crosses the network; this assumes that any http://foo/bar.html
 # will have an identical URL on the HTTPS site
