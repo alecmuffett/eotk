@@ -329,7 +329,10 @@ http {
 
     d2o_search_and_replace = function (i)
       local num, errs
-      -- do a brute-force list of substitutions, because no systematic pattern to match
+      -- do a brute-force list of substitutions, because dns has no systematic pattern to match.
+      -- please excuse the apparent capture and interpolation of (\b) as a zero-width assertion,
+      -- this is because LEFT_TLD_RE is configurable and may be redefined (due to "%2F" usage)
+      -- but it defaults to "\b" which looks silly in the default case...
       %%BEGIN
       i, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)%DNS_DOMAIN_RE2%\\b", "${1}%ONION_ADDRESS%", "io")
       %%END
