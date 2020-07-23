@@ -3,7 +3,7 @@
 # platform-independent lib.sh
 cd `dirname $0` || exit 1
 opt_dir=`pwd`
-. lib.sh || exit 1
+. ./lib.sh || exit 1
 
 # platform dependencies
 shared_deps="

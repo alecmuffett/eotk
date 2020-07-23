@@ -3,7 +3,7 @@
 # platform-independent lib.sh
 cd `dirname $0` || exit 1
 opt_dir=`pwd`
-. lib.sh || exit 1
+. ./lib.sh || exit 1
 
 # FreeBSD users: note: you may want to install libzstd to make
 # compression go faster; apparently the way that you do this is to do
