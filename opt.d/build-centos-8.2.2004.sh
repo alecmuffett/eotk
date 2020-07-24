@@ -13,16 +13,10 @@ libevent-devel
 openssl-devel
 pcre-devel
 "
-
 # build-essential
-# curl
 # dirmngr
-# libssl1.1
-# make
-# perl
 # zlib1g-dev
-
-sudo yum groupinstall 'Development Tools'
+sudo yum -y groupinstall 'Development Tools' # wow this is full of cruft like xorg... maybe
 sudo yum -y install $shared_deps || exit 1
 
 # build openresty
