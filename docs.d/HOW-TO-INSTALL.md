@@ -12,6 +12,14 @@ especially on slower machines.
 * `cd eotk`
 * `./opt.d/build-raspbian-stretch.sh`
 
+## Ubuntu 20.04LTS
+
+Install a `ubuntu-20.04.2-live-server-amd64.iso` server instance; and then:
+
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/build-ubuntu-20.04.sh`
+
 ## Ubuntu 18.04LTS
 
 Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
@@ -19,6 +27,15 @@ Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/build-ubuntu-18.04.sh`
+
+## CentOS 8.2.2004
+
+Install a minimal server and then:
+
+* `sudo yum -y install git`
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/build-centos-8.2.2004.sh`
 
 ## macOS Mojave
 
@@ -30,8 +47,9 @@ Install [Homebrew](https://brew.sh); and then:
 
 ## FreeBSD 12.1
 
-Install a base server, install `pkg install git`, and then:
+Install a base server and then:
 
+* `pkg install git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/build-freebsd-12.1.sh`
