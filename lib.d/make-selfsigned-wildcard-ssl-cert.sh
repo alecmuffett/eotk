@@ -67,14 +67,15 @@ else
     OPENSSL=openssl
 fi
 
-# order is important, first come, first served
+# order is important because Homebrew (sigh)
+# first come, first served...
 cnflist="
 /usr/local/etc/openssl/openssl.cnf
-/etc/ssl/openssl.cnf
 /etc/pki/tls/openssl.cnf
+/etc/ssl/openssl.cnf
 "
 
-for OPENSSL_CONFIG in $cnflist "" ; do
+for OPENSSL_CONFIG in $cnflist "" ; do # empty string terminates
     test -f $OPENSSL_CONFIG && break
 done
 
