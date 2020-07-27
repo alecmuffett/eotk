@@ -1,5 +1,6 @@
 # Security Advisory: Tor Browser Leaks "Secure Cookies" Into Insecure Backend Channels
 
+* v1.2 - 27 July 2020, alec.muffett@gmail.com - update links to gitlab bugs
 * v1.1 - 27 July 2020, alec.muffett@gmail.com - grammar fixes, typos and linkifies
 * v1.0 - 27 July 2020, alec.muffett@gmail.com - initial
 
@@ -73,8 +74,8 @@ In recent software changes that were made to address a series of
 feature requests:
 
 * https://gitlab.torproject.org/tpo/applications/tor-browser/-/issues/21537
-* https://gitlab.torproject.org/legacy/trac/-/issues/23247
-* https://gitlab.torproject.org/legacy/trac/-/issues/21952
+* https://gitlab.torproject.org/tpo/applications/tor-browser/-/issues/23247
+* https://gitlab.torproject.org/tpo/applications/tor-browser/-/issues/21952
 * https://bugzilla.mozilla.org/show_bug.cgi?id=1382359
 
 ...TorBrowser developers made the novel architectural decision that
