@@ -1,6 +1,7 @@
 # Security Advisory: Tor Browser Leaks "Secure Cookies" Into Insecure Backend Channels
 
-* v1.0 - 27 July 2020, alec.muffett@gmail.com
+* v1.1 - 27 July 2020, alec.muffett@gmail.com - grammar fix
+* v1.0 - 27 July 2020, alec.muffett@gmail.com - initial
 
 The master copy of this document resides at:
 
@@ -102,9 +103,9 @@ to the server over HTTPS.
 
 This behaviour is considered one of the fundamentals of web
 architecture, such that many server deployments reasonably do not
-bother to protect legacy plaintext HTTP connections within their
-backend infrastructure because no data of any consequence will ever be
-sent to them by the browser.
+bother to protect or filter legacy plaintext HTTP connections within
+their backend infrastructure because no data of any consequence will
+ever be sent to them by any browser.
 
 Unfortunately with this change, TorBrowser has moved from being one
 which implements simply a superset of layer-3 connectivity, to one
