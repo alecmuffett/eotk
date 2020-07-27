@@ -2,6 +2,10 @@
 
 * v1.0 - 27 July 2020, alec.muffett@gmail.com
 
+The master copy of this document resides at:
+
+* https://github.com/alecmuffett/eotk/blob/master/docs.d/security-advisories.d/001-torbrowser.md
+
 ## Audience
 
 All users and operators of `.onion` websites, especially (but not
