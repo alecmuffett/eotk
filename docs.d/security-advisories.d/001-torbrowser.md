@@ -102,7 +102,7 @@ to them by the browser".
 Unfortunately with this change, TorBrowser has moved from being one
 which implements a superset of layer-3 connectivity, to one which
 instead has "special needs" for deployment because it treats plaintext
-HTTP as a secure channel on-par with HTTPS - and does not match the
+HTTP as a secure channel on par with HTTPS - and does not match the
 assumptions upon which most websites are built.
 
 ![where the leak exists](001-onion-leak.png)
@@ -139,8 +139,13 @@ addressed through user education.
 The author would argue that the less surprising way to achieve this
 goal would be to bring zero-cost HTTPS to Onion Networking - e.g. via
 LetsEncrypt, or by canonisation of special, self-signed certificates -
-rather than to attempt to revivify HTTP as a protocol by making it
-on-par with HTTPS because of an initial layer-3 transport step.
+rather than to attempt to revive HTTP as a protocol by making it
+an equivalent partner to HTTPS because of an initial layer-3 transport step.
+
+Tor counter this argument on the basis that HTTPS-over-Onion is less
+efficient and more verbose - in the nature of superencryption - than
+to assume that the termination of the layer-3 onion connection is
+secure with respect to plaintext HTTP access.
 
 ## Mitigations for this behaviour
 
@@ -232,6 +237,22 @@ special processing.
 
 ### Does this mean that "The Dark Web" is broken?
 
+No. This issue is purely a function of TorBrowser and how it chooses
+to behave and manage cookies for websites which it accesses over HTTP
+and Onion Networking. There are no impacts upon other browsers or upon
+fundamental layer-3 onion networking for (say) SSH.
+
+### Does this impact mobile?
+
+The author does not know whether this change impacts either of
+"TorBrowser" for Android or "OnionBrowser" for iOS.
+
 ### "Is this a NSA Backdoor", etc?
 
-### Impact on "large" `.onion` sites
+The author does not believe that this is wittingly any form of
+backdoor, but rather appears to be driven out of a motivation to
+increase adoption of Onion Services.
+
+Unfortunately the path currently chosen towards this goal includes
+reviving HTTP as a protocol, requiring differing assumption of data
+protection than the rest of the web.
