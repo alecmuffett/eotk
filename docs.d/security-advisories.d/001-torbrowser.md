@@ -242,6 +242,8 @@ If this risk is considered excessive, you may wish to consider
 disabling port 80 services on your Tor daemon, or possibly send port
 80 requests to a custom-built HTTP server within your security
 perimeter, for special processing such as customised cookie-stripping.
+Or - to be frank - you may wish to consider disabling your onion site
+if the risks are excessive and the costs to mitigate are too great.
 
 ## Likely FAQs
 
@@ -249,20 +251,20 @@ perimeter, for special processing such as customised cookie-stripping.
 
 No. This issue is purely a function of TorBrowser and how it chooses
 to behave and manage cookies for websites which it accesses over HTTP
-and Onion Networking. There are no impacts upon other browsers or upon
-fundamental layer-3 onion networking for (say) SSH.
+and Onion Networking. There are no impacts upon other browsers nor upon
+fundamental layer-3 onion networking for (say) SSH-over-Onion.
 
 ### Does this impact mobile?
 
-The author does not know whether this change impacts either of
+The author does not yet know whether this change impacts either of
 "TorBrowser" for Android or "OnionBrowser" for iOS.
 
 ### "Is this a NSA Backdoor", etc?
 
 The author does not believe that this is wittingly any form of
 backdoor, but rather appears to be driven out of a motivation to
-increase adoption of Onion Services.
-
-Unfortunately the path currently chosen towards this goal includes
-reviving HTTP as a protocol, requiring differing assumption of data
-protection than the rest of the web.
+increase adoption of Onion Services. Unfortunately the path currently
+chosen towards this goal includes reviving HTTP as a protocol,
+requiring differing assumption of data protection than the rest of the
+web, and it puts at risk of interception data that was formerly not at
+risk.
