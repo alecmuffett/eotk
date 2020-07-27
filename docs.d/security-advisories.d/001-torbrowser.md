@@ -1,6 +1,6 @@
 # Security Advisory: Tor Browser Leaks "Secure Cookies" Into Insecure Backend Channels
 
-* v1.1 - 27 July 2020, alec.muffett@gmail.com - grammar fix
+* v1.1 - 27 July 2020, alec.muffett@gmail.com - grammar fixes, typos and linkifies
 * v1.0 - 27 July 2020, alec.muffett@gmail.com - initial
 
 The master copy of this document resides at:
@@ -133,7 +133,7 @@ Fastly or Cloudflare, for handling.
 However: with this change TorBrowser **in specific** will leak session
 cookies to those third-party CDN sites, which will traverse the
 `foo.onion` virtual private cloud, if not the whole internet, in
-cleartext where the cookies may be logged and caprtured by state
+cleartext where the cookies may be logged and captured by state
 surveillance agencies if no other.  This problem should be familiar to
 people who have seen the "SSL added and removed here" slides from the
 Snowden files.  No other properly configured browser would behave this
@@ -144,7 +144,7 @@ way.
 The goal of this change was apparently to enable sites to be adapted
 to issue secure cookies for the purposes of enabling login.  Tor
 excuse this behaviour as being "standards-compatible" and cite
-`https://www.w3.org/TR/secure-contexts/` section 3.2 as explicitly
+https://www.w3.org/TR/secure-contexts/ section 3.2 as explicitly
 permitting a user agent to define a secure context as it sees fit.
 
 Tor further have framed the backend impact as a "communications"
