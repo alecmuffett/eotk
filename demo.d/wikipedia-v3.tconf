@@ -19,10 +19,6 @@ set nginx_cache_seconds 60
 set nginx_cache_size 256m
 set nginx_tmpfile_size 64m
 
-# ARE YOU CONFIDENT IN THE COMPLETENESS OF YOUR 100% HTTPS SOLUTION?
-# let's assume so; if wrong you will see a lot of 307 redirects
-set force_https 1
-
 # proof-of-concept: let's make this read-only:
 set suppress_methods_except_get 1
 
