@@ -10,12 +10,6 @@ set nginx_resolver 8.8.8.8 8.8.4.4 ipv6=off
 # video demo I am going to switch it on...
 set ssl_mkcert 1
 
-# use EOTK internally to uplift port80 to port443 so that cleartext
-# never crosses the network; this assumes that any http://foo/bar.html
-# will have an identical URL on the HTTPS site.  default=1, set to 0
-# if your site is not capable of pure HTTPS
-# set force_https 1
-
 # separate logfiles per onion
 set log_separate 1
 
