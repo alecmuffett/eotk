@@ -10,6 +10,7 @@ shared_deps="
 curl
 pcre
 openssl
+gpg
 "
 brew install $shared_deps || exit 1
 
