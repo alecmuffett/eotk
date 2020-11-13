@@ -1,5 +1,7 @@
-#!/usr/bin/perl
-# eotk (c) 2017 Alec Muffett
+#!/bin/sh
+exec perl -x $0 "$@";
+#!perl
+# eotk (c) 2017-2020 Alec Muffett
 
 my %known =
     (
@@ -50,9 +52,12 @@ my %known =
      'HOST_BLACKLIST_RE' => 1,
      'HOST_WHITELIST' => 1,
      'HOST_WHITELIST_RE' => 1,
+     'INJECT_ORIGIN' => 1,
+     'INJECT_REFERER' => 1,
      'IS_SOFTMAP' => 1,
      'LEFT_TLD_RE' => 1,
      'LOG_DIR' => 1, # where logs for the current project live
+     'LOG_SEPARATE' => 1,
      'NGINX_ACTION_ABORT' => 1,
      'NGINX_BLOCK_BUSY_SIZE' => 1,
      'NGINX_BLOCK_COUNT' => 1,
