@@ -18,6 +18,7 @@ NB: bugs should be reported through `Issues`, above.
 
 ### EOTK In the News
 
+* Oct 2020 [Brave browser launches onionsite using EOTK](https://brave.com/new-onion-service/)
 * Oct 2019 [BBC News launches 'dark web' Tor mirror](https://www.bbc.co.uk/news/technology-50150981)
 * Oct 2019 [BBC launches dark web news site in bid to dodge censors](https://www.cityam.com/bbc-launches-dark-web-news-site-in-bid-to-dodge-censors/)
 * Oct 2019 [Tor blimey, Auntie! BBC launches dedicated dark web mirror site](https://www.theregister.co.uk/2019/10/24/beeb_launches_dedicated_dark_web_site/)
