@@ -221,6 +221,17 @@ http {
   # no preserve subs (restore-phase)
   %%ENDIF
 
+  %%IF %KLUDGE_DISABLE_SRI%
+  # disabling sri with a kludge
+  subs_filter
+  "i(ntegrity=\"?sha(?:256|384|512)-)"
+  "_$1"
+  gir
+  ;
+  %%ELSE
+  # not disabling sri with a kludge
+  %%ENDIF
+
   # o2d_re_helper -> if cannot remap, return input. NB: old versions
   # of lua-plugin cannot cope with code like o2d_mappings[o[1]]
   # because of `long bracket syntax`; the `[o[` freaks it out.

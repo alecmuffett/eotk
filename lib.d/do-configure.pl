@@ -593,6 +593,7 @@ my @set_blank = qw(
     host_whitelist_re
     inject_origin
     inject_referer
+    kludge_disable_sri
     log_separate
     nginx_modules_dirs
     no_cache_content_type

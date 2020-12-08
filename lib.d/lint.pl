@@ -55,6 +55,7 @@ my %known =
      'INJECT_ORIGIN' => 1,
      'INJECT_REFERER' => 1,
      'IS_SOFTMAP' => 1,
+     'KLUDGE_DISABLE_SRI' => 1,
      'LEFT_TLD_RE' => 1,
      'LOG_DIR' => 1, # where logs for the current project live
      'LOG_SEPARATE' => 1,
