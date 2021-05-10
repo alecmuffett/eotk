@@ -63,10 +63,25 @@ BREW_OPENSSL=/usr/local/opt/openssl/bin/openssl
 
 if [ -f $BREW_OPENSSL ] ; then
     OPENSSL=$BREW_OPENSSL
-    OPENSSL_CONFIG=/usr/local/etc/openssl/openssl.cnf
 else
     OPENSSL=openssl
-    OPENSSL_CONFIG=/etc/ssl/openssl.cnf
+fi
+
+# order is important because Homebrew (sigh)
+# first come, first served...
+cnflist="
+/usr/local/etc/openssl/openssl.cnf
+/etc/pki/tls/openssl.cnf
+/etc/ssl/openssl.cnf
+"
+
+for OPENSSL_CONFIG in $cnflist "" ; do # empty string terminates
+    test -f $OPENSSL_CONFIG && break
+done
+
+if [ "x$OPENSSL_CONFIG" = "x" ] ; then
+    echo error: cannot find OPENSSL_CONFIG amongst candidates: $cnflist
+    exit 1
 fi
 
 dn_c="AQ" # CountryName: Antarctica

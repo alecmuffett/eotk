@@ -9,8 +9,9 @@
 #
 #   eotk make-scripts
 #
-# 2) copy/symlink it into the relevant system; e.g. for Linux
-#    you will probably do something like:
+# 2) copy/symlink it into the relevant startup system; e.g. for Ubuntu
+#    or Debian-based Linux, you will probably do something like this;
+#    but I am not sure of the equivalent on CentOS yet:
 #
 #   sudo cp eotk-init.sh /etc/init.d && sudo update-rc.d eotk-init.sh defaults
 #
