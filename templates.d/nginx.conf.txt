@@ -15,7 +15,7 @@
 # X-DNS-Prefetch-Control - response security risk?
 # Via - request/response?
 
-# eotk (c) 2019-2020 Alec Muffett
+# eotk (c) 2019-2021 Alec Muffett
 
 # SECURITY NOTE: the contents of this file, when actualised, should
 # not be made world-readable nor published without redaction;
@@ -331,7 +331,7 @@ http {
 
     o2d_search_and_replace = function (i)
       -- because onion addresses are matchable, this can be done in one pass...
-      local o, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)([a-z2-7]{16}(?:[a-z2-7]{40})?\\.onion)\\b", o2d_re_helper, "io")
+      local o, num, errs = ngx.re.gsub(i, "(%LEFT_TLD_RE%)([a-z2-7]{56}\\.onion)\\b", o2d_re_helper, "io")
       if errs == nil and num == 0 then
         return i -- nothing was changed, so return the original
       end

@@ -2,9 +2,9 @@
 # eotk (c) 2017 Alec Muffett
 
 set project digital-rights
-hardmap %NEW_ONION% openrightsgroup.org
-hardmap %NEW_ONION% eff.org
-hardmap %NEW_ONION% accessnow.org
-hardmap %NEW_ONION% digitalrights.ie
+hardmap %NEW_V3_ONION% openrightsgroup.org
+hardmap %NEW_V3_ONION% eff.org
+hardmap %NEW_V3_ONION% accessnow.org
+hardmap %NEW_V3_ONION% digitalrights.ie
 
 # aside: privacy international already have privacyintyqcroe.onion
