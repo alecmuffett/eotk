@@ -3,9 +3,12 @@
 
 ## Primary Supported Platforms
 
+* Ubuntu 20.04LTS, Latest Updates
 * Ubuntu 18.04LTS, Latest Updates
+* CentOS 8.2.2004, Latest Updates
 * OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
+* FreeBSD 12.1, Latest Updates
 
 ## Maillist / Group
 
