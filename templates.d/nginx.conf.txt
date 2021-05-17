@@ -608,22 +608,25 @@ http {
     # tor2web not suppressed
     %%ENDIF
 
+    location / {
+        # tell the client to try again as HTTPS without ever leaving the onion
+        # use 307 / temporary redirect because your URIs may change in future
+        # use $host (not $server) to copy-over subdomains, etc, transparently
+        # SEND BACK ORIGINAL PARAMS, FIX THEM ONLY UPON FORWARD TO THE PROXY.
+        return 307 https://$host$request_uri;
+    }
+
     %%IF %SSL_PROOF_CSV%
     # ssl_proof_csv: 1=fixed_path,2=response
     %%CSV %SSL_PROOF_CSV%
-    location = "%1%" {
+    location "%1%" {
       return 200 "%2%";
     }
+
     %%ENDCSV
     %%ELSE
     # no ssl_proof_csv
     %%ENDIF
-
-    # tell the client to try again as HTTPS without ever leaving the onion
-    # use 307 / temporary redirect because your URIs may change in future
-    # use $host (not $server) to copy-over subdomains, etc, transparently
-    # SEND BACK ORIGINAL PARAMS, FIX THEM ONLY UPON FORWARD TO THE PROXY.
-    return 307 https://$host$request_uri;
   }
   %%ELSE
   # FORCE_HTTPS is not in use, cleartext data may traverse the internet
@@ -684,9 +687,10 @@ http {
     %%IF %SSL_PROOF_CSV%
     # ssl_proof_csv: 1=fixed_path,2=response
     %%CSV %SSL_PROOF_CSV%
-    location = "%1%" {
+    location "%1%" {
       return 200 "%2%";
     }
+
     %%ENDCSV
     %%ELSE
     # no ssl_proof_csv
@@ -698,6 +702,7 @@ http {
     location ~ "%1%" {
       return 200 "%2%";
     }
+
     %%ENDCSV
     %%ELSE
     # no hardcoded_endpoint_csv
