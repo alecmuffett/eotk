@@ -609,14 +609,14 @@ http {
     %%ENDIF
 
     %%IF %SSL_PROOF_CSV%
-    # ssl_proof: 1=fixed_path,2=response
+    # ssl_proof_csv: 1=fixed_path,2=response
     %%CSV %SSL_PROOF_CSV%
     location = "%1%" {
       return 200 "%2%";
     }
     %%ENDCSV
     %%ELSE
-    # no ssl_proof
+    # no ssl_proof_csv
     %%ENDIF
 
     # tell the client to try again as HTTPS without ever leaving the onion
@@ -682,25 +682,25 @@ http {
     %%ENDIF
 
     %%IF %SSL_PROOF_CSV%
-    # ssl_proof: 1=fixed_path,2=response
+    # ssl_proof_csv: 1=fixed_path,2=response
     %%CSV %SSL_PROOF_CSV%
     location = "%1%" {
       return 200 "%2%";
     }
     %%ENDCSV
     %%ELSE
-    # no ssl_proof
+    # no ssl_proof_csv
     %%ENDIF
 
     %%IF %HARDCODED_ENDPOINT_CSV%
-    # hardcoded_endpoint: 1=path_re,2=response
+    # hardcoded_endpoint_csv: 1=path_re,2=response
     %%CSV %HARDCODED_ENDPOINT_CSV%
     location ~ "%1%" {
       return 200 "%2%";
     }
     %%ENDCSV
     %%ELSE
-    # no hardcoded_endpoint
+    # no hardcoded_endpoint_csv
     %%ENDIF
 
     %%IF exists templates.d/nginx-site-%ONION_ADDRESS%.conf
