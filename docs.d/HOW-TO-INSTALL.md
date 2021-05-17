@@ -97,7 +97,7 @@ that you will need.
 You can then add `set ssl_mkcert 1` to configurations, and your
 `mkcert` root certificate will be used to sign the resulting onion
 certificates. You can [install that certificate into your local copy
-of Tor Browser](docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
+of Tor Browser](/docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
 of course it will not work for anyone else.
 
 ## Visit `/hello-onion/` URLs
