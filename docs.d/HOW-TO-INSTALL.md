@@ -129,7 +129,7 @@ following example will emit `FOOPROOF` (or `BARPROOF`) for accesses to
 Note: unlike the previous mechanism which was based on the
 regular-expression-based `hardcoded_endpoint_csv`, these strings are
 checked verbatim against the location, so that `/.well_known/FOO`
-becomes `location = "/.well_known/FOO" {...}` in the NGINX
+becomes `location "/.well_known/FOO" {...}` in the NGINX
 configuration.
 
 Also, as an improvement to the previous mechanism, these endpoints are
