@@ -134,7 +134,7 @@ configuration.
 
 Also, as an improvement to the previous mechanism, these endpoints are
 available in **both** HTTP and HTTPS, irrespective of the state of
-the `force_ssl` setting.
+the `force_https` setting.
 
 Example code:
 
