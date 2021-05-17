@@ -619,6 +619,7 @@ my @set_blank = qw(
     referer_blacklist_re
     referer_whitelist
     referer_whitelist_re
+    ssl_proof_csv
     tor_intros_per_daemon
     user_agent_blacklist
     user_agent_blacklist_re
