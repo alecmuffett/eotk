@@ -121,20 +121,28 @@ rendering these issues moot.
 
 ## IMPORTANT: if all of your "proof" URLs have DIFFERENT pathnames?
 
-Small amounts of plain-text page content may be embedded using
-regular-expressions for pathnames; this is done using
-`hardcoded_endpoint_csv` and the following example will emit
-`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` or
-`../.well_known/bar` respectively, ignoring trailing slashes.  Note
-the use of double-backslash to escape "dots" in the regular
-expression, and use of backslash-indent to continue/enable several
-such paths.
+Small amounts of plain-text page content may be embedded using small,
+fixed pathname strings; this is done using `ssl_proof_csv` and the
+following example will emit `FOOPROOF` (or `BARPROOF`) for accesses to
+`/www/.well_known/foo` (or `.../bar`) respectively.
+
+Note: unlike the previous mechanism which was based on the
+regular-expression-based `hardcoded_endpoint_csv`, these strings are
+checked verbatim against the location, so that `/.well_known/FOO`
+becomes `location = "/.well_known/FOO" {...}` in the NGINX
+configuration.
+
+Also, as an improvement to the previous mechanism, these endpoints are
+available in **both** HTTP and HTTPS, irrespective of the state of
+the `force_ssl` setting.
+
+Example code:
 
 ```
 # demo: CSV list to implement ownership proof URIs for EV SSL issuance
-set hardcoded_endpoint_csv \
-    ^/www/\\.well_known/foo/?$,"FOOPROOF" \
-    ^/www/\\.well_known/bar/?$,"BARPROOF"
+set ssl_proof_csv \
+    /.well_known/FOO,FOOPROOF \
+    /.well_known/BAR,BARPROOF
 ```
 
 ## IMPORTANT: if all your "proof" URLs have THE SAME pathname?
