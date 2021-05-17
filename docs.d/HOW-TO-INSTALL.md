@@ -119,7 +119,7 @@ rendering these issues moot.
 
 # Proving Your Ownership To A Certificate Authority / Hardcoded Content
 
-## IMPORTANT: if all of your "proof" URLs have DIFFERENT pathnames?
+## IMPORTANT: if your "proof" URLs have DIFFERENT pathnames?
 
 Small amounts of plain-text page content may be embedded using small,
 fixed pathname strings; this is done using `ssl_proof_csv` and the
@@ -145,9 +145,12 @@ set ssl_proof_csv \
     /.well_known/BAR,BARPROOF
 ```
 
-## IMPORTANT: if all your "proof" URLs have THE SAME pathname?
+It is advisable to comment these lines out and reconfigure/reload your
+onions, after you obtain a certificate.
 
-The `hardcoded_endpoint_csv` hack works okay if all the proof URLs are
+## IMPORTANT: if your "proof" URLs have THE SAME pathname?
+
+The `ssl_proof_csv` hack works okay if all the proof URLs are
 different; but if Digicert (or whomever) give you the same pathname
 (e.g. `/.well-known/pki-validation/fileauth.txt`) for all of the
 onions, what do you do?
@@ -162,7 +165,7 @@ Answer: you use "splicing".  If you have onion addresses named
 customise as necessary:
 
 ```
-    location ~ "^/\\.well-known/pki-validation/fileauth\\.txt$" {
+    location = "/.well-known/pki-validation/fileauth.txt" {
       return 200 "RESPECTIVE-XXX-OR-YYY-PROOF-STRING-GOES-HERE";
     }
 ```
