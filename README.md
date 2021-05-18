@@ -49,10 +49,6 @@ login credentials of any kind.
 Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide,
 and the other documents in [that folder](docs.d/).
 
-## What's Changed?
-
-Please refer to the [Changelog](docs.d/CHANGELOG.md).
-
 ## Help I'm Stuck!
 
 Ping @alecmuffett on Twitter, or log an `Issue`, above.
