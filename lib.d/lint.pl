@@ -6,7 +6,7 @@ exec perl -x $0 "$@";
 my %known =
     (
      # demo fakes
-     'NEW_ONION' => 1,
+     'NEW_V3_ONION' => 1,
      'SCRIPT_PAUSE' => 1,
      '' => 1, # an empty escape character
 
