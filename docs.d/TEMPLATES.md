@@ -231,6 +231,12 @@ eg: `%%IF %NUMDAEMONS% < 6`
 * `>`
 * `<`
 
+### File Operators
+
+eg: `%%IF exists templates.d/nginx-site-%ONION_ADDRESS%.conf`
+
+True if the (substituted) filename exists.
+
 ### String Operators
 
 eg: `%%IF %ONION% eq facebookcorewwwi`
