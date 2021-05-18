@@ -3,7 +3,7 @@
 
 ## Primary Supported Platforms
 
-* Ubuntu 18.04LTS, Latest Updates
+* Ubuntu 20.04LTS, Latest Updates
 * OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
 
