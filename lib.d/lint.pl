@@ -129,6 +129,7 @@ my %known =
      'SOFTMAP_TOR_WORKERS' => 1,
      'SSL_DIR' => 1, # where ssl certs for the current project live
      'SSL_MKCERT' => 1,
+     'SSL_PROOF_CSV' => 1,
      'SSL_TOOL' => 1,
      'SUPPRESS_HEADER_CSP' => 1,
      'SUPPRESS_HEADER_HPKP' => 1,

@@ -97,7 +97,7 @@ that you will need.
 You can then add `set ssl_mkcert 1` to configurations, and your
 `mkcert` root certificate will be used to sign the resulting onion
 certificates. You can [install that certificate into your local copy
-of Tor Browser](docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
+of Tor Browser](/docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
 of course it will not work for anyone else.
 
 ## Visit `/hello-onion/` URLs
@@ -119,27 +119,38 @@ rendering these issues moot.
 
 # Proving Your Ownership To A Certificate Authority / Hardcoded Content
 
-## IMPORTANT: if all of your "proof" URLs have DIFFERENT pathnames?
+## IMPORTANT: if your "proof" URLs have DIFFERENT pathnames?
 
-Small amounts of plain-text page content may be embedded using
-regular-expressions for pathnames; this is done using
-`hardcoded_endpoint_csv` and the following example will emit
-`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` or
-`../.well_known/bar` respectively, ignoring trailing slashes.  Note
-the use of double-backslash to escape "dots" in the regular
-expression, and use of backslash-indent to continue/enable several
-such paths.
+Small amounts of plain-text page content may be embedded using small,
+fixed pathname strings; this is done using `ssl_proof_csv` and the
+following example will emit `FOOPROOF` (or `BARPROOF`) for accesses to
+`/www/.well_known/foo` (or `.../bar`) respectively.
+
+Note: unlike the previous mechanism which was based on the
+regular-expression-based `hardcoded_endpoint_csv`, these strings are
+checked verbatim against the location, so that `/.well_known/FOO`
+becomes `location "/.well_known/FOO" {...}` in the NGINX
+configuration.
+
+Also, as an improvement to the previous mechanism, these endpoints are
+available in **both** HTTP and HTTPS, irrespective of the state of
+the `force_https` setting.
+
+Example code:
 
 ```
 # demo: CSV list to implement ownership proof URIs for EV SSL issuance
-set hardcoded_endpoint_csv \
-    ^/www/\\.well_known/foo/?$,"FOOPROOF" \
-    ^/www/\\.well_known/bar/?$,"BARPROOF"
+set ssl_proof_csv \
+    /.well_known/FOO,FOOPROOF \
+    /.well_known/BAR,BARPROOF
 ```
 
-## IMPORTANT: if all your "proof" URLs have THE SAME pathname?
+It is advisable to comment these lines out and reconfigure/reload your
+onions, after you obtain a certificate.
 
-The `hardcoded_endpoint_csv` hack works okay if all the proof URLs are
+## IMPORTANT: if your "proof" URLs have THE SAME pathname?
+
+The `ssl_proof_csv` hack works okay if all the proof URLs are
 different; but if Digicert (or whomever) give you the same pathname
 (e.g. `/.well-known/pki-validation/fileauth.txt`) for all of the
 onions, what do you do?
@@ -154,7 +165,7 @@ Answer: you use "splicing".  If you have onion addresses named
 customise as necessary:
 
 ```
-    location ~ "^/\\.well-known/pki-validation/fileauth\\.txt$" {
+    location = "/.well-known/pki-validation/fileauth.txt" {
       return 200 "RESPECTIVE-XXX-OR-YYY-PROOF-STRING-GOES-HERE";
     }
 ```

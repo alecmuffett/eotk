@@ -18,6 +18,7 @@ NB: bugs should be reported through `Issues`, above.
 
 ### EOTK In the News
 
+* Apr 2021 [The Intercept launches onionsite using EOTK](https://theintercept.com/2021/04/28/tor-browser-onion/)
 * Oct 2020 [Brave browser launches onionsite using EOTK](https://brave.com/new-onion-service/)
 * Oct 2019 [BBC News launches 'dark web' Tor mirror](https://www.bbc.co.uk/news/technology-50150981)
 * Oct 2019 [BBC launches dark web news site in bid to dodge censors](https://www.cityam.com/bbc-launches-dark-web-news-site-in-bid-to-dodge-censors/)
