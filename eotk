@@ -444,7 +444,7 @@ case "$cmd" in
         InvokeRemotely debugoff "$@"
         ;;
 
-    cleanup) ## project* ... | stop and remove trash files for projects (eg: after crash, "nginx.pid exists!" and ".sock exists!" errors, etc)
+    clean|cleanup) ## project* ... | stop and remove trash files for projects (eg: after crash, "nginx.pid exists!" and ".sock exists!" errors, etc)
         $need_to_run_locally && RunLocallyOverProjects cleanup "$@"
         InvokeRemotely cleanup "$@"
         ;;
