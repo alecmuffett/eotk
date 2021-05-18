@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # Version 3 onion addresses require explicit declaration of the
 # onion-address AS WELL AS the key materials; for simplicity and
@@ -21,10 +21,13 @@ done
 
 onion=`cat hostname` || Fatal "cannot read 'hostname' file to establish onion address"
 onion=`basename $onion .onion` # strip verbiage
+echo $onion | egrep '^[2-7a-z]{56}$' >/dev/null || Fatal 'bad format onion address '$onion''
 
 public2="$onion.v3pub.key"
 secret2="$onion.v3sec.key"
 
 cp $public $public2 || Fatal "cannot copy $public to $public2"
-
 cp $secret $secret2 || Fatal "cannot copy $secret to $secret2"
+
+echo $public2
+echo $secret2
