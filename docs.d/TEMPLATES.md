@@ -326,7 +326,7 @@ in [the example template configuration file](../demo.d/example.tconf)
 These are used in Template Configuration (`.tconf`) files, and do not
 represent real environment variables.
 
-* NEW_ONION
+* NEW_V3_ONION
 
 Used only in template configs (`*.tconf` files) to show the point
 where a newly created onion address should be inserted.

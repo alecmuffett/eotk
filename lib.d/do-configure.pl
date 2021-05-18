@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -wx $0 "$@";
 #!perl
-# eotk (c) 2017-2020 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 use Data::Dumper;
 
@@ -532,7 +532,7 @@ sub DoProject {
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
-&SetEnv("onion_version", "2");
+&SetEnv("onion_version", "3");
 &SetEnv("preserve_before", "~".&Nonce(128)."~");
 &SetEnv("preserve_after", "~");
 &SetEnv("preserve_preamble_re", "[>@\\\\s]");

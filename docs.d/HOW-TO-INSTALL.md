@@ -211,9 +211,9 @@ Create a config file with a `.tconf` suffix - we'll pretend it's
 
 ```
 set project myproject
-hardmap %NEW_ONION% foo.com
-hardmap %NEW_ONION% foo.co.uk
-hardmap %NEW_ONION% foo.de
+hardmap %NEW_V3_ONION% foo.com
+hardmap %NEW_V3_ONION% foo.co.uk
+hardmap %NEW_V3_ONION% foo.de
 ```
 
 ...and then run
@@ -290,7 +290,7 @@ So if your browser tells you that you are fetching content from
 `cdn7.dublin.ireland.europe.foo.co.jp`, you should add a line like:
 
 ```
-hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
+hardmap %NEW_V3_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
 ```
 
 ...and EOTK should do the rest. All this is necessary purely for
@@ -329,9 +329,9 @@ avoid the actual "hostnames" as described above:
 
 ```
 set project fooproj
-hardmap %NEW_ONION% foo.com.au syd per
-hardmap %NEW_ONION% foo.net cdn
-hardmap %NEW_ONION% foo.aws.amazon.com
+hardmap %NEW_V3_ONION% foo.com.au syd per
+hardmap %NEW_V3_ONION% foo.net cdn
+hardmap %NEW_V3_ONION% foo.aws.amazon.com
 ```
 
 Onion mapping/translations will be applied for all sites in the same project.

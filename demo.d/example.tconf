@@ -228,12 +228,12 @@ foreignmap facebookcorewwwi.onion facebook.com
 # hardmaps use tor daemon configs with onions hard-coded in them
 
 set project hardexample
-hardmap %NEW_ONION% foo.local
-hardmap %NEW_ONION% bar.local
+hardmap %NEW_V3_ONION% foo.local
+hardmap %NEW_V3_ONION% bar.local
 
 # softmaps use onionbalance software to loadbalance across workers
 
 set project softexample
-softmap %NEW_ONION% example.com
-softmap %NEW_ONION% example.org
-softmap %NEW_ONION% example.net
+softmap %NEW_V3_ONION% example.com
+softmap %NEW_V3_ONION% example.org
+softmap %NEW_V3_ONION% example.net
