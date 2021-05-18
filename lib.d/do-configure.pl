@@ -22,16 +22,6 @@ chdir($here) or die "chdir: $here: $!\n";
 
 ##################################################################
 
-sub ValidOnion {
-    my $onion = shift;
-    return ( $onion =~ /^[a-z2-7]{16}(?:[a-z2-7]{40})?$/o );
-}
-
-sub ValidOnionV2 {
-    my $onion = shift;
-    return ( $onion =~ /^[a-z2-7]{16}$/o );
-}
-
 sub ValidOnionV3 {
     my $onion = shift;
     return ( $onion =~ /^[a-z2-7]{56}$/o );
@@ -41,7 +31,7 @@ sub ExtractOnion {
     my $onion = shift;
     $onion =~ s!^.*/!!o;
     $onion =~ s!\.onion$!!o;
-    die "ExtractOnion: was not given a valid onion: $onion\n" unless (&ValidOnion($onion));
+    die "ExtractOnion: was not given a valid onion: $onion\n" unless (&ValidOnionV3($onion));
     return $onion;
 }
 
@@ -55,7 +45,6 @@ sub OnionVersion {
     my $onion = shift;
     $onion = &ExtractOnion($onion);
     return 3 if (&ValidOnionV3($onion));
-    return 2 if (&ValidOnionV2($onion));
     die "OnionVersion: was not given a valid onion: $onion\n";
 }
 
@@ -450,15 +439,10 @@ sub DoProject {
             my $hs_dir = "$ENV{PROJECT_DIR}/$onion_dirname";
             &MakeDir($hs_dir);
 
-            # install keyfile
-            # TODO:
+            # install keyfiles
             my $onion = &ExtractOnion($onion_doto);
             my $secrets_dir = "secrets.d";
-            if (&ValidOnionV2($onion)) {
-                $key = "$secrets_dir/$onion.key";
-                &CopyFile($key, "$hs_dir/private_key");
-            }
-            elsif (&ValidOnionV3($onion)) {
+            if (&ValidOnionV3($onion)) {
                 $pub = "$secrets_dir/$onion.v3pub.key";
                 $sec = "$secrets_dir/$onion.v3sec.key";
                 &CopyFile($pub, "$hs_dir/hs_ed25519_public_key");
