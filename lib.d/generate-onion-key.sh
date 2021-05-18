@@ -1,4 +1,5 @@
 #!/bin/sh
+# eotk (c) 2017-2021 Alec Muffett
 
 here=`pwd` # absolute pathnames are required by tor
 log=$here/__gok$$.log

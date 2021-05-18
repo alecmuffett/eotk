@@ -1,5 +1,5 @@
 # -*- conf -*-
-# eotk (c) 2017 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 set project digital-rights
 hardmap %NEW_V3_ONION% openrightsgroup.org
