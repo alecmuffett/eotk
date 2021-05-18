@@ -19,7 +19,7 @@ for f in $hostname $public $secret ; do
     test -f $f || Fatal "cannot file file '$f' for data"
 done
 
-onion=`cat hostname` || Fatal "cannot read 'hostname' file to establish onion address"
+onion=`cat $hostname` || Fatal "cannot read '$hostname' file to establish onion address"
 onion=`basename $onion .onion` # strip verbiage
 echo $onion | egrep '^[2-7a-z]{56}$' >/dev/null || Fatal 'bad format onion address '$onion''
 
