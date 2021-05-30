@@ -204,6 +204,35 @@ customise as necessary:
 ...then when you next `eotk config` and `eotk nxreload`, that code
 should be spliced into the correct configuration for each onion.
 
+## You will need to install the certificates
+
+For each certificate, HARICA will offer you several files to download; 
+download the "PEM Bundle" file and copy it to your EOTK server. 
+Also: copy the `privateKey.pem` file (mentioned above) to the EOTK server.
+
+Next, change Directory into `~/eotk/projects.d/**PROJECTNAME**.d/ssl.d`; 
+you should see your development certificates, which will look like:
+
+```
+$ ls
+**ONIONADDRESS**.onion.cert
+**ONIONADDRESS**.onion.pem
+```
+
+There are two steps to installation:
+
+Step 1: copy the PEM Bundle file from HARICA, on top of `**ONIONADDRESS**.onion.cert`
+
+Step 2: unlock and extract the private key, by doing:
+
+`openssl ec -in privateKey.pem -out **ONIONADDRESS**.onion.pem`
+
+...and typing in the password that you chose during the CSR setup, earlier; 
+if you chose to use RSA as the algorithm, you will need to use 
+`openssl rsa ...` instead.
+
+Then: change directory back to the EOTK directory, and do `eotk nxreload projectname`, and test it.
+
 # Demonstration And Testing
 
 After installation, you can do:
