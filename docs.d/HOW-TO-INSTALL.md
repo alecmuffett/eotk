@@ -61,20 +61,17 @@ EOTK requires recent `tor` and also recent `openresty` with the
 simply need to be accessible in $PATH.  The above "build" scripts
 simply supply that.
 
-# Dealing With OnionBalance And Load-Balancing
+# Demonstration And Testing
 
-*NEW FOR 2019:*
+After installation, you can do:
 
-OnionBalance as-of June 2019 is an flaky piece of software which is
-hard to run on modern Linux because an stale python crypto library;
-more than 90% of Onion sites will not practically need it - or, not
-initially, anyway - so I am *deprecating OnionBalance in EOTK* until
-it is majorly overhauled and also supports v3 onion addressing.
+* `./eotk config demo.d/wikipedia.tconf`
+  * or: `./eotk config demo.d/wikipedia-v3.tconf`
+* `./eotk start wikipedia`
+* `./eotk maps -a` # and connect to one of the onions you've created
 
-So, I recommend people to avoid OnionBalance and use hardmap (local)
-for the moment, until Tor fix it.  Consider OB if and only if your
-system is under sustained high bandwidth and strongly demonstrates
-extended choking on throughput.
+Be aware that you will suffer from HTTPS certificate errors 
+until you buy a HTTPS certificate.
 
 # Creating HTTPS Certificates for Testing & Development
 
@@ -83,7 +80,7 @@ using wildcard self-signed SSL certificates - you *will* encounter
 many "broken links" which are due to the SSL certificate not being
 valid.
 
-This is *expected* and *proper* behaviour; there are currently two
+This is *expected* and *proper* behaviour; there are currently three
 ways to address this.
 
 ## Install `mkcert`
@@ -116,6 +113,10 @@ images and resources "in a new Tab" and accept the certificate there.
 In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
+
+## Buy a SSL Certificate from HARICA or Digicert
+
+See below.
 
 # Buying a HTTPS Certificate from HARICA
 
@@ -181,7 +182,7 @@ set ssl_proof_csv \
 
 ### Optional: what if your multiple "proof" URLs all have the SAME pathname?
 
-The `ssl_proof_csv` hack works okay if all the proof URLs are
+The `ssl_proof_csv` hack works if all the proof URLs are
 different; but if Digicert (or whomever) were to give you the 
 same pathname (e.g. `/.well-known/pki-validation/fileauth.txt`) 
 for _all_ of the onions, what do you do?
@@ -197,14 +198,14 @@ customise as necessary:
 
 ```
     location = "/.well-known/pki-validation/fileauth.txt" {
-      return 200 "RESPECTIVE-XXX-OR-YYY-PROOF-STRING-GOES-HERE";
+      return 200 "RESPECTIVE-PROOF-STRING-GOES-HERE";
     }
 ```
 
 ...then when you next `eotk config` and `eotk nxreload`, that code
 should be spliced into the correct configuration for each onion.
 
-## You will need to install the certificates
+## You will need to install the certificates for your project
 
 For each certificate, HARICA will offer you several files to download; 
 download the "PEM Bundle" file and copy it to your EOTK server. 
@@ -215,32 +216,24 @@ you should see your development certificates, which will look like:
 
 ```
 $ ls
-**ONIONADDRESS**.onion.cert
-**ONIONADDRESS**.onion.pem
+ONIONADDRESS.onion.cert
+ONIONADDRESS.onion.pem
 ```
 
 There are two steps to installation:
 
-Step 1: copy the PEM Bundle file from HARICA, on top of `**ONIONADDRESS**.onion.cert`
+Step 1: copy the PEM Bundle file from HARICA, on top of `ONIONADDRESS.onion.cert`
 
 Step 2: unlock and extract the private key, by doing:
 
-`openssl ec -in privateKey.pem -out **ONIONADDRESS**.onion.pem`
+`openssl ec -in privateKey.pem -out ONIONADDRESS.onion.pem`
 
 ...and typing in the password that you chose during the CSR setup, earlier; 
 if you chose to use RSA as the algorithm, you will need to use 
 `openssl rsa ...` instead.
 
-Then: change directory back to the EOTK directory, and do `eotk nxreload projectname`, and test it.
-
-# Demonstration And Testing
-
-After installation, you can do:
-
-* `./eotk config demo.d/wikipedia.tconf`
-  * or: `./eotk config demo.d/wikipedia-v3.tconf`
-* `./eotk start wikipedia`
-* `./eotk maps -a` # and connect to one of the onions you've created
+Then: change directory back to the EOTK directory, 
+and do `eotk nxreload projectname`, and test it.
 
 # Configuring Start-On-Boot, And Logfile Compression
 
@@ -474,6 +467,20 @@ persists, check the logfiles.
 Is the clock/time of day correct on all your machines?  Are you
 running NTP?  We are not sure but having an incorrect clock may be a
 contributory factor to this issue.
+
+##  OnionBalance And Load-Balancing
+
+*NEW FOR 2019:* 
+OnionBalance as-of June 2019 is an flaky piece of software which is
+hard to run on modern Linux because an stale python crypto library;
+more than 90% of Onion sites will not practically need it - or, not
+initially, anyway - so I am *deprecating OnionBalance in EOTK* until
+it is majorly overhauled and also supports v3 onion addressing.
+
+So, I recommend people to avoid OnionBalance and use hardmap (local)
+for the moment, until Tor fix it.  Consider OB if and only if your
+system is under sustained high bandwidth and strongly demonstrates
+extended choking on throughput.
 
 ## Video Demonstrations
 
