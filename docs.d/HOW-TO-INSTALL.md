@@ -76,7 +76,7 @@ for the moment, until Tor fix it.  Consider OB if and only if your
 system is under sustained high bandwidth and strongly demonstrates
 extended choking on throughput.
 
-# Dealing With HTTPS Certificates
+# Creating HTTPS Certificates for Testing & Development
 
 When connecting to the resulting onions over HTTP/SSL, you will be
 using wildcard self-signed SSL certificates - you *will* encounter
@@ -117,43 +117,74 @@ In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
 
-# Proving Your Ownership To A Certificate Authority / Hardcoded Content
+# Buying a HTTPS Certificate from HARICA
 
-## IMPORTANT: if your "proof" URLs have DIFFERENT pathnames?
+If you choose to buy an Onion HTTPS certificate from (e.g.) HARICA, 
+what will happen, and what will you need to do?
 
-Small amounts of plain-text page content may be embedded using small,
-fixed pathname strings; this is done using `ssl_proof_csv` and the
-following example will emit `FOOPROOF` (or `BARPROOF`) for accesses to
-`/www/.well_known/foo` (or `.../bar`) respectively.
+## You will need to create a CSR (Certificate Signing Request)
 
-Note: unlike the previous mechanism which was based on the
-regular-expression-based `hardcoded_endpoint_csv`, these strings are
-checked verbatim against the location, so that `/.well_known/FOO`
-becomes `location "/.well_known/FOO" {...}` in the NGINX
-configuration.
+I chose to buy:
 
-Also, as an improvement to the previous mechanism, these endpoints are
-available in **both** HTTP and HTTPS, irrespective of the state of
-the `force_https` setting.
+* a Server Certificate 
+* with Domain-Level (DV) Trust
+* with a reasonable duration
+* using the in-browser generated CSR 
+* using the ECDSA algorithm at 256 bits
+* **important:** remember the password! 
+* **important:** download the private key!
 
-Example code:
+The HARICA website provides an in-browser method of generating a CSR,
+if you are not already familiar. Make sure to generate a good
+passphrase, and remember it, because you will need it soon.
+Also: make sure to download the `privateKey.pem` file that
+is offered, and keep it in a safe place.
+
+## You will need to prove ownership of the site, to HARICA
+
+HARICA will tell you that you need to post a secret key 
+at a particular URL on your onion site; the message will 
+be like:
+
+> Place the file **FiLeNaMe** to http://**ONIONADDRESS**.onion/.well-known/pki-validation/
+
+...and they will offer you a file to download.
+
+Download this file, and open it with a text editor. 
+The content will be a long secret string, like **ThIsIsArEaLlYlOnGsEcReT**
+
+Add a line to your EOTK configuration, substituting the values where necessary:
 
 ```
-# demo: CSV list to implement ownership proof URIs for EV SSL issuance
+set ssl_proof_csv /.well-known/pki-validation/**FiLeNaMe**,**ThIsIsArEaLlYlOnGsEcReT**
+```
+
+Then do something like:
+
+```
+eotk config projectname.conf && eotk nxreload projectname
+```
+
+...to install the URL handlers.
+
+### Optional: what if you have multiple Onion addresses?
+
+You can put multiple `path,value` strings into `ssl_proof_csv`, space-separated; 
+use trailing backslashes to put entries onto separate lines:
+
+```
 set ssl_proof_csv \
-    /.well_known/FOO,FOOPROOF \
-    /.well_known/BAR,BARPROOF
+    /.well-known/pki-validation/key1,value1 \
+    /.well-known/pki-validation/key2,value2 \
+    /.well-known/pki-validation/key3,value3    
 ```
 
-It is advisable to comment these lines out and reconfigure/reload your
-onions, after you obtain a certificate.
-
-## IMPORTANT: if your "proof" URLs have THE SAME pathname?
+### Optional: what if your multiple "proof" URLs all have the SAME pathname?
 
 The `ssl_proof_csv` hack works okay if all the proof URLs are
-different; but if Digicert (or whomever) give you the same pathname
-(e.g. `/.well-known/pki-validation/fileauth.txt`) for all of the
-onions, what do you do?
+different; but if Digicert (or whomever) were to give you the 
+same pathname (e.g. `/.well-known/pki-validation/fileauth.txt`) 
+for _all_ of the onions, what do you do?
 
 Answer: you use "splicing".  If you have onion addresses named
 `xxxxxxxxxxxxxxxx` and `yyyyyyyyyyyyyyyy`, then you can create files:
