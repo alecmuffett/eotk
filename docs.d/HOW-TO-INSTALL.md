@@ -157,7 +157,7 @@ The content will be a long secret string, like **ThIsIsArEaLlYlOnGsEcReT**
 Add a line to your EOTK configuration, substituting the values where necessary:
 
 ```
-set ssl_proof_csv /.well-known/pki-validation/**FiLeNaMe**,**ThIsIsArEaLlYlOnGsEcReT**
+set ssl_proof_csv /.well-known/pki-validation/FiLeNaMe,ThIsIsArEaLlYlOnGsEcReT
 ```
 
 Then do something like:
