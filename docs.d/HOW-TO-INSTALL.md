@@ -118,7 +118,7 @@ rendering these issues moot.
 
 See below.
 
-# Buying a HTTPS Certificate from HARICA
+# Buying a HTTPS Certificate from a Certificate Authority
 
 If you choose to buy an Onion HTTPS certificate from (e.g.) HARICA, 
 what will happen, and what will you need to do?
@@ -141,23 +141,24 @@ passphrase, and remember it, because you will need it soon.
 Also: make sure to download the `privateKey.pem` file that
 is offered, and keep it in a safe place.
 
-## You will need to prove ownership of the site, to HARICA
+## You will need to prove ownership of the site, to the CA
 
-HARICA will tell you that you need to post a secret key 
-at a particular URL on your onion site; the message will 
-be like:
+For example: HARICA will tell you that you need to post 
+a secret key at a particular URL on your onion site; 
+the message will read something like:
 
-> Place the file **FiLeNaMe** to http://**ONIONADDRESS**.onion/.well-known/pki-validation/
+> Place the file FILENAME to http://ONIONADDRESS.onion/.well-known/pki-validation/
 
 ...and they will offer you a file to download.
 
-Download this file, and open it with a text editor. 
-The content will be a long secret string, like **ThIsIsArEaLlYlOnGsEcReT**
+Download this file, and open it with a text editor;
+the content will be a long secret string,
+like THISISAREALLYLONGHEXADECIMALSECRET
 
 Add a line to your EOTK configuration, substituting the values where necessary:
 
 ```
-set ssl_proof_csv /.well-known/pki-validation/FiLeNaMe,ThIsIsArEaLlYlOnGsEcReT
+set ssl_proof_csv /.well-known/pki-validation/FILENAME,THISISAREALLYLONGHEXADECIMALSECRET
 ```
 
 Then do something like:
@@ -211,7 +212,7 @@ For each certificate, HARICA will offer you several files to download;
 download the "PEM Bundle" file and copy it to your EOTK server. 
 Also: copy the `privateKey.pem` file (mentioned above) to the EOTK server.
 
-Next, change Directory into `~/eotk/projects.d/**PROJECTNAME**.d/ssl.d`; 
+Next, change Directory into `~/eotk/projects.d/PROJECTNAME.d/ssl.d`; 
 you should see your development certificates, which will look like:
 
 ```
