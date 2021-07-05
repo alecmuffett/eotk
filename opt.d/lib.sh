@@ -60,7 +60,7 @@ ConfigureOpenResty() { # this accepts arguments
 
 SetupTorVars() {
     tool="tor"
-    tool_version="0.4.5.8"
+    tool_version="0.4.5.9"
     tool_signing_keys="6AFEE6D49E92B601 C218525819F78451"
     tool_url="https://dist.torproject.org/$tool-$tool_version.tar.gz"
     tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.asc"
