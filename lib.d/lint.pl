@@ -6,7 +6,7 @@ exec perl -x $0 "$@";
 my %known =
     (
      # demo fakes
-     'NEW_ONION' => 1,
+     'NEW_V3_ONION' => 1,
      'SCRIPT_PAUSE' => 1,
      '' => 1, # an empty escape character
 
@@ -55,6 +55,7 @@ my %known =
      'INJECT_ORIGIN' => 1,
      'INJECT_REFERER' => 1,
      'IS_SOFTMAP' => 1,
+     'KLUDGE_DISABLE_SRI' => 1,
      'LEFT_TLD_RE' => 1,
      'LOG_DIR' => 1, # where logs for the current project live
      'LOG_SEPARATE' => 1,
@@ -128,6 +129,7 @@ my %known =
      'SOFTMAP_TOR_WORKERS' => 1,
      'SSL_DIR' => 1, # where ssl certs for the current project live
      'SSL_MKCERT' => 1,
+     'SSL_PROOF_CSV' => 1,
      'SSL_TOOL' => 1,
      'SUPPRESS_HEADER_CSP' => 1,
      'SUPPRESS_HEADER_HPKP' => 1,

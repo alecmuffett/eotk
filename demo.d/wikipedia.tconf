@@ -64,17 +64,17 @@ foreignmap nytimes3xbfgragh nytimes.com
 
 # the Wikimedia Foundation have lots of sites
 set project wikipedia
-hardmap %NEW_ONION% mediawiki.org
-hardmap %NEW_ONION% wikidata.org
-hardmap %NEW_ONION% wikimedia.org
-hardmap %NEW_ONION% wikimediafoundation.org
+hardmap %NEW_V3_ONION% mediawiki.org
+hardmap %NEW_V3_ONION% wikidata.org
+hardmap %NEW_V3_ONION% wikimedia.org
+hardmap %NEW_V3_ONION% wikimediafoundation.org
 # the following have an `m` subdomain
-hardmap %NEW_ONION% wikibooks.org m
-hardmap %NEW_ONION% wikinews.org m
-hardmap %NEW_ONION% wikipedia.org m
-hardmap %NEW_ONION% wikiquote.org m
-hardmap %NEW_ONION% wikisource.org m
-hardmap %NEW_ONION% wikiversity.org m
-hardmap %NEW_ONION% wikivoyage.org m
-hardmap %NEW_ONION% wiktionary.org m
+hardmap %NEW_V3_ONION% wikibooks.org m
+hardmap %NEW_V3_ONION% wikinews.org m
+hardmap %NEW_V3_ONION% wikipedia.org m
+hardmap %NEW_V3_ONION% wikiquote.org m
+hardmap %NEW_V3_ONION% wikisource.org m
+hardmap %NEW_V3_ONION% wikiversity.org m
+hardmap %NEW_V3_ONION% wikivoyage.org m
+hardmap %NEW_V3_ONION% wiktionary.org m
 # nb: by subdomain we mean FOO in en.FOO.wikipedia.org, etc.

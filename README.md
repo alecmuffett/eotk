@@ -3,7 +3,7 @@
 
 ## Primary Supported Platforms
 
-* Ubuntu 18.04LTS, Latest Updates
+* Ubuntu 20.04LTS, Latest Updates
 * OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
 
@@ -18,6 +18,8 @@ NB: bugs should be reported through `Issues`, above.
 
 ### EOTK In the News
 
+* Apr 2021 [The Intercept launches onionsite using EOTK](https://theintercept.com/2021/04/28/tor-browser-onion/)
+* Oct 2020 [Brave browser launches onionsite using EOTK](https://brave.com/new-onion-service/)
 * Oct 2019 [BBC News launches 'dark web' Tor mirror](https://www.bbc.co.uk/news/technology-50150981)
 * Oct 2019 [BBC launches dark web news site in bid to dodge censors](https://www.cityam.com/bbc-launches-dark-web-news-site-in-bid-to-dodge-censors/)
 * Oct 2019 [Tor blimey, Auntie! BBC launches dedicated dark web mirror site](https://www.theregister.co.uk/2019/10/24/beeb_launches_dedicated_dark_web_site/)
@@ -46,10 +48,6 @@ login credentials of any kind.
 
 Please refer to the [How To Install](docs.d/HOW-TO-INSTALL.md) guide,
 and the other documents in [that folder](docs.d/).
-
-## What's Changed?
-
-Please refer to the [Changelog](docs.d/CHANGELOG.md).
 
 ## Help I'm Stuck!
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -wx $0 "$@";
 #!perl
-# eotk (c) 2017-2020 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 use Data::Dumper;
 
@@ -22,16 +22,6 @@ chdir($here) or die "chdir: $here: $!\n";
 
 ##################################################################
 
-sub ValidOnion {
-    my $onion = shift;
-    return ( $onion =~ /^[a-z2-7]{16}(?:[a-z2-7]{40})?$/o );
-}
-
-sub ValidOnionV2 {
-    my $onion = shift;
-    return ( $onion =~ /^[a-z2-7]{16}$/o );
-}
-
 sub ValidOnionV3 {
     my $onion = shift;
     return ( $onion =~ /^[a-z2-7]{56}$/o );
@@ -41,7 +31,7 @@ sub ExtractOnion {
     my $onion = shift;
     $onion =~ s!^.*/!!o;
     $onion =~ s!\.onion$!!o;
-    die "ExtractOnion: was not given a valid onion: $onion\n" unless (&ValidOnion($onion));
+    die "ExtractOnion: was not given a valid onion: $onion\n" unless (&ValidOnionV3($onion));
     return $onion;
 }
 
@@ -55,7 +45,6 @@ sub OnionVersion {
     my $onion = shift;
     $onion = &ExtractOnion($onion);
     return 3 if (&ValidOnionV3($onion));
-    return 2 if (&ValidOnionV2($onion));
     die "OnionVersion: was not given a valid onion: $onion\n";
 }
 
@@ -450,15 +439,10 @@ sub DoProject {
             my $hs_dir = "$ENV{PROJECT_DIR}/$onion_dirname";
             &MakeDir($hs_dir);
 
-            # install keyfile
-            # TODO:
+            # install keyfiles
             my $onion = &ExtractOnion($onion_doto);
             my $secrets_dir = "secrets.d";
-            if (&ValidOnionV2($onion)) {
-                $key = "$secrets_dir/$onion.key";
-                &CopyFile($key, "$hs_dir/private_key");
-            }
-            elsif (&ValidOnionV3($onion)) {
+            if (&ValidOnionV3($onion)) {
                 $pub = "$secrets_dir/$onion.v3pub.key";
                 $sec = "$secrets_dir/$onion.v3sec.key";
                 &CopyFile($pub, "$hs_dir/hs_ed25519_public_key");
@@ -532,7 +516,7 @@ sub DoProject {
 &SetEnv("nginx_timeout", 15);
 &SetEnv("nginx_tmpfile_size", "256m");
 &SetEnv("nginx_workers", "auto");
-&SetEnv("onion_version", "2");
+&SetEnv("onion_version", "3");
 &SetEnv("preserve_before", "~".&Nonce(128)."~");
 &SetEnv("preserve_after", "~");
 &SetEnv("preserve_preamble_re", "[>@\\\\s]");
@@ -593,6 +577,7 @@ my @set_blank = qw(
     host_whitelist_re
     inject_origin
     inject_referer
+    kludge_disable_sri
     log_separate
     nginx_modules_dirs
     no_cache_content_type
@@ -618,6 +603,7 @@ my @set_blank = qw(
     referer_blacklist_re
     referer_whitelist
     referer_whitelist_re
+    ssl_proof_csv
     tor_intros_per_daemon
     user_agent_blacklist
     user_agent_blacklist_re

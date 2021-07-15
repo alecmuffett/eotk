@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -wx $0 "$@";
 #!perl
-# eotk (c) 2017-2020 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 if (-t STDIN) { # stderr is already redirected...
     if (open(DOTS, ">/dev/tty")) {
@@ -18,14 +18,13 @@ sub GenOnion {
 sub Lookup {
     my $var = shift;
 
-    foreach $deprecated (qw(NEW_HARD_ONION NEW_SOFT_ONION)) {
+    foreach $deprecated (qw(NEW_HARD_ONION NEW_SOFT_ONION NEW_ONION)) {
         die "Lookup: $deprecated is no longer supported syntax\n"
-            if $var =~ /$deprecated/;
+            if $var eq $deprecated;
     }
 
-    if ($var =~ /^NEW_(V3_)?ONION$/) {
-        my $version = $1 ? 3 : 2;
-        return &GenOnion($version);
+    if ($var eq "NEW_V3_ONION") {
+        return &GenOnion(3); # old syntax now deprecated
     }
 
     if (defined($ENV{$var})) {

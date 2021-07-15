@@ -1,4 +1,5 @@
 #!/bin/sh
+# eotk (c) 2017-2021 Alec Muffett
 
 here=`pwd` # absolute pathnames are required by tor
 log=$here/__gok$$.log
@@ -17,11 +18,10 @@ HiddenServiceDir $dir
 HiddenServicePort 1 127.0.0.1:1
 EOF
 
-if [ x$ONION_VERSION = x3 ] ; then
-    echo HiddenServiceVersion 3 >> $dir/config
-else
-    echo HiddenServiceVersion 2 >> $dir/config
-fi
+case "$ONION_VERSION" in
+    3) echo HiddenServiceVersion 3 >> $dir/config ;;
+    *) echo error: the only supported value for ONION_VERSION is 3 ; exit 1 ;;
+esac
 
 tor -f $dir/config >$log 2>&1
 
@@ -40,15 +40,10 @@ kill -TERM `cat $dir/tor.pid` # shut it down
 onion=`cat $dir/hostname`
 onion=`basename $onion .onion`
 
-if [ x$ONION_VERSION = x3 ] ; then
-    pfile=$onion.v3pub.key
-    sfile=$onion.v3sec.key
-    mv $dir/hs_ed25519_public_key $pfile || exit 1
-    mv $dir/hs_ed25519_secret_key $sfile || exit 1
-else
-    file=$onion.key
-    mv $dir/private_key $file || exit 1
-fi
+pfile=$onion.v3pub.key
+sfile=$onion.v3sec.key
+mv $dir/hs_ed25519_public_key $pfile || exit 1
+mv $dir/hs_ed25519_secret_key $sfile || exit 1
 rm -r $dir $log || exit 1
 
 echo $onion

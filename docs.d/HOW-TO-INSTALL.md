@@ -12,6 +12,14 @@ especially on slower machines.
 * `cd eotk`
 * `./opt.d/build-raspbian-stretch.sh`
 
+## Ubuntu 20.04LTS
+
+Install a `ubuntu-20.04.2-live-server-amd64.iso` server instance; and then:
+
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/build-ubuntu-20.04.sh`
+
 ## Ubuntu 18.04LTS
 
 Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
@@ -19,6 +27,15 @@ Install a `ubuntu-18.04.2-live-server-amd64.iso` server instance; and then:
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/build-ubuntu-18.04.sh`
+
+## CentOS 8.2.2004
+
+Install a minimal server and then:
+
+* `sudo yum -y install git`
+* `git clone https://github.com/alecmuffett/eotk.git`
+* `cd eotk`
+* `./opt.d/build-centos-8.2.2004.sh`
 
 ## macOS Mojave
 
@@ -30,8 +47,9 @@ Install [Homebrew](https://brew.sh); and then:
 
 ## FreeBSD 12.1
 
-Install a base server, install `pkg install git`, and then:
+Install a base server and then:
 
+* `pkg install git`
 * `git clone https://github.com/alecmuffett/eotk.git`
 * `cd eotk`
 * `./opt.d/build-freebsd-12.1.sh`
@@ -43,29 +61,26 @@ EOTK requires recent `tor` and also recent `openresty` with the
 simply need to be accessible in $PATH.  The above "build" scripts
 simply supply that.
 
-# Dealing With OnionBalance And Load-Balancing
+# Demonstration And Testing
 
-*NEW FOR 2019:*
+After installation, you can do:
 
-OnionBalance as-of June 2019 is an flaky piece of software which is
-hard to run on modern Linux because an stale python crypto library;
-more than 90% of Onion sites will not practically need it - or, not
-initially, anyway - so I am *deprecating OnionBalance in EOTK* until
-it is majorly overhauled and also supports v3 onion addressing.
+* `./eotk config demo.d/wikipedia.tconf`
+  * or: `./eotk config demo.d/wikipedia-v3.tconf`
+* `./eotk start wikipedia`
+* `./eotk maps -a` # and connect to one of the onions you've created
 
-So, I recommend people to avoid OnionBalance and use hardmap (local)
-for the moment, until Tor fix it.  Consider OB if and only if your
-system is under sustained high bandwidth and strongly demonstrates
-extended choking on throughput.
+Be aware that you will suffer from HTTPS certificate errors 
+until you buy a HTTPS certificate.
 
-# Dealing With HTTPS Certificates
+# Creating HTTPS Certificates for Testing & Development
 
 When connecting to the resulting onions over HTTP/SSL, you will be
 using wildcard self-signed SSL certificates - you *will* encounter
 many "broken links" which are due to the SSL certificate not being
 valid.
 
-This is *expected* and *proper* behaviour; there are currently two
+This is *expected* and *proper* behaviour; there are currently three
 ways to address this.
 
 ## Install `mkcert`
@@ -79,7 +94,7 @@ that you will need.
 You can then add `set ssl_mkcert 1` to configurations, and your
 `mkcert` root certificate will be used to sign the resulting onion
 certificates. You can [install that certificate into your local copy
-of Tor Browser](docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
+of Tor Browser](/docs.d/ADDING-A-ROOT-CERTIFICATE-TO-TOR-BROWSER.md);
 of course it will not work for anyone else.
 
 ## Visit `/hello-onion/` URLs
@@ -99,32 +114,79 @@ In production, of course, one would expect to use an SSL EV
 certificate to provide identity and assurance to an onion site,
 rendering these issues moot.
 
-# Proving Your Ownership To A Certificate Authority / Hardcoded Content
+## Buy a SSL Certificate from HARICA or Digicert
 
-## IMPORTANT: if all of your "proof" URLs have DIFFERENT pathnames?
+See below.
 
-Small amounts of plain-text page content may be embedded using
-regular-expressions for pathnames; this is done using
-`hardcoded_endpoint_csv` and the following example will emit
-`FOOPROOF` (or `BARPROOF`) for accesses to `/www/.well_known/foo` or
-`../.well_known/bar` respectively, ignoring trailing slashes.  Note
-the use of double-backslash to escape "dots" in the regular
-expression, and use of backslash-indent to continue/enable several
-such paths.
+# Buying a HTTPS Certificate from a Certificate Authority
+
+If you choose to buy an Onion HTTPS certificate from (e.g.) HARICA, 
+what will happen, and what will you need to do?
+
+## You will need to create a CSR (Certificate Signing Request)
+
+I chose to buy:
+
+* a Server Certificate 
+* with Domain-Level (DV) Trust
+* with a reasonable duration
+* using the in-browser generated CSR 
+* using the ECDSA algorithm at 256 bits
+* **important:** remember the password! 
+* **important:** download the private key!
+
+The HARICA website provides an in-browser method of generating a CSR,
+if you are not already familiar. Make sure to generate a good
+passphrase, and remember it, because you will need it soon.
+Also: make sure to download the `privateKey.pem` file that
+is offered, and keep it in a safe place.
+
+## You will need to prove ownership of the site, to the CA
+
+For example: HARICA will tell you that you need to post 
+a secret key at a particular URL on your onion site; 
+the message will read something like:
+
+> Place the file FILENAME to http://ONIONADDRESS.onion/.well-known/pki-validation/
+
+...and they will offer you a file to download.
+
+Download this file, and open it with a text editor;
+the content will be a long secret string,
+like THISISAREALLYLONGHEXADECIMALSECRET
+
+Add a line to your EOTK configuration, substituting the values where necessary:
 
 ```
-# demo: CSV list to implement ownership proof URIs for EV SSL issuance
-set hardcoded_endpoint_csv \
-    ^/www/\\.well_known/foo/?$,"FOOPROOF" \
-    ^/www/\\.well_known/bar/?$,"BARPROOF"
+set ssl_proof_csv /.well-known/pki-validation/FILENAME,THISISAREALLYLONGHEXADECIMALSECRET
 ```
 
-## IMPORTANT: if all your "proof" URLs have THE SAME pathname?
+Then do something like:
 
-The `hardcoded_endpoint_csv` hack works okay if all the proof URLs are
-different; but if Digicert (or whomever) give you the same pathname
-(e.g. `/.well-known/pki-validation/fileauth.txt`) for all of the
-onions, what do you do?
+```
+eotk config projectname.conf && eotk nxreload projectname
+```
+
+...to install the URL handlers.
+
+### Optional: what if you have multiple Onion addresses?
+
+You can put multiple `path,value` strings into `ssl_proof_csv`, space-separated; 
+use trailing backslashes to put entries onto separate lines:
+
+```
+set ssl_proof_csv \
+    /.well-known/pki-validation/key1,value1 \
+    /.well-known/pki-validation/key2,value2 \
+    /.well-known/pki-validation/key3,value3    
+```
+
+### Optional: what if your multiple "proof" URLs all have the SAME pathname?
+
+The `ssl_proof_csv` hack works if all the proof URLs are
+different; but if Digicert (or whomever) were to give you the 
+same pathname (e.g. `/.well-known/pki-validation/fileauth.txt`) 
+for _all_ of the onions, what do you do?
 
 Answer: you use "splicing".  If you have onion addresses named
 `xxxxxxxxxxxxxxxx` and `yyyyyyyyyyyyyyyy`, then you can create files:
@@ -136,22 +198,43 @@ Answer: you use "splicing".  If you have onion addresses named
 customise as necessary:
 
 ```
-    location ~ "^/\\.well-known/pki-validation/fileauth\\.txt$" {
-      return 200 "RESPECTIVE-XXX-OR-YYY-PROOF-STRING-GOES-HERE";
+    location = "/.well-known/pki-validation/fileauth.txt" {
+      return 200 "RESPECTIVE-PROOF-STRING-GOES-HERE";
     }
 ```
 
 ...then when you next `eotk config` and `eotk nxreload`, that code
 should be spliced into the correct configuration for each onion.
 
-# Demonstration And Testing
+## You will need to install the certificates for your project
 
-After installation, you can do:
+For each certificate, HARICA will offer you several files to download; 
+download the "PEM Bundle" file and copy it to your EOTK server. 
+Also: copy the `privateKey.pem` file (mentioned above) to the EOTK server.
 
-* `./eotk config demo.d/wikipedia.tconf`
-  * or: `./eotk config demo.d/wikipedia-v3.tconf`
-* `./eotk start wikipedia`
-* `./eotk maps -a` # and connect to one of the onions you've created
+Next, change Directory into `~/eotk/projects.d/PROJECTNAME.d/ssl.d`; 
+you should see your development certificates, which will look like:
+
+```
+$ ls
+ONIONADDRESS.onion.cert
+ONIONADDRESS.onion.pem
+```
+
+There are two steps to installation:
+
+Step 1: copy the PEM Bundle file from HARICA, on top of `ONIONADDRESS.onion.cert`
+
+Step 2: unlock and extract the private key, by doing:
+
+`openssl ec -in privateKey.pem -out ONIONADDRESS.onion.pem`
+
+...and typing in the password that you chose during the CSR setup, earlier; 
+if you chose to use RSA as the algorithm, you will need to use 
+`openssl rsa ...` instead.
+
+Then: change directory back to the EOTK directory, 
+and do `eotk nxreload projectname`, and test it.
 
 # Configuring Start-On-Boot, And Logfile Compression
 
@@ -182,9 +265,9 @@ Create a config file with a `.tconf` suffix - we'll pretend it's
 
 ```
 set project myproject
-hardmap %NEW_ONION% foo.com
-hardmap %NEW_ONION% foo.co.uk
-hardmap %NEW_ONION% foo.de
+hardmap %NEW_V3_ONION% foo.com
+hardmap %NEW_V3_ONION% foo.co.uk
+hardmap %NEW_V3_ONION% foo.de
 ```
 
 ...and then run
@@ -261,7 +344,7 @@ So if your browser tells you that you are fetching content from
 `cdn7.dublin.ireland.europe.foo.co.jp`, you should add a line like:
 
 ```
-hardmap %NEW_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
+hardmap %NEW_V3_ONION% foo.co.jp europe ireland.europe dublin.ireland.europe
 ```
 
 ...and EOTK should do the rest. All this is necessary purely for
@@ -300,9 +383,9 @@ avoid the actual "hostnames" as described above:
 
 ```
 set project fooproj
-hardmap %NEW_ONION% foo.com.au syd per
-hardmap %NEW_ONION% foo.net cdn
-hardmap %NEW_ONION% foo.aws.amazon.com
+hardmap %NEW_V3_ONION% foo.com.au syd per
+hardmap %NEW_V3_ONION% foo.net cdn
+hardmap %NEW_V3_ONION% foo.aws.amazon.com
 ```
 
 Onion mapping/translations will be applied for all sites in the same project.
@@ -385,6 +468,20 @@ persists, check the logfiles.
 Is the clock/time of day correct on all your machines?  Are you
 running NTP?  We are not sure but having an incorrect clock may be a
 contributory factor to this issue.
+
+##  OnionBalance And Load-Balancing
+
+*NEW FOR 2019:* 
+OnionBalance as-of June 2019 is an flaky piece of software which is
+hard to run on modern Linux because an stale python crypto library;
+more than 90% of Onion sites will not practically need it - or, not
+initially, anyway - so I am *deprecating OnionBalance in EOTK* until
+it is majorly overhauled and also supports v3 onion addressing.
+
+So, I recommend people to avoid OnionBalance and use hardmap (local)
+for the moment, until Tor fix it.  Consider OB if and only if your
+system is under sustained high bandwidth and strongly demonstrates
+extended choking on throughput.
 
 ## Video Demonstrations
 
