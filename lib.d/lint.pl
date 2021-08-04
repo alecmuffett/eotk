@@ -132,6 +132,7 @@ my %known =
      'SSL_MKCERT' => 1,
      'SSL_PROOF_CSV' => 1,
      'SSL_TOOL' => 1,
+     'SSL_TRUNCATED' => 1, # where ssl certs for the current project live
      'SUPPRESS_HEADER_CSP' => 1,
      'SUPPRESS_HEADER_HPKP' => 1,
      'SUPPRESS_HEADER_HSTS' => 1,

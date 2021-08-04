@@ -10,6 +10,8 @@ die "$0: needs EOTK_HOME environment variable to be set\n"
 
 $site_conf = 'eotk-site.conf';
 
+my $ONION_V3_TRUNCATE = 20;
+
 # state
 
 my %projects = ();
@@ -52,15 +54,15 @@ sub OnionVersion {
 # most Unixes, and NGINX surfaces this issue.
 # https://gitlab.com/gitlab-org/gitlab-development-kit/issues/55
 
-sub TruncDir {
+sub TruncateOnion {
     my $onion = shift;
     $onion = &ExtractOnion($onion);
     if (&ValidOnionV3($onion)) {
         my $suffix = "-v3";
-        $onion = substr($onion, 0, 30 - length($suffix));
+        $onion = substr($onion, 0, $ONION_V3_TRUNCATE);
         $onion = "$onion$suffix";
     }
-    return "$onion.d";
+    return $onion;
 }
 
 sub Nonce {
@@ -330,7 +332,9 @@ sub DoMap {
     $row{ONION_ADDRESS_RE8} = &PolySlash($onion_doto, 8);
     $row{ONION_ADDRESS_RE12} = &PolySlash($onion_doto, 12);
 
-    $row{ONION_DIRNAME} = &TruncDir($onion_doto);
+    my $otrunc = &TruncateOnion($onion_doto);
+    $row{ONION_TRUNCATED} = $otrunc;
+    $row{ONION_DIRNAME} = "$otrunc.d";
     $row{ONION_VERSION} = &OnionVersion($onion_doto);
 
     warn Dumper(\%row);
