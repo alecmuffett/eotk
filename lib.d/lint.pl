@@ -127,6 +127,7 @@ my %known =
      'REFERER_WHITELIST_RE' => 1,
      'SOFTMAP_NGINX_WORKERS' => 1,
      'SOFTMAP_TOR_WORKERS' => 1,
+     'SSL_CERTS_PER_ONION' => 1,
      'SSL_DIR' => 1, # where ssl certs for the current project live
      'SSL_MKCERT' => 1,
      'SSL_PROOF_CSV' => 1,
