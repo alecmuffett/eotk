@@ -346,6 +346,8 @@ sub DoMap {
     push(@{$projects{$project}{ROWS}}, \%row);
 }
 
+##################################################################
+
 sub DoUmbrellaCert {
     warn "DoUmbrellaCert @_\n";
     my $project = shift;
@@ -363,7 +365,7 @@ sub DoUmbrellaCert {
             $cert_common_name = $projects{$project}{FIRST_ONION};
         }
     }
-    die "empty cert_common_name in project $project\n" unless (defined($cert_common_name));
+    die "empty umbrella cert_common_name in project $project\n" unless (defined($cert_common_name));
     &SetEnv("cert_common_name", $cert_common_name); # in case we had to manufacture one
 
     # clean up the SAN list; purge the CommonName for deduplication
@@ -371,33 +373,58 @@ sub DoUmbrellaCert {
     my @sanlist = sort keys %{$projects{$project}{ALTNAMES}};
 
     # debugging
-    warn "commit $ENV{PROJECT} san $cert_common_name @sanlist\n";
+    warn "commit umbrella $ENV{PROJECT} san $cert_common_name @sanlist\n";
 
     $cert_prefix = $project;
-    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
     &SetEnv("cert_prefix", $cert_prefix);
+    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
     if (-f $cert) {
-        warn "$cert exists!";
+        warn "umbrella cert $cert already exists!\n"; # do not overwrite
     } # TODO: if the cert is already in the secrets.d directory, install it
     else {
-        warn "making cert for $cert_prefix\n";
+        warn "making umbrella cert as $cert for $cert_prefix\n";
         &GoAndRun(
             $ENV{SSL_DIR},
             $ENV{SSL_TOOL},
-            '-f', # this is a recent addition
-            $cert_prefix, # this is a recent addition
+            '-f',
+            $cert_prefix,
             $cert_common_name,
             @sanlist
             );
     }
 }
 
-sub DoRowCert {
-    warn "DoRowCert @_\n";
-    my $row = shift;
-}
+sub DoIndividualCerts {
+    warn "DoIndividualCerts @_\n";
+    my $project = shift;
 
-##################################################################
+    foreach my $row (@{$projects{$project}{ROWS}}) {
+        my $onion = ${$row}{ONION_ADDRESS} ||
+            die "DoIndividualCerts: $project: missing ONION_ADDRESS\n";
+        my $cert_prefix = ${$row}{ONION_TRUNCATED} ||
+            die "DoIndividualCerts: $project: missing ONION_TRUNCATED\n";
+        &SetEnv("cert_prefix", $cert_prefix);
+        my @subdomains = @{$projects{$project}{SUBDOMAINS}{$onion}};
+        my @args = (
+            $ENV{SSL_DIR},
+            $ENV{SSL_TOOL},
+            '-f',
+            $cert_prefix,
+            $onion
+        );
+        foreach my $subdomain (@subdomains) {
+            push(@args, "$subdomain.$onion");
+        }
+        my $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
+        if (-f $cert) {
+            warn "individual cert $cert already exists!\n"; # do not overwrite
+        } # TODO: if the cert is already in the secrets.d directory, install it
+        else {
+            warn "making individual cert as $cert for $cert_prefix\n";
+            &GoAndRun(@args);
+        }
+    }
+}
 
 sub DoProject {
     warn "DoProject @_\n";
@@ -418,9 +445,7 @@ sub DoProject {
 
     # certificate generation
     if ($ENV{SSL_CERT_EACH_ONION}) {
-        foreach my $row (1,2,3) {
-	    &DoRowCert($row);
-	}
+        &DoIndividualCerts($project);
     }
     else {
         &DoUmbrellaCert($project);
