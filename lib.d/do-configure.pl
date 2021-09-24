@@ -239,7 +239,7 @@ sub DoForeign {
 ##################################################################
 
 # $projects{$project}{ROWS} = [ {}, {}, ... ] # see $row
-# $projects{$project}{SUBDOMAINS} = {} # keys-only
+# $projects{$project}{ALTNAMES} = {} # keys-only
 # $projects{$project}{FIRST_ONION} = ""
 # $projects{$project}{TYPE} = ""
 # $projects{$project}{IS_SOFTMAP} = 0/1
@@ -306,11 +306,14 @@ sub DoMap {
         $projects{$project}{FIRST_ONION} = $onion_doto;
     }
 
-    # populate the subdomains
-    $projects{$project}{SUBDOMAINS}{$onion_doto} = 1;
+    # populate the fqdn altnames
+    $projects{$project}{ALTNAMES}{$onion_doto} = 1;
     foreach my $sd (@subdomains) {
-        $projects{$project}{SUBDOMAINS}{"$sd.$onion_doto"} = 1;
+        $projects{$project}{ALTNAMES}{"$sd.$onion_doto"} = 1;
     }
+
+    # log the subdomains
+    $projects{$project}{SUBDOMAINS}{$onion_doto} = \@subdomains;
 
     # create the row
     my %row = ();
@@ -343,6 +346,57 @@ sub DoMap {
     push(@{$projects{$project}{ROWS}}, \%row);
 }
 
+sub DoUmbrellaCert {
+    warn "DoUmbrellaCert @_\n";
+    my $project = shift;
+
+    my $cert_common_name;
+
+    if (defined($ENV{CERT_COMMON_NAME})) {
+        $cert_common_name = $ENV{CERT_COMMON_NAME};
+    }
+    else {
+        if ($ENV{IS_SOFTMAP}) {
+            $cert_common_name = "$project.local";
+        }
+        else {
+            $cert_common_name = $projects{$project}{FIRST_ONION};
+        }
+    }
+    die "empty cert_common_name in project $project\n" unless (defined($cert_common_name));
+    &SetEnv("cert_common_name", $cert_common_name); # in case we had to manufacture one
+
+    # clean up the SAN list; purge the CommonName for deduplication
+    delete($projects{$project}{ALTNAMES}{$cert_common_name});
+    my @sanlist = sort keys %{$projects{$project}{ALTNAMES}};
+
+    # debugging
+    warn "commit $ENV{PROJECT} san $cert_common_name @sanlist\n";
+
+    $cert_prefix = $project;
+    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
+    &SetEnv("cert_prefix", $cert_prefix);
+    if (-f $cert) {
+        warn "$cert exists!";
+    } # TODO: if the cert is already in the secrets.d directory, install it
+    else {
+        warn "making cert for $cert_prefix\n";
+        &GoAndRun(
+            $ENV{SSL_DIR},
+            $ENV{SSL_TOOL},
+            '-f', # this is a recent addition
+            $cert_prefix, # this is a recent addition
+            $cert_common_name,
+            @sanlist
+            );
+    }
+}
+
+sub DoRowCert {
+    warn "DoRowCert @_\n";
+    my $row = shift;
+}
+
 ##################################################################
 
 sub DoProject {
@@ -362,46 +416,14 @@ sub DoProject {
     &MakeDir($ENV{SSL_DIR});
     &MakeDir($ENV{LOG_DIR});
 
-    # set the CommonName for the project cert; this is the first onion encountered:
-    my $cert_common_name;
-
-    if (defined($ENV{CERT_COMMON_NAME})) {
-        $cert_common_name = $ENV{CERT_COMMON_NAME};
+    # certificate generation
+    if ($ENV{SSL_CERT_EACH_ONION}) {
+        foreach my $row (1,2,3) {
+	    &DoRowCert($row);
+	}
     }
     else {
-        if ($ENV{IS_SOFTMAP}) {
-            $cert_common_name = "$project.local";
-        }
-        else {
-            $cert_common_name = $projects{$project}{FIRST_ONION};
-        }
-    }
-    die "empty cert_common_name in project $project\n" unless (defined($cert_common_name));
-    &SetEnv("cert_common_name", $cert_common_name); # in case we had to manufacture one
-
-    # clean up the SAN list; purge the CommonName for deduplication
-    delete($projects{$project}{SUBDOMAINS}{$cert_common_name});
-    my @sanlist = sort keys %{$projects{$project}{SUBDOMAINS}};
-
-    # debugging
-    warn "commit $ENV{PROJECT} san $cert_common_name @sanlist\n";
-
-    # cert generation
-    # XXX
-    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
-    if (-f $cert) {
-        warn "$cert exists!";
-    } # TODO: if the cert is already in the secrets.d directory, use it
-    else {
-        warn "making cert for $cert_prefix\n";
-        &GoAndRun(
-            $ENV{SSL_DIR},
-            $ENV{SSL_TOOL},
-            # '-f', # this is a recent addition
-            # $cert_prefix, # this is a recent addition
-            $cert_common_name,
-            @sanlist
-            );
+        &DoUmbrellaCert($project);
     }
 
     # nginx config: feed the rows to the template
@@ -531,7 +553,7 @@ sub DoProject {
 &SetEnv("projects_home", "$here/projects.d");
 &SetEnv("softmap_nginx_workers", "auto"); # nginx_workers * softmap_tor_workers
 &SetEnv("softmap_tor_workers", 2); # MUST BE NUMERIC > 1
-&SetEnv("ssl_cert_each_onion", 1);
+&SetEnv("ssl_cert_each_onion", 0);
 &SetEnv("ssl_mkcert", 0);
 &SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("suppress_header_csp", 0); # 0 = try rewriting; 1 = elide completely
