@@ -52,7 +52,7 @@
 # EOTK uses a search-and-replace strategy for editing content on the
 # fly; one side-effect of this is that some instances of domain names
 # may be rewritten unwantedly (eg: email addresses like
-# foo@facebook.com become foo@facebookcorewwwi.onion)
+# foo@facebook.com become foo@facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd.onion)
 
 # `preserve_csv` uses a very simple heuristic to try and protect
 # plaintext domain names from being rewritten.
@@ -222,8 +222,7 @@
 
 # foreignmaps are onion-to-site mappings that exist outside of this
 # particular configuration file, eg: for some other site.
-
-foreignmap facebookcorewwwi.onion facebook.com
+foreignmap facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd facebook.com
 
 # hardmaps use tor daemon configs with onions hard-coded in them
 

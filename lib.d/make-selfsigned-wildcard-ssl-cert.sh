@@ -6,13 +6,6 @@ if [ "x$1" = "x" ] ; then
     exit 1
 fi
 
-
-
-
-
-
-
-
 PRIMARY="$1" # first argument = primary domain
 
 pemfile="$PRIMARY.pem"

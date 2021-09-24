@@ -59,8 +59,7 @@ set user_agent_whitelist_re \
 # set cookie_lock /open-sesame
 
 # index of other onion sites ("what happens in onion, should stay in onion")
-foreignmap facebookcorewwwi facebook.com
-foreignmap nytimes3xbfgragh nytimes.com
+foreignmap facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd facebook.com
 
 # the Wikimedia Foundation have lots of sites
 set project wikipedia
