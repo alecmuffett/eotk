@@ -363,30 +363,31 @@ sub DoProject {
     &MakeDir($ENV{LOG_DIR});
 
     # set the CommonName for the project cert; this is the first onion encountered:
-    my $cert_prefix;
+    my $cert_common_name;
 
     if (defined($ENV{CERT_COMMON_NAME})) {
-        $cert_prefix = $ENV{CERT_COMMON_NAME};
+        $cert_common_name = $ENV{CERT_COMMON_NAME};
     }
     else {
         if ($ENV{IS_SOFTMAP}) {
-            $cert_prefix = "$project.local";
+            $cert_common_name = "$project.local";
         }
         else {
-            $cert_prefix = $projects{$project}{FIRST_ONION};
+            $cert_common_name = $projects{$project}{FIRST_ONION};
         }
     }
-    die "empty cert_prefix in project $project\n" unless (defined($cert_prefix));
-    &SetEnv("cert_prefix", $cert_prefix);
+    die "empty cert_common_name in project $project\n" unless (defined($cert_common_name));
+    &SetEnv("cert_common_name", $cert_common_name); # in case we had to manufacture one
 
     # clean up the SAN list; purge the CommonName for deduplication
-    delete($projects{$project}{SUBDOMAINS}{$cert_prefix});
+    delete($projects{$project}{SUBDOMAINS}{$cert_common_name});
     my @sanlist = sort keys %{$projects{$project}{SUBDOMAINS}};
 
     # debugging
-    warn "commit $ENV{PROJECT} san $cert_prefix @sanlist\n";
+    warn "commit $ENV{PROJECT} san $cert_common_name @sanlist\n";
 
     # cert generation
+    # XXX
     $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
     if (-f $cert) {
         warn "$cert exists!";
@@ -396,7 +397,9 @@ sub DoProject {
         &GoAndRun(
             $ENV{SSL_DIR},
             $ENV{SSL_TOOL},
-            $cert_prefix,        # must be first argument
+            # '-f', # this is a recent addition
+            # $cert_prefix, # this is a recent addition
+            $cert_common_name,
             @sanlist
             );
     }
