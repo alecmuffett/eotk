@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -x $0 "$@";
 #!perl
-# eotk (c) 2017-2020 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 my %known =
     (

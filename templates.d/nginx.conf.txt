@@ -1,5 +1,6 @@
 # -*- awk -*-
 # EMACS awk mode works quite well for nginx configs
+# eotk (c) 2019-2021 Alec Muffett
 
 # TODO LIST:
 
@@ -561,6 +562,7 @@ http {
   # SSL_CERTS_PER_ONION is disabled, all SubjectAltNames MUST be defined this certificate file
   ssl_certificate %SSL_DIR%/%CERT_PREFIX%.cert;
   ssl_certificate_key %SSL_DIR%/%CERT_PREFIX%.pem;
+  ssl_buffer_size 4k;
   %%ENDIF
   #ssl_ciphers 'EECDH+CHACHA20:EECDH+AESGCM:EECDH+AES256'; ## LibreSSL, OpenSSL 1.1.0+
   ssl_ciphers 'EECDH+AESGCM:EECDH+AES256'; ## OpenSSL 1.0.1% to 1.0.2%
