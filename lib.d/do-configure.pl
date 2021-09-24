@@ -312,7 +312,7 @@ sub DoMap {
         $projects{$project}{ALTNAMES}{"$sd.$onion_doto"} = 1;
     }
 
-    # log the subdomains
+    # populate the per-onion subdomains
     $projects{$project}{SUBDOMAINS}{$onion_doto} = \@subdomains;
 
     # create the row
@@ -578,7 +578,7 @@ sub DoProject {
 &SetEnv("projects_home", "$here/projects.d");
 &SetEnv("softmap_nginx_workers", "auto"); # nginx_workers * softmap_tor_workers
 &SetEnv("softmap_tor_workers", 2); # MUST BE NUMERIC > 1
-&SetEnv("ssl_cert_each_onion", 0);
+&SetEnv("ssl_cert_each_onion", 1); # make default
 &SetEnv("ssl_mkcert", 0);
 &SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("suppress_header_csp", 0); # 0 = try rewriting; 1 = elide completely
