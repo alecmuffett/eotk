@@ -1,6 +1,6 @@
 # -*- awk -*-
 # EMACS awk mode works quite well for nginx configs
-# eotk (c) 2019-2021 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 # TODO LIST:
 

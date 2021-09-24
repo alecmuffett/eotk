@@ -1,5 +1,5 @@
 #!/bin/sh
-# eotk (c) 2021 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 if [ "x$1" = "x" ] ; then
     echo "usage: $0 [-f filename-prefix] foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
