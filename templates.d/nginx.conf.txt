@@ -556,10 +556,10 @@ http {
 
   # SSL config
   ssl_buffer_size 4k;
-  %%IF %SSL_CERTS_PER_ONION%
-  # SSL_CERTS_PER_ONION is enabled, see individual onions for ssl_certificate directives
+  %%IF %SSL_CERT_EACH_ONION%
+  # SSL_CERT_EACH_ONION is enabled, see individual onions for ssl_certificate directives
   %%ELSE
-  # SSL_CERTS_PER_ONION is disabled, all SubjectAltNames MUST be defined this certificate file
+  # SSL_CERT_EACH_ONION is disabled, all SubjectAltNames MUST be defined this certificate file
   ssl_certificate %SSL_DIR%/%CERT_PREFIX%.cert;
   ssl_certificate_key %SSL_DIR%/%CERT_PREFIX%.pem;
   ssl_buffer_size 4k;
@@ -659,12 +659,12 @@ http {
     listen unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock ssl;
     %%ENDIF
 
-    %%IF %SSL_CERTS_PER_ONION%
-    # SSL_CERTS_PER_ONION is enabled, use separate certs per onion
+    %%IF %SSL_CERT_EACH_ONION%
+    # SSL_CERT_EACH_ONION is enabled, use separate certs per onion
     ssl_certificate %SSL_DIR%/%ONION_TRUNCATED%.cert;
     ssl_certificate_key %SSL_DIR%/%ONION_TRUNCATED%.pem;
     %%ELSE
-    # SSL_CERTS_PER_ONION is disabled, see global certificate directive, above
+    # SSL_CERT_EACH_ONION is disabled, see global certificate directive, above
     %%ENDIF
 
     %%IF %LOG_SEPARATE%
