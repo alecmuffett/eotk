@@ -14,7 +14,8 @@ I've landed a small breaking change in order to better-support HARICA, but also 
   * for instance `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRESS.onion.pem`, for each ONIONADDRESS in PROJECTNAME
 * if you are using 'combo' certificates, where a single certificate contains all SubjectAltNames for all onion addresses in the project
   * do `set ssl_cert_each_onion 0` in the configuration, to re-enable combo cert handling
-  * combo-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
+  * now: combo-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
+  * previously: path would have been `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
 
 If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue above.
 
