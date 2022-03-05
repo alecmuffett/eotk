@@ -10,6 +10,8 @@ die "$0: needs EOTK_HOME environment variable to be set\n"
 
 $site_conf = 'eotk-site.conf';
 
+my $ONION_V3_TRUNCATE = 20;
+
 # state
 
 my %projects = ();
@@ -52,15 +54,15 @@ sub OnionVersion {
 # most Unixes, and NGINX surfaces this issue.
 # https://gitlab.com/gitlab-org/gitlab-development-kit/issues/55
 
-sub TruncDir {
+sub TruncateOnion {
     my $onion = shift;
     $onion = &ExtractOnion($onion);
     if (&ValidOnionV3($onion)) {
         my $suffix = "-v3";
-        $onion = substr($onion, 0, 30 - length($suffix));
+        $onion = substr($onion, 0, $ONION_V3_TRUNCATE);
         $onion = "$onion$suffix";
     }
-    return "$onion.d";
+    return $onion;
 }
 
 sub Nonce {
@@ -237,7 +239,7 @@ sub DoForeign {
 ##################################################################
 
 # $projects{$project}{ROWS} = [ {}, {}, ... ] # see $row
-# $projects{$project}{SUBDOMAINS} = {} # keys-only
+# $projects{$project}{ALTNAMES} = {} # keys-only
 # $projects{$project}{FIRST_ONION} = ""
 # $projects{$project}{TYPE} = ""
 # $projects{$project}{IS_SOFTMAP} = 0/1
@@ -304,11 +306,14 @@ sub DoMap {
         $projects{$project}{FIRST_ONION} = $onion_doto;
     }
 
-    # populate the subdomains
-    $projects{$project}{SUBDOMAINS}{$onion_doto} = 1;
+    # populate the fqdn altnames
+    $projects{$project}{ALTNAMES}{$onion_doto} = 1;
     foreach my $sd (@subdomains) {
-        $projects{$project}{SUBDOMAINS}{"$sd.$onion_doto"} = 1;
+        $projects{$project}{ALTNAMES}{"$sd.$onion_doto"} = 1;
     }
+
+    # populate the per-onion subdomains
+    $projects{$project}{SUBDOMAINS}{$onion_doto} = \@subdomains;
 
     # create the row
     my %row = ();
@@ -330,7 +335,9 @@ sub DoMap {
     $row{ONION_ADDRESS_RE8} = &PolySlash($onion_doto, 8);
     $row{ONION_ADDRESS_RE12} = &PolySlash($onion_doto, 12);
 
-    $row{ONION_DIRNAME} = &TruncDir($onion_doto);
+    my $otrunc = &TruncateOnion($onion_doto);
+    $row{ONION_TRUNCATED} = $otrunc;
+    $row{ONION_DIRNAME} = "$otrunc.d";
     $row{ONION_VERSION} = &OnionVersion($onion_doto);
 
     warn Dumper(\%row);
@@ -340,6 +347,84 @@ sub DoMap {
 }
 
 ##################################################################
+
+sub DoUmbrellaCert {
+    warn "DoUmbrellaCert @_\n";
+    my $project = shift;
+
+    my $cert_common_name;
+
+    if (defined($ENV{CERT_COMMON_NAME})) {
+        $cert_common_name = $ENV{CERT_COMMON_NAME};
+    }
+    else {
+        if ($ENV{IS_SOFTMAP}) {
+            $cert_common_name = "$project.local";
+        }
+        else {
+            $cert_common_name = $projects{$project}{FIRST_ONION};
+        }
+    }
+    die "empty umbrella cert_common_name in project $project\n" unless (defined($cert_common_name));
+    &SetEnv("cert_common_name", $cert_common_name); # in case we had to manufacture one
+
+    # clean up the SAN list; purge the CommonName for deduplication
+    delete($projects{$project}{ALTNAMES}{$cert_common_name});
+    my @sanlist = sort keys %{$projects{$project}{ALTNAMES}};
+
+    # debugging
+    warn "commit umbrella $ENV{PROJECT} san $cert_common_name @sanlist\n";
+
+    $cert_prefix = $project;
+    &SetEnv("cert_prefix", $cert_prefix);
+    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
+    if (-f $cert) {
+        warn "umbrella cert $cert already exists!\n"; # do not overwrite
+    } # TODO: if the cert is already in the secrets.d directory, install it
+    else {
+        warn "making umbrella cert as $cert for $cert_prefix\n";
+        &GoAndRun(
+            $ENV{SSL_DIR},
+            $ENV{SSL_TOOL},
+            '-f',
+            $cert_prefix,
+            $cert_common_name,
+            @sanlist
+            );
+    }
+}
+
+sub DoIndividualCerts {
+    warn "DoIndividualCerts @_\n";
+    my $project = shift;
+
+    foreach my $row (@{$projects{$project}{ROWS}}) {
+        my $onion = ${$row}{ONION_ADDRESS} ||
+            die "DoIndividualCerts: $project: missing ONION_ADDRESS\n";
+        my $cert_prefix = ${$row}{ONION_TRUNCATED} ||
+            die "DoIndividualCerts: $project: missing ONION_TRUNCATED\n";
+        &SetEnv("cert_prefix", $cert_prefix);
+        my @subdomains = @{$projects{$project}{SUBDOMAINS}{$onion}};
+        my @args = (
+            $ENV{SSL_DIR},
+            $ENV{SSL_TOOL},
+            '-f',
+            $cert_prefix,
+            $onion
+        );
+        foreach my $subdomain (@subdomains) {
+            push(@args, "$subdomain.$onion");
+        }
+        my $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
+        if (-f $cert) {
+            warn "individual cert $cert already exists!\n"; # do not overwrite
+        } # TODO: if the cert is already in the secrets.d directory, install it
+        else {
+            warn "making individual cert as $cert for $cert_prefix\n";
+            &GoAndRun(@args);
+        }
+    }
+}
 
 sub DoProject {
     warn "DoProject @_\n";
@@ -358,43 +443,12 @@ sub DoProject {
     &MakeDir($ENV{SSL_DIR});
     &MakeDir($ENV{LOG_DIR});
 
-    # set the CommonName for the project cert; this is the first onion encountered:
-    my $cert_prefix;
-
-    if (defined($ENV{CERT_COMMON_NAME})) {
-        $cert_prefix = $ENV{CERT_COMMON_NAME};
+    # certificate generation
+    if ($ENV{SSL_CERT_EACH_ONION}) {
+        &DoIndividualCerts($project);
     }
     else {
-        if ($ENV{IS_SOFTMAP}) {
-            $cert_prefix = "$project.local";
-        }
-        else {
-            $cert_prefix = $projects{$project}{FIRST_ONION};
-        }
-    }
-    die "empty cert_prefix in project $project\n" unless (defined($cert_prefix));
-    &SetEnv("cert_prefix", $cert_prefix);
-
-    # clean up the SAN list; purge the CommonName for deduplication
-    delete($projects{$project}{SUBDOMAINS}{$cert_prefix});
-    my @sanlist = sort keys %{$projects{$project}{SUBDOMAINS}};
-
-    # debugging
-    warn "commit $ENV{PROJECT} san $cert_prefix @sanlist\n";
-
-    # cert generation
-    $cert = "$ENV{SSL_DIR}/$cert_prefix.cert";
-    if (-f $cert) {
-        warn "$cert exists!";
-    } # TODO: if the cert is already in the secrets.d directory, use it
-    else {
-        warn "making cert for $cert_prefix\n";
-        &GoAndRun(
-            $ENV{SSL_DIR},
-            $ENV{SSL_TOOL},
-            $cert_prefix,        # must be first argument
-            @sanlist
-            );
+        &DoUmbrellaCert($project);
     }
 
     # nginx config: feed the rows to the template
@@ -524,8 +578,9 @@ sub DoProject {
 &SetEnv("projects_home", "$here/projects.d");
 &SetEnv("softmap_nginx_workers", "auto"); # nginx_workers * softmap_tor_workers
 &SetEnv("softmap_tor_workers", 2); # MUST BE NUMERIC > 1
-&SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
+&SetEnv("ssl_cert_each_onion", 1); # make default
 &SetEnv("ssl_mkcert", 0);
+&SetEnv("ssl_tool", "$here/lib.d/make-selfsigned-wildcard-ssl-cert.sh");
 &SetEnv("suppress_header_csp", 0); # 0 = try rewriting; 1 = elide completely
 &SetEnv("suppress_header_hpkp", 1); # 1 = elide completely
 &SetEnv("suppress_header_hsts", 1); # 1 = elide completely

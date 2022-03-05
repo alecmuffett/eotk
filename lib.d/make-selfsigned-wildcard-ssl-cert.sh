@@ -1,18 +1,24 @@
 #!/bin/sh
-# eotk (c) 2019 Alec Muffett
+# eotk (c) 2017-2021 Alec Muffett
 
 if [ "x$1" = "x" ] ; then
-    echo "usage: $0 foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
+    echo "usage: $0 [-f filename-prefix] foo.com [sub.foo.com ...] (wildcards are added by this script)" 1>&2
     exit 1
 fi
 
-# 2019: reorganised argument parsing to accomodate `mkcert`
+if [ "x$1" = "x-f" ] ; then
+   shift
+   FILEPREFIX="$1"
+   shift
+else
+    FILEPREFIX="$1"
+fi
 
-PRIMARY="$1" # first argument = primary domain
+PRIMARY="$1"
 
-pemfile="$PRIMARY.pem"
-csrfile="$PRIMARY.csr"
-certfile="$PRIMARY.cert"
+pemfile="$FILEPREFIX.pem"
+csrfile="$FILEPREFIX.csr"
+certfile="$FILEPREFIX.cert"
 
 this=`basename $0`
 

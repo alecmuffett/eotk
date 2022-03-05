@@ -370,7 +370,7 @@ Configure() {
         fi
     done 2>$log
 
-    Print done. logfile is $log.
+    Print done. logfile is $log
 }
 
 # argument 'parser' - ha!
