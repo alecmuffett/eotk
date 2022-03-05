@@ -24,7 +24,7 @@ EV certificate from Digicert.
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.pem`
   * :warning: this means that you will need to rename pre-existing certificate 
     `cert` and `pem` files after you update and reconfigure; 
-    **if you fail to do this you will see "self-signed certificate" warnings**
+  * :warning: **if you fail to do this you will experience "self-signed certificate" warnings**
 * if you are using 'multi' certificates (such as some Digicert EV) where a
   single certificate contains all SubjectAltNames for 2+ onion
   addresses that are part of a single project:
