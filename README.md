@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ![banner image](docs.d/hello-onion-text.png)
 
-## Important HTTPS-related Annoucement: March 2022
+## :warning: Important HTTPS-related Annoucement: March 2022 
 
 I've landed a small breaking change in order to better-support HARICA as a certificate provider,
 but also for better usability; this change impacts any project with a multi-onion
@@ -21,7 +21,10 @@ EV certificate from Digicert.
     PROJECTNAME:
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.cert`
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.pem`
-* if you are using 'multi' certificates (such as Digicert EV) where a
+  * this means that you may need to rename pre-existing certificate 
+    `cert` and `pem` files after you update and reconfigure; 
+    **if you fail to do this you will see "self-signed certificate" warnings**
+* if you are using 'multi' certificates (such as some Digicert EV) where a
   single certificate contains all SubjectAltNames for 2+ onion
   addresses that are part of a single project:
   * do `set ssl_cert_each_onion 0` in the configuration, to re-enable
