@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -wx $0 "$@";
 #!perl
-# eotk (c) 2017-2021 Alec Muffett
+# eotk (c) 2017-2022 Alec Muffett
 
 use Data::Dumper;
 
@@ -586,6 +586,7 @@ sub DoProject {
 &SetEnv("suppress_header_hsts", 1); # 1 = elide completely
 &SetEnv("suppress_methods_except_get", 0); # 1 = GET/HEAD Only
 &SetEnv("suppress_tor2web", 1); # 1 = block access by tor2web sites
+
 &SetEnv("template_tool", "$here/lib.d/expand-template.pl");
 &SetEnv("tor_single_onion", 1);
 &SetEnv("tor_syslog", "notice"); # https://www.torproject.org/docs/tor-manual.html.en
@@ -630,6 +631,7 @@ my @set_blank = qw(
     host_blacklist_re
     host_whitelist
     host_whitelist_re
+    inject_headers_upstream
     inject_origin
     inject_referer
     kludge_disable_sri

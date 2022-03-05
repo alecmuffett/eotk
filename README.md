@@ -3,21 +3,33 @@
 
 ## Important HTTPS-related Annoucement: March 2022
 
-I've landed a small breaking change in order to better-support HARICA as a certificate provider, 
+I've landed a small breaking change in order to better-support HARICA as a certificate provider,
 but also for better usability; this change impacts any project with a multi-onion
 EV certificate from Digicert.
 
-* v3 onion addresses used in pathnames are now truncated at 20 chars of onion, rather than 30 overall, to make shorter pathnames for unix domain sockets
+* v3 onion addresses used in pathnames are now truncated at 20 chars
+  of onion, rather than 30 overall, to make shorter pathnames for unix
+  domain sockets
+* onion scratch-directory name changes:
   * was: `projects.d/tweep.d/abcdefghijklmnopqrstuvwxyza-v3.d/port-80.sock`
-  * now: `projects.d/tweep.d/abcdefghijklmnopqrst-v3.d/port-80.sock` 
+  * now: `projects.d/tweep.d/abcdefghijklmnopqrst-v3.d/port-80.sock`
   * this may mean some scratch directories are remade
-* default behaviour changed:
-  * onion HTTPS certificates are now installed in per-onion pathnames
-  * for instance `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRESS.onion.pem`, for each ONIONADDRESS in PROJECTNAME
-* if you are using 'multi' certificates, where a single certificate contains all SubjectAltNames for all onion addresses in the project
-  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable multi cert handling
-  * now: multi-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
-  * previously: path would have been `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
+* https certificate path-name changes
+  * was: HTTPS certificate files used the full onion address
+  * now: onion HTTPS certificates are now expected to be installed in
+    per-onion-truncated-at-20 pathnames: e.g. for each ONIONADDRESS in
+    PROJECTNAME:
+    * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.cert`
+    * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.pem`
+* if you are using 'multi' certificates (such as Digicert EV) where a
+  single certificate contains all SubjectAltNames for 2+ onion
+  addresses that are part of a single project:
+  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable
+    multi cert handling
+  * was: path would have been
+    `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
+  * now: multi-certificate now goes into the more generic/meaningful
+    `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
 
 If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue above.
 
