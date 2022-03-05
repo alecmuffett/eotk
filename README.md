@@ -5,7 +5,10 @@
 
 I've landed a small breaking change in order to better-support HARICA, but also for better usability:
 
-* v3 onion addresses used in pathnames are now truncated at 20 chars, rather than 30, to consume less buffer space
+* v3 onion addresses used in pathnames are now truncated at 20 chars of onion, rather than 30 overall, to make shorter pathnames for unix domain sockets
+  * was: `projects.d/tweep.d/abcdefghijklmnopqrstuvwxyza-v3.d/port-80.sock`
+  * now: `projects.d/tweep.d/abcdefghijklmnopqrst-v3.d/port-80.sock` 
+  * this may mean some scratch directories are remade
 * default behaviour changed:
   * onion HTTPS certificates are now installed in per-onion pathnames
   * for instance `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRESS.onion.pem`, for each ONIONADDRESS in PROJECTNAME
@@ -13,7 +16,7 @@ I've landed a small breaking change in order to better-support HARICA, but also 
   * do `set ssl_cert_each_onion 0` in the configuration, to re-enable combo cert handling
   * combo-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
 
-If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue.
+If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue above.
 
 ## Primary Supported Platforms
 
