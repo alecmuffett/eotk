@@ -1,9 +1,11 @@
 # The Enterprise Onion Toolkit
 ![banner image](docs.d/hello-onion-text.png)
 
-## Important Annoucement: March 2022
+## Important HTTPS-related Annoucement: March 2022
 
-I've landed a small breaking change in order to better-support HARICA, but also for better usability:
+I've landed a small breaking change in order to better-support HARICA as a certificate provider, 
+but also for better usability; this change impacts any project with a multi-onion
+EV certificate from Digicert.
 
 * v3 onion addresses used in pathnames are now truncated at 20 chars of onion, rather than 30 overall, to make shorter pathnames for unix domain sockets
   * was: `projects.d/tweep.d/abcdefghijklmnopqrstuvwxyza-v3.d/port-80.sock`
@@ -12,9 +14,9 @@ I've landed a small breaking change in order to better-support HARICA, but also 
 * default behaviour changed:
   * onion HTTPS certificates are now installed in per-onion pathnames
   * for instance `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRESS.onion.pem`, for each ONIONADDRESS in PROJECTNAME
-* if you are using 'combo' certificates, where a single certificate contains all SubjectAltNames for all onion addresses in the project
-  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable combo cert handling
-  * now: combo-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
+* if you are using 'multi' certificates, where a single certificate contains all SubjectAltNames for all onion addresses in the project
+  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable multi cert handling
+  * now: multi-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
   * previously: path would have been `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
 
 If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue above.
