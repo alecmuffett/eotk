@@ -34,10 +34,12 @@
 #
 # set x_from_onion_value 1
 
-# Other headers to pass upstream to Origin; be careful not to tread on
-# any which are controlled elsewhere / by other means, such as "Host"
-# or "Accept-Encoding", as those MUST win. See "nginx.conf.txt" for
-# relevant code.
+# Other headers to pass upstream to Origin in order to enable
+# whitelisting, etc; be careful not to tread on any which are
+# controlled elsewhere / by other means, such as "Host" or
+# "Accept-Encoding", as those MUST win.  It is preferred for the
+# Origin to detect and whitelist "X-From-Onion", but this provides an
+# alternative.  See "nginx.conf.txt" for relevant code.
 #
 # set inject_headers_upstream header-name,header-value [...]
 
