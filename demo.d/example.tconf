@@ -34,6 +34,13 @@
 #
 # set x_from_onion_value 1
 
+# Other headers to pass upstream to Origin; be careful not to tread on
+# any which are controlled elsewhere / by other means, such as "Host"
+# or "Accept-Encoding", as those MUST win. See "nginx.conf.txt" for
+# relevant code.
+#
+# set inject_headers_upstream header-name,header-value [...]
+
 # When you're proving SSL ownership, you may want arbitrary text
 # strings to be returned for a GET upon an arbitrary "/path"
 #
