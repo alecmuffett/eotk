@@ -1,7 +1,7 @@
 #!/bin/sh
 exec perl -x $0 "$@";
 #!perl
-# eotk (c) 2017-2021 Alec Muffett
+# eotk (c) 2017-2022 Alec Muffett
 
 my %known =
     (
@@ -52,6 +52,7 @@ my %known =
      'HOST_BLACKLIST_RE' => 1,
      'HOST_WHITELIST' => 1,
      'HOST_WHITELIST_RE' => 1,
+     'INJECT_HEADERS_UPSTREAM' => 1,
      'INJECT_ORIGIN' => 1,
      'INJECT_REFERER' => 1,
      'IS_SOFTMAP' => 1,
@@ -97,6 +98,7 @@ my %known =
      'ONION_ADDRESS_RE6' => 1,
      'ONION_ADDRESS_RE8' => 1,
      'ONION_DIRNAME' => 1,
+     'ONION_TRUNCATED' => 1,
      'ONION_VERSION' => 1,
      'ORIGIN_BLACKLIST' => 1,
      'ORIGIN_BLACKLIST_RE' => 1,

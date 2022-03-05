@@ -1,6 +1,6 @@
 # -*- awk -*-
 # EMACS awk mode works quite well for nginx configs
-# eotk (c) 2017-2021 Alec Muffett
+# eotk (c) 2017-2022 Alec Muffett
 
 # TODO LIST:
 
@@ -787,6 +787,15 @@ http {
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
 
       # request_rewrites and injections:
+      %%IF %INJECT_HEADERS_UPSTREAM%
+      # inject_headers_upstream
+      %%CSV %INJECT_HEADERS_UPSTREAM%
+      proxy_set_header %1% "%2%";
+      %%ENDCSV
+      %%ELSE
+      # no inject_headers_upstream
+      %%ENDIF
+
       proxy_set_header X-From-Onion %X_FROM_ONION_VALUE%;
       proxy_set_header Host "${servernamesubdomain}%DNS_DOMAIN%";
       proxy_set_header Accept-Encoding "identity";
