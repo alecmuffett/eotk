@@ -1,6 +1,20 @@
 # The Enterprise Onion Toolkit
 ![banner image](docs.d/hello-onion-text.png)
 
+## Important Annoucement: March 2022
+
+I've landed a small breaking change in order to better-support HARICA, but also for better usability:
+
+* v3 onion addresses used in pathnames are now truncated at 20 chars, rather than 30, to consume less buffer space
+* default behaviour changed:
+  * onion HTTPS certificates are now installed in per-onion pathnames
+  * for instance `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRESS.onion.pem`, for each ONIONADDRESS in PROJECTNAME
+* if you are using 'combo' certificates, where a single certificate contains all SubjectAltNames for all onion addresses in the project
+  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable combo cert handling
+  * combo-certificate goes into `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
+
+If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue.
+
 ## Primary Supported Platforms
 
 * Ubuntu 20.04LTS, Latest Updates
