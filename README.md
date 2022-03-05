@@ -30,10 +30,11 @@ EV certificate from Digicert.
   addresses that are part of a single project:
   * :warning: do `set ssl_cert_each_onion 0` in the configuration, to re-enable
     multi cert handling
-  * was: path would have been
-    `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
-  * now: multi-certificate now goes into the more generic/meaningful
-    `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.pem`
+  * :warning: the names of the certificate files must be changed:
+    * was: filenames used to be
+      `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.{pem,cert}`
+    * now: multi-certificates now must be named with the more meaningful
+      `projects.d/PROJECTNAME.d/ssl.d/PROJECTNAME.{pem,cert}`
 
 If you have any issues, please reach out to @alecmuffett on Twitter, or log an issue above.
 
