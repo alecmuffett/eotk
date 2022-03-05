@@ -1,7 +1,7 @@
 # The Enterprise Onion Toolkit
 ![banner image](docs.d/hello-onion-text.png)
 
-## :warning: Important HTTPS-related Annoucement: March 2022 
+## :warning: Important HTTPS-related Annoucement: March 2022 :warning:
 
 I've landed a small breaking change in order to better-support HARICA as a certificate provider,
 but also for better usability; this change impacts any project with a multi-onion
@@ -13,7 +13,8 @@ EV certificate from Digicert.
 * onion scratch-directory name changes:
   * was: `projects.d/tweep.d/abcdefghijklmnopqrstuvwxyza-v3.d/port-80.sock`
   * now: `projects.d/tweep.d/abcdefghijklmnopqrst-v3.d/port-80.sock`
-  * this may mean some scratch directories are remade
+  * :warning: this means that some scratch directories may be are remade, 
+    so a full restart is advisable after updating
 * https certificate path-name changes
   * was: HTTPS certificate files used the full onion address
   * now: onion HTTPS certificates are now expected to be installed in
@@ -21,13 +22,13 @@ EV certificate from Digicert.
     PROJECTNAME:
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.cert`
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.pem`
-  * this means that you may need to rename pre-existing certificate 
+  * :warning: this means that you will need to rename pre-existing certificate 
     `cert` and `pem` files after you update and reconfigure; 
     **if you fail to do this you will see "self-signed certificate" warnings**
 * if you are using 'multi' certificates (such as some Digicert EV) where a
   single certificate contains all SubjectAltNames for 2+ onion
   addresses that are part of a single project:
-  * do `set ssl_cert_each_onion 0` in the configuration, to re-enable
+  * :warning: do `set ssl_cert_each_onion 0` in the configuration, to re-enable
     multi cert handling
   * was: path would have been
     `projects.d/PROJECTNAME.d/ssl.d/PRIMARYONIONADDRESSWASHERE.pem`
