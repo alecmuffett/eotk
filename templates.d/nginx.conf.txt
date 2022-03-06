@@ -788,7 +788,7 @@ http {
       # https://blog.g3rt.nl/nginx-add_header-pitfall.html
 
       %%IF %INJECT_HEADERS_UPSTREAM%
-      # inject_headers_upstream;
+      # inject_headers_upstream
       # this is above the ones below in order to disambiguate which ones "win"
       %%CSV %INJECT_HEADERS_UPSTREAM%
       proxy_set_header %1% "%2%";
