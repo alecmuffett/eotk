@@ -19,8 +19,8 @@ HiddenServicePort 1 127.0.0.1:1
 EOF
 
 case "$ONION_VERSION" in
-    3) echo HiddenServiceVersion 3 >> $dir/config ;;
-    *) echo error: the only supported value for ONION_VERSION is 3 ; exit 1 ;;
+    ""|3) echo HiddenServiceVersion 3 >> $dir/config ;;
+    *) echo "error: the only supported value for ONION_VERSION is 3, or empty (default, also 3)" ; exit 1 ;;
 esac
 
 tor -f $dir/config >$log 2>&1
