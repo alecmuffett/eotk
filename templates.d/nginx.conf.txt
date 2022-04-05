@@ -834,6 +834,13 @@ http {
       # non-GET methods (e.g.: POST) are not suppressed
       %%ENDIF
     }
+
+    server {
+        listen 8080;
+        location ~ "^/healthcheck$" {
+           return 200 "OK";
+        }
+    }
   }
 
   %%END
