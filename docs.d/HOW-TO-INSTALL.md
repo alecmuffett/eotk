@@ -289,7 +289,7 @@ would trash your existing onions.
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
-  * Alternately get a tool like `mkp224o`, `oniongen-go`, or `oniongen-go` and use that to "mine" a desirable onion address.
+  * Alternately get a tool like `mkp224o`, `oniongen-go`, or `oniongen-rs` and use that to "mine" a desirable onion address.
     * https://github.com/cathugger/mkp224o - in C, for CPUs
       * Requires a UNIX-like platform, like Linux, *BSD, or Cygwin
     * https://github.com/rdkr/oniongen-go - in Go, for CPUs
