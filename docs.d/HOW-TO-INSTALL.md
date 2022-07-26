@@ -289,23 +289,25 @@ would trash your existing onions.
 
 * Do `eotk genkey` - it will print the name of the onion it generates
   * Do this as many times as you wish/need.
-  * Alternately get a tool like `scallion`, `shallot`, or `eschalot` and use that to "mine" a desirable onion address.
-    * https://github.com/katmagic/Shallot - in C, for CPUs
-      * Seems okay on Linux, not sure about other platforms
-    * https://github.com/lachesis/scallion - in C#, for CPUs & GPUs (GPU == very fast)
-      * Advertised as working on Windows, Linux; works well on OSX under "Mono"
-    * https://github.com/ReclaimYourPrivacy/eschalot - in C, for CPUs
-      * Works well under Linux, and BSD systems. Uses multiple threads. Can use a wordlist to generate onion addresses
-    * Be sure to store your mined private keys in `secrets.d` with a
-      filename like `a2s3c4d5e6f7g8h9.key` where `a2s3c4d5e6f7g8h9` is
-      the corresponding onion address.
+  * Alternately get a tool like `mkp224o`, `oniongen-go`, or `oniongen-go` and use that to "mine" a desirable onion address.
+    * https://github.com/cathugger/mkp224o - in C, for CPUs
+      * Requires a UNIX-like platform, like Linux, *BSD, or Cygwin
+    * https://github.com/rdkr/oniongen-go - in Go, for CPUs
+      * Works on Linux and Windows, uses regex
+    * https://gitlab.com/iamawacko/oniongen-rs - in Rust, for CPUs
+      * Works similarly to oniongen-go, but is written in Rust
+    * Be sure to store your mined keys in `secrets.d`,
+      naming the keys like
+      * `someverylongonionaddressinvolvingalotofbase23characterss.v3pub.key` and
+      * `someverylongonionaddressinvolvingalotofbase32characterss.v3sec.key`
+      where.
 * Create a config file with a `.conf` suffix - we'll pretend it's
   `foo.conf` - and use this kind of syntax, substituting
   `a2s3c4d5e6f7g8h9` for the onion address that you generated.
 
 ```
 set project myproject
-hardmap secrets.d/a2s3c4d5e6f7g8h9.key foo.com
+hardmap secrets.d/a2s3c4d5e6f7g8h9.v3sec.key foo.com
 ```
 
 ...and then (IMPORTANT) run:
