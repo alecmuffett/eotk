@@ -298,9 +298,8 @@ would trash your existing onions.
       * Works similarly to oniongen-go, but is written in Rust
     * Be sure to store your mined keys in `secrets.d`,
       naming the keys like
-      * `someverylongonionaddressinvolvingalotofbase23characterss.v3pub.key` and
-      * `someverylongonionaddressinvolvingalotofbase32characterss.v3sec.key`
-      where.
+      `someverylongonionaddressinvolvingalotofbase23characterss.v3pub.key` and
+      `someverylongonionaddressinvolvingalotofbase32characterss.v3sec.key`
 * Create a config file with a `.conf` suffix - we'll pretend it's
   `foo.conf` - and use this kind of syntax, substituting
   `a2s3c4d5e6f7g8h9` for the onion address that you generated.
