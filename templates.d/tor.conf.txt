@@ -12,21 +12,26 @@ Log %TOR_SYSLOG% file %TOR_DIR%/tor.log
 DataDirectory %PROJECT_DIR%
 ControlPort unix:%PROJECT_DIR%/tor-control.sock
 PidFile %PROJECT_DIR%/tor.pid
+# TODO: logging doesn't work for stdout w/ tor as a daemon
 Log %TOR_SYSLOG% file %LOG_DIR%/tor.log
 %%ENDIF
 SafeLogging 1
 HeartbeatPeriod 60 minutes
 LongLivedPorts 80,443
 RunAsDaemon 1
+NumCPUs 32
+MetricsPort 127.0.0.1:9035
+MetricsPortPolicy accept 127.0.0.1
+RendPostPeriod 20 minutes
 
 %%IF %TOR_SINGLE_ONION%
 # use single onions, many settings to tweak:
-SocksPort 0
+SocksPort 0 # required for NonAnonymousMode
 HiddenServiceSingleHopMode 1
 HiddenServiceNonAnonymousMode 1
 %%ELSE
 # use normal onions
-SocksPort 0 # frankly we don't want SOCKS anyway
+SocksPort 0 # required for NonAnonymousMode
 %%ENDIF
 
 %%IF %IS_SOFTMAP%
@@ -34,6 +39,7 @@ SocksPort 0 # frankly we don't want SOCKS anyway
 HiddenServiceDir %TOR_DIR%
 HiddenServicePort 80 unix:%TOR_DIR%/port-80.sock
 HiddenServicePort 443 unix:%TOR_DIR%/port-443.sock
+HiddenServiceExportCircuitID haproxy
 %%IF %TOR_INTROS_PER_DAEMON%
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
 %%ENDIF
@@ -45,6 +51,7 @@ HiddenServiceVersion %ONION_VERSION%
 HiddenServiceDir %PROJECT_DIR%/%ONION_DIRNAME%
 HiddenServicePort 80 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-80.sock
 HiddenServicePort 443 unix:%PROJECT_DIR%/%ONION_DIRNAME%/port-443.sock
+HiddenServiceExportCircuitID haproxy
 %%IF %TOR_INTROS_PER_DAEMON%
 HiddenServiceNumIntroductionPoints %TOR_INTROS_PER_DAEMON%
 %%ENDIF
