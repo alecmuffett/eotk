@@ -1,0 +1,21 @@
+## This should be specified in the overlay for the right values
+#
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: onion-exporter-configmap
+#   namespace: eotk-on-k8s
+# data:
+#   config.yml: |
+#     listen_addr: "0.0.0.0:8080"
+#     tor_addr: "localhost:9050"
+#     timeout: "30s"
+#     check_interval: "30s"
+#     log_level: "debug"
+#     log_format: "json"
+#     insecure_skip_ssl_verify: true
+#     targets:
+#       - name: somename
+#         type: "http"
+#         url: "https://something.onion"

@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tor-relay
+  namespace: eotk-on-k8s
+  labels:
+    app: onion-exporter
+spec:
+  ports:
+    - name: tor
+      port: 9050
+      protocol: TCP
+      targetPort: 9050
+  selector:
+    app: onion-exporter
+  type: ClusterIP

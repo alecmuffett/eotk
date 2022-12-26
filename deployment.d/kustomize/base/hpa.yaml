@@ -1,0 +1,29 @@
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: eotk-on-k8s
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+spec:
+  behavior:
+    scaleDown:
+      policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 5
+      stabilizationWindowSeconds: 300
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 70
+          type: Utilization
+      type: Resource
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: eotk-on-k8s

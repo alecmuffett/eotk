@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onion-exporter
+  namespace: eotk-on-k8s
+  labels:
+    app: onion-exporter
+spec:
+  selector:
+    matchLabels:
+      app: onion-exporter
+  template:
+    metadata:
+      labels:
+        app: onion-exporter
+    spec:
+      containers:
+      - name: onion-exporter
+        image: systemli/prometheus-onion-service-exporter:1.2.6@sha256:1d4ddda7900a409dc87f0bbbf4eb3b5c1d69f9ead91a0217bbdc569783867fc4
+        imagePullPolicy: Always
+        args: ["-c", "/config/config.yml"]
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+          name: metrics
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 200m
+          limits:
+            memory: 100Mi
+        volumeMounts:
+          - name: onion-exporter-configmap
+            mountPath: /config
+      - name: tor-relay
+        image: osminogin/tor-simple:0.4.7.12
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9050
+          protocol: TCP
+          name: tor
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 200m
+          limits:
+            memory: 100Mi
+        livenessProbe:
+          exec:
+            command:
+              - curl -s --socks5 127.0.0.1:9050 'https://check.torproject.org/' | grep -qm1 Congratulations
+          initialDelaySeconds: 20
+          periodSeconds: 60
+      volumes:
+        - name: onion-exporter-configmap
+          configMap:
+            name: onion-exporter-configmap
+      restartPolicy: Always

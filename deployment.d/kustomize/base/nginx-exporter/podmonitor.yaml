@@ -1,0 +1,12 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: nginx-exporter
+  namespace: eotk-on-k8s
+spec:
+  selector:
+    matchLabels:
+      app: eotk-on-k8s
+  podMetricsEndpoints:
+    - port: nginx-metrics

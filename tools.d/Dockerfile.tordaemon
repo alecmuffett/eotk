@@ -1,0 +1,17 @@
+# Tor daemon used for onion uptime pinging
+
+FROM alpine:edge
+
+# renovate: datasource=repology depName=alpine_edge/tor versioning=loose
+ENV TOR_VERSION=0.4.7.12-r0
+# renovate: datasource=repology depName=alpine_edge/curl versioning=loose
+ENV CURL_VERSION=7.87.0-r1
+
+RUN apk add --no-cache curl~=7 tor~=${TOR_VERSION} && \
+    sed "1s/^/SocksPort 0.0.0.0:9050\n/" /etc/tor/torrc.sample > /etc/tor/torrc
+
+EXPOSE 9050
+
+USER tor
+
+CMD ["tor"]

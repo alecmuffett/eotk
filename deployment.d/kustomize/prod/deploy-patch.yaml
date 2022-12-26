@@ -1,0 +1,12 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+spec:
+  template:
+    spec:
+      containers:
+        - name: eotk-on-k8s
+          image: eotk-on-k8s:latest
