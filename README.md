@@ -13,7 +13,7 @@ EV certificate from Digicert.
 * onion scratch-directory name changes:
   * was: `projects.d/tweep.d/abcdefghijklmnopqrstuvwxyza-v3.d/port-80.sock`
   * now: `projects.d/tweep.d/abcdefghijklmnopqrst-v3.d/port-80.sock`
-  * :warning: this means that some scratch directories may be are remade, 
+  * :warning: this means that some scratch directories may be are remade,
     so a full restart is advisable after updating
 * https certificate path-name changes
   * was: HTTPS certificate files used the full onion address
@@ -22,8 +22,8 @@ EV certificate from Digicert.
     PROJECTNAME:
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.cert`
     * `/projects.d/PROJECTNAME.d/ssl.d/ONIONADDRFIRST20CHAR-v3.onion.pem`
-  * :warning: this means that you will need to rename pre-existing certificate 
-    `cert` and `pem` files after you update and reconfigure; 
+  * :warning: this means that you will need to rename pre-existing certificate
+    `cert` and `pem` files after you update and reconfigure;
   * :warning: **if you fail to do this you will experience "self-signed certificate" warnings**
 * if you are using 'multi' certificates (such as some Digicert EV) where a
   single certificate contains all SubjectAltNames for 2+ onion
@@ -40,6 +40,7 @@ If you have any issues, please reach out to @alecmuffett on Twitter, or log an i
 
 ## Primary Supported Platforms
 
+* k8s >= 1.21 on Ubuntu 22.04
 * Ubuntu 20.04LTS, Latest Updates
 * OSX Mojave with Homebrew, Latest Updates
 * Raspbian Stretch/Stretch-Lite, Latest Updates
@@ -55,6 +56,7 @@ NB: bugs should be reported through `Issues`, above.
 
 ### EOTK In the News
 
+* Oct 2022 [Reddit Onion Service Launch](https://www.reddit.com/r/redditsecurity/comments/yd6hqg/reddit_onion_service_launch/)
 * Apr 2021 [The Intercept launches onionsite using EOTK](https://theintercept.com/2021/04/28/tor-browser-onion/)
 * Oct 2020 [Brave browser launches onionsite using EOTK](https://brave.com/new-onion-service/)
 * Oct 2019 [BBC News launches 'dark web' Tor mirror](https://www.bbc.co.uk/news/technology-50150981)
