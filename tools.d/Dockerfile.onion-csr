@@ -1,0 +1,16 @@
+# intermediary docker image to complete Harica's onion-csr validation process
+# usage: 
+# $ docker build -t onion-csr .
+# $ docker run -it -v <path-to-onion-secret-folder>:/src onion-csr
+
+FROM ruby:3-bullseye
+
+RUN apt-get install gcc
+
+RUN git clone --recurse-submodules https://github.com/HARICA-official/onion-csr.git /opt/onion-csr
+
+WORKDIR /opt/onion-csr
+RUN gem install ffi && \
+    gcc -shared -o libed25519.so -fPIC ed25519/src/*.c
+
+CMD ["ruby", "onion-csr.rb"]
