@@ -5,6 +5,10 @@ reasons of development and keeping up to date with core, evolving
 features.  As such, installations make take extensive time to build,
 especially on slower machines.
 
+## Kubernetes / docker-compose (based on Ubuntu 22.04)
+
+* Build the docker image in `./opt.d/Dockerfile`
+
 ## Raspbian
 
 * `sudo apt-get install -y git`
