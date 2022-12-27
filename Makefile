@@ -31,9 +31,10 @@ test-gok:
 
 docker-build:
 	docker build --tag eotk-image --progress=plain -f opt.d/Dockerfile .
+	@echo "Image build done! Check your environment variables for PROJECT and ENVIRONMENT"
 
 docker-run:
-	docker run -it --name eotk-container -u user --cap-drop=all -f opt.d/Dockerfile \
+	docker run -it --name eotk-container -u user --cap-drop=all \
 		-v `pwd`/lib.d:/opt/eotk/lib.d \
 		-v `pwd`/templates.d:/opt/eotk/templates.d \
 		-v `pwd`/${PROJECT}-${ENVIRONMENT}.tconf:/opt/eotk/${PROJECT}-${ENVIRONMENT}.tconf \
@@ -41,7 +42,7 @@ docker-run:
 	$(MAKE) docker-kill
 
 docker-debug:
-	docker run -it --name eotk-container -e ENVIRONMENT=${ENVIRONMENT} -e PROJECT:${PROJECT} -f opt.d/Dockerfile \
+	docker run -it --name eotk-container -e ENVIRONMENT=${ENVIRONMENT} -e PROJECT:${PROJECT} \
 		-v `pwd`/lib.d:/opt/eotk/lib.d \
 		-v `pwd`/templates.d:/opt/eotk/templates.d \
 		-v `pwd`/${PROJECT}-${ENVIRONMENT}.tconf:/opt/eotk/${PROJECT}-${ENVIRONMENT}.tconf \
