@@ -5,9 +5,20 @@ reasons of development and keeping up to date with core, evolving
 features.  As such, installations make take extensive time to build,
 especially on slower machines.
 
-## Kubernetes / docker-compose (based on Ubuntu 22.04)
+## Docker (based on Ubuntu 22.04)
 
-* Build the docker image in `./opt.d/Dockerfile`
+* Generate a `dhparams.pem` (see template file for command)
+* Set your environment variables (see `.envrc`, load with [direnv](https://direnv.net/))
+* Put your `.tconf` file in repo root
+* Build the docker image in `./opt.d/Dockerfile` with `make docker-build`
+* Test the build and configs with `make docker-run`
+
+## Kubernetes (using image from Docker steps above) >= 1.21
+
+* Publish docker image to some registry
+* Update `deploy-patch.yaml` with your image's location / tags
+* Use kustomize and deploy with `kubectl -k ./deployment.d/staging/kustomization.yaml`
+* Note: you can ignore the SecretProviderClass and ConfigMaps for initial deploy
 
 ## Raspbian
 
@@ -222,7 +233,7 @@ If using HARICA and you need to use wildcards because you have subdomains
 on your onion site, you'll need to generate an onion-csr as proof of ownership.
 To do this you'll need the provided CSR nonce and Harica's [onion-csr](https://github.com/HARICA-official/onion-csr) tool
 pointed at the directory containing the hostname and hs_ed25519_public and secret key
-files. This should generate a CSR. Note, a Dockerfile is provided to mount
+files. This should generate a CSR. Note, a Dockerfile (`./tools.d/Dockerfile.onion-csr`)is provided to mount
 your onion secrets directory in to generate.
 
 
