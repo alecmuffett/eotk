@@ -1,3 +1,4 @@
+# Example config for use in Docker image
 
 set nginx_resolver 9.9.9.9 1.1.1.1 ipv6=off
 
@@ -7,6 +8,7 @@ foreignmap twitter3e4tixl4xyajtrzo62zg5vztmjuricljdp2c5kshju4avyoid twitter.com
 foreignmap p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd.onion propublica.com
 foreignmap bbcnewsd73hkzno2ini43t4gblxvycyac5aw4gnv7t2rccijh7745uqd.onion bbc.com
 foreignmap 27m3p2uv7igmj6kvd4ql3cct5h3sdwrsajovkkndeufumzyfhlfev4qd.onion theintercept.com
+foreignmap reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion reddit.com
 
 # use mkcert for development purposes
 set ssl_mkcert 1
