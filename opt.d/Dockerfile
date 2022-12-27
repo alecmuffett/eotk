@@ -65,11 +65,12 @@ COPY ./opt.d/ $EOTK_HOME/opt.d/
 RUN $EOTK_HOME/opt.d/build-docker.sh
 # Copy remaining source material filtered by .dockerignore
 COPY ./ ${EOTK_HOME}
+# Move the default config, which is expected to be in $EOTK_HOME (put your config in repo root)
+RUN mv ${EOTK_HOME}/demo.d/example-dev.tconf ${EOTK_HOME}/example-dev.tconf
 # Move dhparams file to shared location
 COPY ./dhparams.pem /etc/nginx/dhparams.pem
 
 # do mkcert setup - not used in prod
-
 RUN if [ "$MKCERT" = "true" ] ; then curl -JLO "https://dl.filippo.io/mkcert/${MKCERT_VERSION}?for=linux/amd64" \
     && sha256sum -c ${EOTK_HOME}/tools.d/mkcert-${MKCERT_VERSION}.sha256sum \
     && chmod +x mkcert-${MKCERT_VERSION}-linux-amd64 \
