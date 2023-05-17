@@ -14,6 +14,9 @@
 cd `dirname $0` || exit 1
 export EOTK_HOME=`pwd`
 
+# avoid the shell auto-echoing paths on "cd" commands by ensuring CDPATH is empty
+export CDPATH=""
+
 # for invoking myself
 prog=`basename $0`
 self=$EOTK_HOME/$prog
