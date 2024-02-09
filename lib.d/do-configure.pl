@@ -563,6 +563,8 @@ sub DoProject {
 &SetEnv("nginx_cache_size", "256m");
 &SetEnv("nginx_hash_bucket_size", 128);
 &SetEnv("nginx_hello_onion", 1);
+&SetEnv("nginx_proxy_ssl_trusted_certificate", "/etc/ssl/certs/ca-certificates.crt");
+&SetEnv("nginx_proxy_ssl_verify", 1);
 &SetEnv("nginx_resolver", "8.8.8.8");
 &SetEnv("nginx_rlim", 4096);
 &SetEnv("nginx_syslog", "error"); # https://nginx.org/en/docs/ngx_core_module.html#error_log

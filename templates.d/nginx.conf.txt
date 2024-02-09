@@ -80,6 +80,14 @@ http {
   proxy_max_temp_file_size %NGINX_TMPFILE_SIZE%;
   proxy_temp_file_write_size %NGINX_BLOCK_SIZE%;
 
+  # in case we want to check upstream certificates
+  %%IF %NGINX_PROXY_SSL_VERIFY%
+  proxy_ssl_trusted_certificate %NGINX_PROXY_SSL_TRUSTED_CERTIFICATE%;
+  proxy_ssl_verify on;
+  %%ELSE
+  # no checking upstream certificates
+  %%ENDIF
+
   %%IF %NGINX_CACHE_SECONDS%
   # nginx caching static responses for %NGINX_CACHE_SECONDS% seconds
   # - this is a lightweight cache to reduce "storms", hence the global
