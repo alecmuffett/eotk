@@ -1,0 +1,27 @@
+# Example config for use in Docker image
+
+set nginx_resolver 9.9.9.9 1.1.1.1 ipv6=off
+
+# index of other onion sites ("what happens in onion, should stay in onion")
+foreignmap facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd facebook.com
+foreignmap twitter3e4tixl4xyajtrzo62zg5vztmjuricljdp2c5kshju4avyoid twitter.com
+foreignmap p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd.onion propublica.com
+foreignmap bbcnewsd73hkzno2ini43t4gblxvycyac5aw4gnv7t2rccijh7745uqd.onion bbc.com
+foreignmap 27m3p2uv7igmj6kvd4ql3cct5h3sdwrsajovkkndeufumzyfhlfev4qd.onion theintercept.com
+foreignmap reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion reddit.com
+
+# use mkcert for development purposes
+set ssl_mkcert 1
+
+# use stdout for logging
+set log_stdout 1
+
+set nginx_cache_seconds 3600
+set nginx_cache_size 1000m
+set nginx_tmpfile_size 1000m
+
+set extra_subs_filter_types application/dash+xml application/x-www-form-urlencoded
+
+set project example-dev
+# in dev, we randomly generate onion addresses since these are short lived
+hardmap %NEW_V3_ONION% example.com

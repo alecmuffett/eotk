@@ -1,0 +1,5 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: eotk-on-k8s

@@ -1,0 +1,95 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+  labels:
+    app: eotk-on-k8s
+spec:
+  selector:
+    matchLabels:
+      app: eotk-on-k8s
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: eotk-on-k8s
+    spec:
+      volumes:
+        - name: nginx-cache
+          emptyDir:
+            sizeLimit: 10G
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "eotk-on-k8s"
+      containers:
+        - name: eotk-on-k8s
+          image: eotk-on-k8s:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: admin
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - grep
+                - -r
+                - "Bootstrapped 100%"
+                - ./
+            initialDelaySeconds: 15
+            periodSeconds: 1
+          volumeMounts:
+            - mountPath: /tmp
+              name: nginx-cache
+            - mountPath: /var/local/secrets
+              name: secrets-store-inline
+              readOnly: true
+          env:
+            - name: ONION_HEADER_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: nginx-shared-secret
+                  name: eotk-on-k8s-config
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: environment
+                  name: eotk-on-k8s-config
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: admin
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 1000m
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:0.11.0@sha256:131c2c2963296bbae7e9fcb52f77a1202f1d87d5d85e8e6cd7bcbccad799bc01
+          imagePullPolicy: IfNotPresent
+          args: ["-nginx.scrape-uri=http://127.0.0.1:8080/stub_status"]
+          ports:
+            - containerPort: 9113
+              protocol: TCP
+              name: nginx-metrics
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 100m
+            limits:
+              memory: 100Mi
+              cpu: 250m
+      restartPolicy: Always

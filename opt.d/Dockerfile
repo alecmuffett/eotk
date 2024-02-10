@@ -1,57 +1,94 @@
-# Development dockerfile for EOTK
-# EOTK will be downloaded and setup ready-to-run without root privileges
+# Dockerfile for EOTK
 
-# To build:
-# docker build --tag eotk-image .
+FROM ubuntu:jammy
 
-# To run:
-# docker run -it --cap-drop=all --name eotk-container eotk-image
+# MKCERT: determines if mkcert and root CA are included in image. To get consistent root CA,
+# generate your rootCA-key.pem and rootCA.pem files with mkcert locally and add them to ./secrets.d
+ARG MKCERT=true
 
-# credit:
-# v1 Alex Haydock <alex@alexhaydock.co.uk>
-# v2 Alec Muffett <alec.muffett@gmail.com>
+# ENV/ENVIRONMENT: suffix used to target different configs and determines secrets behavior
+ARG ENV=dev
+ENV ENVIRONMENT=$ENV
 
-FROM ubuntu:16.04
+# PROJECT: the suffix name of your configuration file, typically your site name
+ARG PROJECT=example
+ENV PROJECT=$PROJECT
 
-LABEL maintainer "Alec Muffett <alec.muffett@gmail.com>"
+# Standard environment varibles, you probably won't need to change
+ENV DEBIAN_FRONTEND=non-interactive
+ENV TZ=Etc/UTC
+ENV EOTK_HOME=/opt/eotk
 
-ENV TOR_REPO https://deb.torproject.org/torproject.org
-ENV TOR_FINGERPRINT A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
-ENV TOR_KEYURL $TOR_REPO/$TOR_FINGERPRINT.asc
+# renovate: datasource=github-tags depName=torproject/tor versioning=loose extractVersion=^tor-(?<version>.*)$
+ENV TOR_VERSION=0.4.7.11
+# renovate: datasource=github-tags depName=openresty/openresty versioning=loose
+ENV OPENRESTY_VERSION=v1.21.4.1
+# renovate: datasource=github-tags depName=openssl/openssl extractVersion=OpenSSL_(?<major>.+)_(?<minor>.+)_(?<patch>.+)(?<build>.+)
+ENV OPENSSL_VERSION=1.1.1s
+# renovate: datasource=github-releases depName=phuslu/nginx-ssl-fingerprint
+ENV NGINX_SSL_FINGERPRINT_VERSION=v0.3.0
+# renovate: datasource=github-tags depName=FiloSottile/mkcert
+ENV MKCERT_VERSION=v1.4.4
 
-ENV EOTK_REPO https://github.com/alecmuffett/eotk.git
-ENV EOTK_HOME /opt/eotk
-
-# no-one will ever convince me that this syntax is not an awful hack
 RUN apt-get update \
-    && apt-get install -y apt-transport-https \
-    && apt-get install -y gnupg2 curl sudo \
-    && curl $TOR_KEYURL | gpg --import \
-    && gpg --export $TOR_FINGERPRINT | sudo apt-key add - \
-    && echo "deb $TOR_REPO xenial main" >/etc/apt/sources.list.d/tor.list \
-    && apt-get update \
-    && apt-get install -y deb.torproject.org-keyring \
+    && apt-get install --no-install-recommends -y \
+        apt-transport-https \
+        build-essential \
+        curl \
+        dirmngr \
+        dumb-init \
+        git \
+        gnupg2 \
+        libjansson-dev \
+        libevent-dev \
+        libpcre3-dev \
+        libssl-dev \
+        libssl3 \
+        make \
+        nginx-extras \
+        perl \
+        python-is-python3 \
+        python3 \
+        python3-dev \
+        python3-pip \
+        zlib1g-dev \
     && apt-get clean \
-    && apt-get install -y \
-      git \
-      nginx-extras \
-      perl \
-      python \
-      python-dev \
-      python-pip \
-      socat \
-      tor \
-    && apt-get clean \
-    && pip install onionbalance \
-    && git clone $EOTK_REPO $EOTK_HOME \
-    && useradd user --home-dir $EOTK_HOME --no-create-home --system \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p ${EOTK_HOME} \
+    && useradd -u 1000 user --home-dir $EOTK_HOME --no-create-home --system \
     && chown -R user:user $EOTK_HOME \
-    && echo 'export PATH="$EOTK_HOME:$PATH"' > $EOTK_HOME/.bashrc \
-    && chown -R user /var/log/nginx \
-    && chown -R user /var/lib/nginx \
-    && find /usr/local/bin /usr/local/lib -perm -0400 -print0 | xargs -0 chmod a+r \
-    && find /usr/local/bin /usr/local/lib -perm -0100 -print0 | xargs -0 chmod a+x
+    && echo 'export PATH="$EOTK_HOME:$PATH"' > $EOTK_HOME/.bashrc
 
+# Copy installation scripts (to save caching layer)
+COPY ./opt.d/ $EOTK_HOME/opt.d/
+# Build tor and openresty
+RUN $EOTK_HOME/opt.d/build-docker.sh
+# Copy remaining source material filtered by .dockerignore
+COPY ./ ${EOTK_HOME}
+# Move the default config, which is expected to be in $EOTK_HOME (put your config in repo root)
+RUN mv ${EOTK_HOME}/demo.d/example-dev.tconf ${EOTK_HOME}/example-dev.tconf
+# Move dhparams file to shared location
+COPY ./dhparams.pem /etc/nginx/dhparams.pem
+
+# do mkcert setup - not used in prod
+RUN if [ "$MKCERT" = "true" ] ; then curl -JLO "https://dl.filippo.io/mkcert/${MKCERT_VERSION}?for=linux/amd64" \
+    && sha256sum -c ${EOTK_HOME}/tools.d/mkcert-${MKCERT_VERSION}.sha256sum \
+    && chmod +x mkcert-${MKCERT_VERSION}-linux-amd64 \
+    && mv mkcert-${MKCERT_VERSION}-linux-amd64 /usr/local/bin/mkcert \
+    && mkdir -p $EOTK_HOME/.local/share/mkcert \
+    && mkdir -p /root/.local/share/mkcert \
+    && cp ${EOTK_HOME}/secrets.d/rootCA* /root/.local/share/mkcert/ \
+    && cp ${EOTK_HOME}/secrets.d/rootCA* $EOTK_HOME/.local/share/mkcert/ ; fi
+
+# setup non-root user
+RUN chown -R user:user $EOTK_HOME
 USER user
 WORKDIR $EOTK_HOME
-ENTRYPOINT [ "/bin/bash" ]
+
+# nginx stub status metrics endpoint
+EXPOSE 8080
+# tor prometheus metrics endpoint
+EXPOSE 9053
+
+ENTRYPOINT [ "/usr/bin/dumb-init", "--"]
+CMD [ "tools.d/docker-entrypoint.sh" ]

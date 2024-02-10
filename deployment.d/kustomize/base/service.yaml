@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+  labels:
+    app: eotk-on-k8s
+spec:
+  ports:
+  - name: nginx-stub
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: tor-metrics
+    port: 9053
+    protocol: TCP
+    targetPort: 9053
+  selector:
+    app: eotk-on-k8s
+  type: ClusterIP

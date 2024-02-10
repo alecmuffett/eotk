@@ -1,0 +1,44 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "branchPrefix": "renovate-",
+    "dependencyDashboard": true,
+    "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+    "onboardingPrTitle": "build(renovate): Renovate Onboarding PR 🤖",
+    "onboardingBranch": "renovate-configure",
+    "dockerfile": {
+        "fileMatch": [
+            "Dockerfile(.*)?"
+        ]
+    },
+    "regexManagers": [
+        {
+            "description": "Update _VERSION variables in Dockerfiles scripts",
+            "fileMatch": [
+                "Dockerfile"
+            ],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>.+?)(?: lookupName=(?<lookupName>.+?))?(?: versioning=(?<versioning>[a-z-]+?))?(?: extractVersion=(?<extractVersion>.+?))?\\s(ARG|ENV) [A-Z_]+_VERSION=(?<currentValue>.+)\\s"
+            ],
+            "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
+        }
+    ],
+    "packageRules": [
+        {
+            "datasources": [
+                "repology"
+            ],
+            "matchPackagePatterns": [
+                "^alpine_edge/"
+            ],
+            "separateMajorMinor": false,
+            "groupName": "alpine packages",
+            "groupSlug": "alpine"
+        },
+        {
+            "matchPackageNames": [
+                "torproject/tor"
+            ],
+            "allowedVersions": "/tor-\\d.\\d.\\d.\\d$/"
+        }
+    ]
+}

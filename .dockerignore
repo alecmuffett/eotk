@@ -1,0 +1,14 @@
+# directories we don't need in final build
+deployment.d/
+demo.d/
+docs.d/
+
+# we do need the example-dev.tconf as a fallback config
+!demo.d/example-dev.tconf
+
+# files we don't need
+.git
+.gitignore
+Makefile
+dhparams.pem.tmpl
+renovate.json

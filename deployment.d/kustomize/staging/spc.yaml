@@ -1,0 +1,18 @@
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+spec:
+  provider: vault
+  parameters:
+    roleName: eotk_on_k8s
+    objects: |
+      # example.com's public and private key for onion site
+      - objectName: hff4c4h4l62ei2mmtkfuuu6oxwr26uycozsdnbngvxytpa6vhnoshoqd.v3pub.key
+        secretPath: "secret/eotk-on-k8s/onion-keys/example_com"
+        secretKey: "pub"
+      - objectName: hff4c4h4l62ei2mmtkfuuu6oxwr26uycozsdnbngvxytpa6vhnoshoqd.v3sec.key
+        secretPath: "secret/eotk-on-k8s/onion-keys/example_com"
+        secretKey: "sec"

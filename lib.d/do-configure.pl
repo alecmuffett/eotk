@@ -554,6 +554,7 @@ sub DoProject {
 &SetEnv("force_https", 1);
 &SetEnv("hard_mode", 1);
 &SetEnv("left_tld_re", "\\\\b");
+&SetEnv("log_stdout", "\\\\b");
 &SetEnv("nginx_action_abort", "return 500");
 &SetEnv("nginx_block_busy_size", "16k");
 &SetEnv("nginx_block_count", 8);

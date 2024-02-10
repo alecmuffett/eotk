@@ -1,3 +1,5 @@
+.PHONY: all lint test clean distclean dist-clean test-ob-tor test-gok docker-build docker-run docker-debug docker-kill docker-status docker-clean std-params
+
 all:
 	echo "make what?"
 
@@ -27,9 +29,29 @@ test-gok:
 
 ##################################################################
 
-docker-test:
-	docker build --tag eotk-image opt.d
-	docker run -it --cap-drop=all --name eotk-container eotk-image
+docker-build:
+	docker build --tag eotk-image --progress=plain -f opt.d/Dockerfile .
+	@echo "Image build done! Check your environment variables for PROJECT and ENVIRONMENT"
+
+docker-run:
+	docker run -it --name eotk-container -u user --cap-drop=all \
+		-v `pwd`/lib.d:/opt/eotk/lib.d \
+		-v `pwd`/templates.d:/opt/eotk/templates.d \
+		-v `pwd`/${PROJECT}-${ENVIRONMENT}.tconf:/opt/eotk/${PROJECT}-${ENVIRONMENT}.tconf \
+		eotk-image || true
+	$(MAKE) docker-kill
+
+docker-debug:
+	docker run -it --name eotk-container -e ENVIRONMENT=${ENVIRONMENT} -e PROJECT:${PROJECT} \
+		-v `pwd`/lib.d:/opt/eotk/lib.d \
+		-v `pwd`/templates.d:/opt/eotk/templates.d \
+		-v `pwd`/${PROJECT}-${ENVIRONMENT}.tconf:/opt/eotk/${PROJECT}-${ENVIRONMENT}.tconf \
+		eotk-image || true
+	$(MAKE) docker-kill
+
+docker-kill:
+	docker kill eotk-container || true
+	docker rm eotk-container || true
 
 docker-status:
 	docker images -a
@@ -38,7 +60,7 @@ docker-status:
 docker-clean:
 	docker system prune --volumes
 	docker image prune -a
-	make docker-status
+	$(MAKE) docker-status
 
 ##################################################################
 

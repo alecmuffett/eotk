@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+
+resources:
+  - ../base
+  - spc.yaml
+  - configmap.yaml
+
+patchesStrategicMerge:
+  - deploy-patch.yaml
+
+configMapGenerator:
+  - name: eotk-on-k8s-config
+    namespace: eotk-on-k8s
+    literals:
+      - environment="staging"
+      - nginx-shared-secret="hunter2"

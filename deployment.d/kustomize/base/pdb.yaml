@@ -1,0 +1,13 @@
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: eotk-on-k8s
+  name: eotk-on-k8s
+  namespace: eotk-on-k8s
+spec:
+  maxUnavailable: 10%
+  selector:
+    matchLabels:
+      app: eotk-on-k8s

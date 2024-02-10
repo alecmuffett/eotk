@@ -1,0 +1,12 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: onion-exporter
+  namespace: eotk-on-k8s
+spec:
+  selector:
+    matchLabels:
+      app: onion-exporter
+  podMetricsEndpoints:
+  - port: metrics
