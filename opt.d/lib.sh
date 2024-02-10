@@ -6,6 +6,7 @@ keyserver="keyserver.ubuntu.com" # standard
 CustomiseVars() {
     install_dir=$opt_dir/$tool.d
     tool_tarball=`basename "$tool_url"`
+    tool_checksum=`basename "$tool_checksum_url"`
     tool_sig=`basename "$tool_sig_url"`
     tool_dir=`basename "$tool_tarball" .tar.gz`
 }
@@ -13,6 +14,8 @@ CustomiseVars() {
 SetupForBuild() {
     test -f "$tool_tarball" || curl -o "$tool_tarball" "$tool_url" || exit 1
     test -f "$tool_sig" || curl -o "$tool_sig" "$tool_sig_url" || exit 1
+    test -z "$tool_checksum" || test -f "$tool_checksum" || curl -o "$tool_checksum" "$tool_checksum_url" || exit 1
+    test -z "$tool_checksum" || $tool_checksum_command "$tool_checksum" || exit 1
     gpg --keyserver "hkp://$keyserver:80" --recv-keys $tool_signing_keys || exit 1
     gpg --verify "$tool_sig" || exit 1
     test -d "$tool_dir" || tar zxf "$tool_tarball" || exit 1
@@ -24,7 +27,7 @@ BuildAndCleanup() {
     $MAKE install || exit 1
     cd $opt_dir || exit 1
     for x in $tool_link_paths ; do ln -sf "$install_dir/$x" || exit 1 ; done
-    rm -rf "$tool_tarball" "$tool_sig" "$tool_dir" || exit 1
+    rm -rf "$tool_tarball" "$tool_sig" "$tool_dir" "$tool_checksum" || exit 1
 }
 
 # ------------------------------------------------------------------
@@ -60,10 +63,12 @@ ConfigureOpenResty() { # this accepts arguments
 
 SetupTorVars() {
     tool="tor"
-    tool_version="0.4.5.8"
-    tool_signing_keys="6AFEE6D49E92B601 C218525819F78451"
+    tool_version="0.4.7.13"
+    tool_signing_keys="514102454D0A87DB0767A1EBBE6A0531C18A9179 B74417EDDF22AC9F9E90F49142E86A2A11F48D36 2133BC600AB133E1D826D173FE43009C4607B1FB"
     tool_url="https://dist.torproject.org/$tool-$tool_version.tar.gz"
-    tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.asc"
+    tool_checksum_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.sha256sum"
+    tool_checksum_command="sha256sum -c"
+    tool_sig_url="https://dist.torproject.org/$tool-$tool_version.tar.gz.sha256sum.asc"
     tool_link_paths="bin/$tool"
 }
 
