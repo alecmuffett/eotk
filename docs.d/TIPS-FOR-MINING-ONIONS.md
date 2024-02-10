@@ -89,7 +89,7 @@ strategy is follows:
 
 * There is also a vast amount of noise -- huge, enormous quantities of
   gibberish -- but that's okay, because (again) `storage+grep` is
-  mucg cheaper than `encryption+wallclocktime`.
+  much cheaper than `encryption+wallclocktime`.
 
 * When we mined the Facebook onion address, the search-patterns were
   `^(facebook|fbcdn|fbsbx|...)` and a few others all in a single
@@ -110,7 +110,7 @@ strategy is follows:
 
 * Ideally, make sure that you are thoroughly in control of the backups
   and storage of the machine upon which you are doing the mining; try
-  to use an encrypted partition if you can
+  to use an encrypted partition if you can.
 
 * Ensure that you have proper controls over all media which ever
   receives a copy of the Onion address key.
